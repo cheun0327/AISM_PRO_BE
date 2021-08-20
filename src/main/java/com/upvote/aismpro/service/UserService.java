@@ -34,12 +34,12 @@ public class UserService {
     public void updateById(String userId, User user) {
         Optional<User> e = userRepo.findByUserId(userId);
 
-        if (e.isPresent()) {
-            e.get().setMbrNo(user.getMbrNo());
-            e.get().setId(user.getId());
-            e.get().setName(user.getName());
-            userRepo.save(user);
-        }
+//        if (e.isPresent()) {
+//            e.get().setMbrNo(user.getMbrNo());
+//            e.get().setId(user.getId());
+//            e.get().setName(user.getName());
+//            userRepo.save(user);
+//        }
     }
 
 }
