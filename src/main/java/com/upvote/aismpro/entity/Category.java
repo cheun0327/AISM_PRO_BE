@@ -21,7 +21,7 @@ public class Category {
         inverseJoinColumns = @JoinColumn(name = "ITEM_ID"))
     private List<Item> items = new ArrayList<Item>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
     private Category parent;
 
@@ -32,7 +32,7 @@ public class Category {
 
     public void addChildCategory(Category child) {
         this.child.add(child);
-        this.setParrent(this);
+        this.setParent(this);
     }
 
     // Getter Setter //

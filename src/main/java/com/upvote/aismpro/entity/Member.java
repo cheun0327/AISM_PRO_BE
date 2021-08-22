@@ -7,12 +7,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+
 @Entity
-@Getter
 @Table(name="MEMBER")
 //@AllArgsConstructor -> 생성자를 알아서 만들어준다.
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     @Id
@@ -20,11 +19,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Embedded
     private Address address;
@@ -48,12 +43,16 @@ public class Member {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public void setOrders(List<Order> orders) {
