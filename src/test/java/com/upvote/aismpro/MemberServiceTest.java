@@ -9,19 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+@WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Member.class, MemberService.class, MemberRepository.class})
 @Transactional
 public class MemberServiceTest {
 
-    @Autowired
+    @Autowired(required=true)
     MemberService memberService;
-    @Autowired
+    @Autowired(required=true)
     MemberRepository memberRepository;
+
 
     @Test
     public void joinTest() throws Exception {
@@ -37,8 +41,18 @@ public class MemberServiceTest {
         assertEquals(member, memberRepository.findOne(saveId));
     }
 
-//    @Test(expected = IllegalStateException.class)
-//    public void doubleMemberException() throws Exception {
-//
-//    }
+    @Test(expected = IllegalStateException.class)
+    public void doubleMemberException() throws Exception {
+        Member member1 = new Member();
+        member1.setName("kim");
+
+        Member member2 = new Member();
+        member2.setName("kim");
+
+        memberService.join(member1);
+        memberService.join(member2);
+
+        fail("예외 발생!");
+    };
+
 }
