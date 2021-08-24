@@ -27,9 +27,9 @@ public class PageController  {
 
         return "Hi 현재 서버 시간 : " + new Date() + "입니다. \n";
     }
-
     @GetMapping("/hi")
     public String hi() {
         return "hi";
     }
+
 }
