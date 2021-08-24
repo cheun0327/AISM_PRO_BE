@@ -2,6 +2,7 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.entity.Member;
 import com.upvote.aismpro.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.List;
 // Member 관련 비즈니스 로직
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class MemberService {
     @Autowired
     MemberRepository memberRepo;

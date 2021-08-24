@@ -15,15 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@WebAppConfiguration
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Member.class, MemberService.class, MemberRepository.class})
 @Transactional
 public class MemberServiceTest {
 
-    @Autowired(required=true)
+    @Autowired
     MemberService memberService;
-    @Autowired(required=true)
+    @Autowired
     MemberRepository memberRepository;
 
 
