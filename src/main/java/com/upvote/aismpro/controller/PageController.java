@@ -30,6 +30,6 @@ public class PageController  {
 
     @GetMapping("/hi")
     public String hi() {
-        return "hi";
+        return "hello hi jenkins";
     }
 }
