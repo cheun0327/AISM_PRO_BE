@@ -27,6 +27,9 @@ public class PageController  {
 
         return "Hi 현재 서버 시간 : " + new Date() + "입니다. \n";
     }
-    // jenkins test
-    // jenkins test 2
+    @GetMapping("/hi")
+    public String hi() {
+        return "hi";
+    }
+
 }
