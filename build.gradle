@@ -28,6 +28,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compileOnly "joda-time:joda-time:2.2"
+	compileOnly 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	testCompileOnly "junit:junit:4.12"
 }
 
