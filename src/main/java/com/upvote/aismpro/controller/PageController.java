@@ -12,9 +12,14 @@ public class PageController {
     @GetMapping("/hello")
     public String hello() {
         System.out.println("hi");
-        System.out.println("hi");
         return "Hi 현재 서버 시간 : " + new Date() + "입니다. \n";
     }
 
+//    @PostMapping(value = "tokenVerify")
+//    public ResponseEntity<?> tokenVerify(String idToken){
+//        System.out.println("RequestBody value : " + idToken);
+//
+//        return null;
+//    }
 
 }
