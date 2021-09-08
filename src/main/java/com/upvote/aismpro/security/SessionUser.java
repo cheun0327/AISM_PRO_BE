@@ -1,4 +1,4 @@
-package com.upvote.aismpro.service;
+package com.upvote.aismpro.security;
 
 import com.upvote.aismpro.entity.User;
 import lombok.Builder;
