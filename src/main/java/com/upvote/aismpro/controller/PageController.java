@@ -17,19 +17,4 @@ public class PageController  {
 
     private Object MapUtils;
 
-    @RequestMapping(value = "/hello", method = {RequestMethod.POST})
-    @ResponseBody
-    public String hello(@RequestBody Map<String, Object> map) {
-        if (map == null || map.isEmpty()) System.out.println("empty");
-        else System.out.println("not null");
-
-        System.out.println(map);
-
-        return "Hi 현재 서버 시간 : " + new Date() + "입니다. \n";
-    }
-    @GetMapping("/hi")
-    public String hi() {
-        return "hello hi jenkins";
-    }
-
 }
