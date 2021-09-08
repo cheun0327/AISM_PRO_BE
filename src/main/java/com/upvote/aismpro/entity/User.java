@@ -22,6 +22,10 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Role role;
+
     @Builder
     public User(String name, String email, String picture) {
         this.name = name;
