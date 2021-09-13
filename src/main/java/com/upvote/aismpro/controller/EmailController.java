@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -18,9 +16,12 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/email") // 이메일 인증 코드 보내기
-    public ResponseEntity<String> emailAuth(@RequestBody Map<String, String> email) throws Exception {
-        emailService.sendSimpleMessage(email.get("email"));
+    //@PostMapping("/email")
+    @GetMapping("/email") // 이메일 인증 코드 보내기
+    //public ResponseEntity<String> emailAuth(@RequestBody Map<String, String> email) throws Exception {
+    public ResponseEntity<String> emailAuth(@RequestParam String email) throws Exception {
+        //emailService.sendSimpleMessage(email.get("email"));
+        emailService.sendSimpleMessage(email);
 
         return new ResponseEntity<String>("true", HttpStatus.OK);
     }
