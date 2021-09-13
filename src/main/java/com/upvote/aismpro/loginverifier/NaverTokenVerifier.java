@@ -34,8 +34,6 @@ public class NaverTokenVerifier {
     }
 
     public Map<String, Object> getUserInfo(String accessToken) throws IOException {
-        System.out.println("call get user info function");
-
         Map<String, Object> map = new HashMap<String, Object>();
 
         String apiURL = "https://openapi.naver.com/v1/nid/me";
