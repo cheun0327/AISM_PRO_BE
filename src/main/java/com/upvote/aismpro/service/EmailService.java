@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
@@ -12,8 +13,8 @@ import java.util.Random;
 
 
 @Service
-@Repository
 @RequiredArgsConstructor
+@PropertySource(value = { "classpath:email.properties" })
 public class EmailService {
 
     private final JavaMailSender emailSender;
@@ -26,19 +27,18 @@ public class EmailService {
 
         String code = createCode(ePw);
         message.addRecipients(MimeMessage.RecipientType.TO, to); //보내는 대상
-        message.setSubject("Slack 확인 코드: " + code); //제목
+        message.setSubject("AISM 확인 코드: " + code); //제목
 
         String msg="";
-        msg += "<img width=\"120\" height=\"36\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://slack.com/x-a1607371436052/img/slack_logo_240.png\" alt=\"\" loading=\"lazy\">";
+        msg += "<img width=\"330\" height=\"200\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px;\" src=\"https://e7.pngegg.com/pngimages/508/217/png-clipart-homer-simpson-illustration-homer-simpson-internet-meme-drooling-meme-television-vertebrate.png\" alt=\"\" loading=\"lazy\">";
         msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
-        msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 확인 코드를 Slack 가입 창이 있는 브라우저 창에 입력하세요.</p>";
+        msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래는 인증코드!</p>";
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
         msg += code;
         msg += "</td></tr></tbody></table></div>";
-        msg += "<a href=\"https://slack.com\" style=\"text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">Slack Clone Technologies, Inc</a>";
+
 
         message.setText(msg, "utf-8", "html"); //내용
-        message.setFrom(new InternetAddress("보내는 계정","slack-clone")); //보내는 사람
 
         return message;
     }
