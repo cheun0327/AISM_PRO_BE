@@ -20,7 +20,8 @@ public class LoginController {
     GoogleTokenVerifier googleVerifier;
 
     @PostMapping("/tokenVerify")
-    public ResponseEntity<User> tokenVerify(@RequestBody Map param){
+    //public ResponseEntity<User> tokenVerify(@RequestBody Map param){
+    public void tokenVerify(@RequestBody Map param){
         System.out.println("RequestBody value : " + param.get("tokenId"));
         googleVerifier.tokenVerify((String) param.get("tokenId"));
 
