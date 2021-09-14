@@ -1,12 +1,14 @@
 package com.upvote.aismpro.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
@@ -20,7 +22,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     public static final String ePw = createKey();
 
-    private MimeMessage createMessage(String to)throws Exception{
+    private MimeMessage createMessage(String to) throws Exception{
         System.out.println("보내는 대상 : "+ to);
         System.out.println("인증 번호 : " + ePw);
         MimeMessage message = emailSender.createMimeMessage();
@@ -36,7 +38,6 @@ public class EmailService {
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
         msg += code;
         msg += "</td></tr></tbody></table></div>";
-
 
         message.setText(msg, "utf-8", "html"); //내용
 
@@ -65,6 +66,6 @@ public class EmailService {
     }
 
     public String createCode(String ePw){
-        return ePw.substring(0, 3) + "-" + ePw.substring(3, 6);
+        return ePw.substring(0, 3) + ePw.substring(3, 6);
     }
 }

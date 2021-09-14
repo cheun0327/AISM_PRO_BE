@@ -24,9 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-//@SpringBootTest
+@SpringBootTest
 // 특정 빈만 로드한다.
-@WebMvcTest(EmailController.class)
+//@WebMvcTest(EmailController.class)
 @AutoConfigureMockMvc
 public class EmailTester {
 

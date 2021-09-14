@@ -1,55 +1,84 @@
 //package com.upvote.aismpro.settings;
 //
-//import org.springframework.beans.factory.annotation.Value;
+//import com.upvote.aismpro.entity.User;
+//import com.upvote.aismpro.repository.EmailRepository;
+//import com.upvote.aismpro.service.EmailService;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
-//import org.springframework.context.annotation.PropertySource;
 //import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.mail.javamail.JavaMailSenderImpl;
 //
-//import java.util.Properties;
+//import java.util.Optional;
 //
 //@Configuration
-//@PropertySource("classpath:email.properties")
 //public class EmailConfig {
 //
-//    @Value("${mail.smtp.port}")
-//    private int port;
-//    @Value("${mail.smtp.socketFactory.port}")
-//    private int socketPort;
-//    @Value("${mail.smtp.auth}")
-//    private boolean auth;
-//    @Value("${mail.smtp.starttls.enable}")
-//    private boolean starttls;
-//    @Value("${mail.smtp.starttls.required}")
-//    private boolean startlls_required;
-//    @Value("${mail.smtp.socketFactory.fallback}")
-//    private boolean fallback;
-//    @Value("${AdminMail.id}")
-//    private String id;
-//    @Value("${AdminMail.password}")
-//    private String password;
+//    @Bean
+//    public EmailRepository emailRepository() {
+//        return new EmailRepository() {
+//            @Override
+//            public <S extends User> S save(S entity) {
+//                return null;
+//            }
+//
+//            @Override
+//            public <S extends User> Iterable<S> saveAll(Iterable<S> entities) {
+//                return null;
+//            }
+//
+//            @Override
+//            public Optional<User> findById(Long aLong) {
+//                return Optional.empty();
+//            }
+//
+//            @Override
+//            public boolean existsById(Long aLong) {
+//                return false;
+//            }
+//
+//            @Override
+//            public Iterable<User> findAll() {
+//                return null;
+//            }
+//
+//            @Override
+//            public Iterable<User> findAllById(Iterable<Long> longs) {
+//                return null;
+//            }
+//
+//            @Override
+//            public long count() {
+//                return 0;
+//            }
+//
+//            @Override
+//            public void deleteById(Long aLong) {
+//
+//            }
+//
+//            @Override
+//            public void delete(User entity) {
+//
+//            }
+//
+//            @Override
+//            public void deleteAllById(Iterable<? extends Long> longs) {
+//
+//            }
+//
+//            @Override
+//            public void deleteAll(Iterable<? extends User> entities) {
+//
+//            }
+//
+//            @Override
+//            public void deleteAll() {
+//
+//            }
+//        };
+//    }
 //
 //    @Bean
-//    public JavaMailSender javaMailService() {
-//        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-//        javaMailSender.setHost("smtp.gmail.com");
-//        javaMailSender.setUsername(id);
-//        javaMailSender.setPassword(password);
-//        javaMailSender.setPort(port);
-//        javaMailSender.setJavaMailProperties(getMailProperties());
-//        javaMailSender.setDefaultEncoding("UTF-8");
-//        return javaMailSender;
-//    }
-//    private Properties getMailProperties()
-//    {
-//        Properties pt = new Properties();
-//        pt.put("mail.smtp.socketFactory.port", socketPort);
-//        pt.put("mail.smtp.auth", auth);
-//        pt.put("mail.smtp.starttls.enable", starttls);
-//        pt.put("mail.smtp.starttls.required", startlls_required);
-//        pt.put("mail.smtp.socketFactory.fallback",fallback);
-//        pt.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//        return pt;
+//    public EmailService emailService() {
+//        return new EmailService((JavaMailSender) emailRepository());
 //    }
 //}
