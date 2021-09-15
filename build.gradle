@@ -24,6 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'com.google.code.gson:gson:2.8.8'
+	implementation 'com.google.api-client:google-api-client:1.31.5'
 
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
@@ -31,7 +32,6 @@ dependencies {
 	compileOnly "joda-time:joda-time:2.2"
 	compileOnly 'org.projectlombok:lombok'
 	compileOnly 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	compileOnly 'com.google.api-client:google-api-client:1.31.5'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

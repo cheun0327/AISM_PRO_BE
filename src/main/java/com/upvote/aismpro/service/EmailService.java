@@ -15,12 +15,20 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @PropertySource(value = { "classpath:email.properties" })
-public class EmailService {
+public class EmailService implements EmailServiceInter {
 
     private final JavaMailSender emailSender;
-    public static final String ePw = createKey();
+    static public String ePw;
 
-    private MimeMessage createMessage(String to)throws Exception{
+    public static void setEPw(String ePw) {
+        EmailService.ePw = ePw;
+    }
+
+    @Override
+    public MimeMessage createMessage(String to)throws Exception{
+
+        setEPw(createKey());
+
         System.out.println("보내는 대상 : "+ to);
         System.out.println("인증 번호 : " + ePw);
         MimeMessage message = emailSender.createMimeMessage();
@@ -42,6 +50,16 @@ public class EmailService {
 
         return message;
     }
+    @Override
+    public void sendSimpleMessage(String to) throws Exception {
+        MimeMessage message = createMessage(to);
+        try{//예외처리
+            emailSender.send(message);
+        }catch(MailException es){
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+    }
 
     // 인증코드 만들기
     public static String createKey() {
@@ -52,16 +70,6 @@ public class EmailService {
             key.append((rnd.nextInt(10)));
         }
         return key.toString();
-    }
-
-    public void sendSimpleMessage(String to)throws Exception {
-        MimeMessage message = createMessage(to);
-        try{//예외처리
-            emailSender.send(message);
-        }catch(MailException es){
-            es.printStackTrace();
-            throw new IllegalArgumentException();
-        }
     }
 
     public String createCode(String ePw){
