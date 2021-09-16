@@ -16,15 +16,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailController {
 
-    private final EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/email")
-    //@GetMapping("/email") // 이메일 인증 코드 보내기
     public ResponseEntity<String> emailAuth(@RequestBody Map<String, String> email) throws Exception {
-    //public ResponseEntity<String> emailAuth(@RequestParam String email) throws Exception {
-        System.out.println(emailService);
         emailService.sendSimpleMessage(email.get("email"));
-        //emailService.sendSimpleMessage(email);
 
         return new ResponseEntity<String>("true", HttpStatus.OK);
     }
