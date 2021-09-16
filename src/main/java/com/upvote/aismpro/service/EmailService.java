@@ -18,10 +18,14 @@ import java.util.Random;
 public class EmailService implements EmailServiceInter {
 
     private final JavaMailSender emailSender;
-    static public String ePw;
+    private String ePw;
 
-    public static void setEPw(String ePw) {
-        EmailService.ePw = ePw;
+    public void setEPw(String ePw) {
+        this.ePw = ePw;
+    }
+
+    public String getEPW() {
+        return this.ePw;
     }
 
     @Override

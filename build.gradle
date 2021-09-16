@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'com.google.code.gson:gson:2.8.8'
 	implementation 'com.google.api-client:google-api-client:1.31.5'
+	implementation 'org.jetbrains:annotations:20.1.0'
 
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
