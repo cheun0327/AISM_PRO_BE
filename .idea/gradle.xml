@@ -4,7 +4,11 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+<<<<<<< HEAD
         <option name="delegatedBuild" value="false" />
+=======
+        <option name="delegatedBuild" value="true" />
+>>>>>>> 275624c5921e74750e9f44787305b1380c0b2756
         <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />

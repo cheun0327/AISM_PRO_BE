@@ -21,9 +21,24 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+<<<<<<< HEAD
 	implementation 'junit:junit:4.13.1'
 	compileOnly 'org.projectlombok:lombok'
+=======
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'com.google.code.gson:gson:2.8.8'
+	implementation 'com.google.api-client:google-api-client:1.31.5'
+	implementation 'org.jetbrains:annotations:20.1.0'
+
+>>>>>>> 275624c5921e74750e9f44787305b1380c0b2756
 	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+
+	compileOnly "joda-time:joda-time:2.2"
+	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
@@ -33,3 +48,11 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+apply plugin: 'idea'
+
+// For Deploy Jar File
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'io.spring.dependency-management'
+
