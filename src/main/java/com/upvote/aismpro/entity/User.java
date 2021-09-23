@@ -8,32 +8,27 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "user_info")
 @Data
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(nullable = false)
-    private String name;
+    private String nickName;
 
     @Column(nullable = false)
     private String email;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private Role role;
-
     @Builder
-    public User(String name, String email, String picture) {
-        this.name = name;
+    public User(String nickName, String email, String picture) {
+        this.nickName = nickName;
         this.email = email;
     }
 
-    public User update(String name, String email) {
-        this.name = name;
+    public User update(String nickName, String email) {
+        this.nickName = nickName;
         this.email = email;
 
         return this;
