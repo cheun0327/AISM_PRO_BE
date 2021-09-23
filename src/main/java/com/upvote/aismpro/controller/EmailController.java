@@ -27,11 +27,16 @@ public class EmailController {
     }
 
     @PostMapping("/verifyCode") // 이메일 인증 코드 검증
-    public ResponseEntity<String> verifyCode(@RequestBody Map<String, String> code) throws Exception {
-        if(EmailService.ePw.equals(code.get("code"))) {
+    public ResponseEntity<String> verifyCode(@RequestBody Map<String, String> code) {
+        System.out.println("code : "+code);
+        if(emailService.getEPW().equals(code.get("code"))) {
+            System.out.println("코드 인증 완료");
+
             return new ResponseEntity<String>("true", HttpStatus.OK);
         }
         else{
+            System.out.println("코드 인증 실패");
+
             return new ResponseEntity<String>("false", HttpStatus.OK);
         }
     }
