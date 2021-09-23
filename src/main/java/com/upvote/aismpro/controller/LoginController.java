@@ -9,6 +9,7 @@ import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +33,28 @@ public class LoginController {
         googleVerifier.tokenVerify((String) param.get("tokenId"));
     }
 
-//    @GetMapping ("/nickNameDoubleCheck")
-//    public @ResponseBody Map<String, Boolean> nickDoubleCheck(@RequestParam("nickName") String nickName) {
-//
-//    }
+    // 닉네임 중복 확인
+    @GetMapping ("/isValidNickName/{nickName}")
+    public @ResponseBody Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
+        System.out.println("== nickName Double Check : " + nickName);
+        try {
+            login.nickDoubleCheck(nickName);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
+        return Collections.singletonMap("result", true);
+    }
 
+    // 회원가입 실행
     @PostMapping("/signup.do")
     public @ResponseBody Map<String, Boolean> signup(@RequestBody User user) {
-        login.signup(user);
+        try {
+            login.signup(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
         return Collections.singletonMap("result", true);
     }
 
