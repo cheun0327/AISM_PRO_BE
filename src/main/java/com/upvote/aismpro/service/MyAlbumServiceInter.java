@@ -5,6 +5,6 @@ import com.upvote.aismpro.entity.MyAlbum;
 import java.util.List;
 
 public interface MyAlbumServiceInter{
-    public List<MyAlbum> getAllSong(String userID);
+    public List<Object> getAllSong(String userID, String option);
 
 }
