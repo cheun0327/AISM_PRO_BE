@@ -21,12 +21,12 @@ public class SignupController {
     }
 
     // 이메일 중복 확인
-    @GetMapping("/isValidEmail/{email}")
+    @GetMapping("/isValidNickName/{email}")
     public @ResponseBody
-    Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
-        System.out.println("== nickName Double Check : " + nickName);
+    Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
+        System.out.println("== email Double Check : " + email);
         try {
-            signup.nickDoubleCheck(nickName);
+            signup.emailDoubleCheck(email);
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return Collections.singletonMap("result", false);
@@ -35,12 +35,12 @@ public class SignupController {
     }
 
     // 닉네임 중복 확인
-    @GetMapping("/isValidNickName/{email}")
+    @GetMapping("/isValidNickName/{nickName}")
     public @ResponseBody
-    Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
-        System.out.println("== email Double Check : " + email);
+    Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
+        System.out.println("== nickName Double Check : " + nickName);
         try {
-            signup.emailDoubleCheck(email);
+            signup.nickDoubleCheck(nickName);
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return Collections.singletonMap("result", false);
