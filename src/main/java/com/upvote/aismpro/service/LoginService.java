@@ -1,6 +1,8 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.entity.Oauth;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.repository.OauthRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,15 @@ public class LoginService implements LoginServiceInter{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OauthRepository oauthRepository;
+
+
+    public void snsLogin(String platform, String email) {
+        List<Oauth> findUsers =  oauthRepository.findByPlatformAndEmail(platform, email);
+
+    }
 
     @Override
     public void signup(User user) throws Exception{
