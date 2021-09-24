@@ -1,10 +1,8 @@
 package com.upvote.aismpro.controller;
 
 
-import com.upvote.aismpro.entity.BookEntity;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
-import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class LoginController {
