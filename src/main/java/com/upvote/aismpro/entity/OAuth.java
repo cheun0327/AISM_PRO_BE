@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "oAuth")
 @Data
 @NoArgsConstructor
-public class Oauth {
+public class OAuth {
 
     @Id
     private String userId;

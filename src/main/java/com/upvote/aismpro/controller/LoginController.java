@@ -11,7 +11,10 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -23,44 +26,60 @@ public class LoginController {
     @Autowired
     private LoginService login;
 
-    // 구글 토큰 유효성 검증
-    @PostMapping("/tokenVerify")
-    public void tokenVerify(@RequestBody Map param){
-        System.out.println("RequestBody value : " + param.get("tokenId"));
-        googleVerifier.tokenVerify((String) param.get("tokenId"));
-    }
-
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public void kakaoLogin(@RequestBody Map<Object, Object> kakaoInfo) {
-        System.out.println(kakaoInfo);
+    public @ResponseBody Map<String, Object> kakaoLogin(@RequestBody LinkedHashMap<String, Object> kakaoInfo) {
+        // 카카오 로그인 정보 json
+        LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
+        // 카카오 로그인 유저 정보 json
+        LinkedHashMap<String, String> kakaoProfileInfo = (LinkedHashMap<String, String>) kakaoProfile.get("kakao_account");
+
         // Oauth info에서 이메일로 정보 찾고 없으면 있으면 로그인 시키고 아니면 없다고 알려줌(회원가입하거나, 연동해야함)
-
-    }
-
-    // 닉네임 중복 확인
-    @GetMapping ("/isValidNickName/{nickName}")
-    public @ResponseBody Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
-        System.out.println("== nickName Double Check : " + nickName);
         try {
-            login.nickDoubleCheck(nickName);
-        } catch (IllegalStateException e) {
+            String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("result", true);
+            map.put("userId", userId);
+            return map;
+        } catch (EntityNotFoundException e){
             e.printStackTrace();
             return Collections.singletonMap("result", false);
         }
-        return Collections.singletonMap("result", true);
     }
 
-    // 회원가입 실행
-    @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(@RequestBody User user) {
+    @PostMapping("/login/google")
+    public @ResponseBody Map<String, Object> googleLogin(@RequestBody LinkedHashMap<String, Object> googleInfo) {
+        // 구글 로그인 정보 json
+        LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
+
         try {
-            login.signup(user);
-        } catch (Exception e) {
+            String userId = login.snsLinkageCheck("google", googleProfile.get("email"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("result", true);
+            map.put("userId", userId);
+            return map;
+        } catch (EntityNotFoundException e){
             e.printStackTrace();
             return Collections.singletonMap("result", false);
         }
-        return Collections.singletonMap("result", true);
+    }
+
+    @PostMapping("/login/naver")
+    public @ResponseBody Map<String, Object> naverLogin(@RequestBody LinkedHashMap<String, Object> naverLogin) {
+
+        // TODO
+        // Naver 회원 정보 가공
+
+        try {
+            String userId = login.snsLinkageCheck("naver", "여기에 이메일 넣어주세요.");
+            Map<String, Object> map = new HashMap<>();
+            map.put("result", true);
+            map.put("userId", userId);
+            return map;
+        } catch (EntityNotFoundException e){
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
     }
 
 }
