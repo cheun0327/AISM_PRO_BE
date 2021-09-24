@@ -16,7 +16,7 @@ public class MyAlbumController {
     private MyAlbumService myAlbumService;
 
     @GetMapping("/getAllSong")
-    public List<MyAlbum> getAllSong(@RequestParam("userID") String userID) {
-        return myAlbumService.getAllSong(userID);
+    public List<Object> getAllSong(@RequestParam("userID") String userID, @RequestParam("option") String option) {
+        return myAlbumService.getAllSong(userID, option);
     }
 }
