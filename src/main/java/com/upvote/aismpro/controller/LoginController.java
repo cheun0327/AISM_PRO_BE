@@ -12,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class LoginController {
@@ -61,6 +63,12 @@ public class LoginController {
             return Collections.singletonMap("result", false);
         }
         return Collections.singletonMap("result", true);
+    }
+
+    // 로그인 성공 이후 사용자 정보 전달
+    @GetMapping("getUserInfo")
+    public Optional<User> getUserInfo(@RequestParam("userID") String userID) {
+        return login.getUserInfo(userID);
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,6 +42,12 @@ public class LoginService implements LoginServiceInter{
         if (!findUsers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 닉네임입니다.");
         }
+    }
+
+    // 사용자 정보 가져오기
+    @Override
+    public Optional<User> getUserInfo(String userID) {
+        return userRepository.findById(userID);
     }
 
     private String createRandomId() {
