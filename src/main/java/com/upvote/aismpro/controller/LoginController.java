@@ -84,7 +84,7 @@ public class LoginController {
     }
 
     // 로그인 성공 이후 사용자 정보 전달
-    @GetMapping("getUserInfo")
+    @GetMapping("/getUserInfo")
     public Optional<User> getUserInfo(@RequestParam("userID") String userID) {
         return login.getUserInfo(userID);
     }
