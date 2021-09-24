@@ -28,24 +28,15 @@ public class LoginService implements LoginServiceInter{
             OAuth findUser = (OAuth) oAuthRepository.findByPlatformAndEmail(platform, email);
             return findUser.getUserId();
         } catch (Exception e){
-            throw new EntityNotFoundException("해당 sns 연동 정보가 없습니다.");
+            throw new EntityNotFoundException("linkage not found");
         }
-    }
-
-    @Override
-    public void nickDoubleCheck(String nickName) {
-
-    }
-
-    @Override
-    public void signup(User input) throws Exception {
-
     }
 
     // 사용자 정보 가져오기
     @Override
-    public Optional<User> getUserInfo(String userID) {
-        return userRepository.findById(userID);
+    public User getUserInfo(String userID) {
+        return userRepository.findById(userID)
+                .orElseThrow(() -> new EntityNotFoundException("user not found"));
     }
 
     private String createRandomId() {

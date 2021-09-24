@@ -5,18 +5,15 @@ import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class LoginController {
@@ -29,7 +26,7 @@ public class LoginController {
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public @ResponseBody Map<String, Object> kakaoLogin(@RequestBody LinkedHashMap<String, Object> kakaoInfo) {
+    public @ResponseBody Map<String, Object> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo) {
         // 카카오 로그인 정보 json
         LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
         // 카카오 로그인 유저 정보 json
@@ -39,6 +36,17 @@ public class LoginController {
         try {
             String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
             Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
             map.put("result", true);
             map.put("userId", userId);
             return map;
@@ -49,13 +57,24 @@ public class LoginController {
     }
 
     @PostMapping("/login/google")
-    public @ResponseBody Map<String, Object> googleLogin(@RequestBody LinkedHashMap<String, Object> googleInfo) {
+    public @ResponseBody Map<String, Object> googleLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> googleInfo) {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
 
         try {
             String userId = login.snsLinkageCheck("google", googleProfile.get("email"));
             Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
             map.put("result", true);
             map.put("userId", userId);
             return map;
@@ -66,14 +85,24 @@ public class LoginController {
     }
 
     @PostMapping("/login/naver")
-    public @ResponseBody Map<String, Object> naverLogin(@RequestBody LinkedHashMap<String, Object> naverLogin) {
+    public @ResponseBody Map<String, Object> naverLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> naverLogin) {
 
-        // TODO
         // Naver 회원 정보 가공
 
         try {
             String userId = login.snsLinkageCheck("naver", "여기에 이메일 넣어주세요.");
             Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
             map.put("result", true);
             map.put("userId", userId);
             return map;
@@ -84,9 +113,8 @@ public class LoginController {
     }
 
     // 로그인 성공 이후 사용자 정보 전달
-    @GetMapping("/getUserInfo")
-    public Optional<User> getUserInfo(@RequestParam("userID") String userID) {
+    @GetMapping("getUserInfo")
+    public User getUserInfo(@RequestParam("userID") String userID) {
         return login.getUserInfo(userID);
     }
-
 }
