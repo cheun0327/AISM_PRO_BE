@@ -21,7 +21,7 @@ public class SignupController {
     }
 
     // 이메일 중복 확인
-    @GetMapping("/isValidNickName/{email}")
+    @GetMapping("/isValidEmail/{email}")
     public @ResponseBody
     Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
         System.out.println("== email Double Check : " + email);
