@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "oauth")
+@Table(name = "oAuth")
 @Data
 @NoArgsConstructor
 public class Oauth {
