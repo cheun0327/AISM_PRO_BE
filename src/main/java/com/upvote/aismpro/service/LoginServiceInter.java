@@ -11,5 +11,5 @@ public interface LoginServiceInter {
     public User getUserInfo(String userID);
 
     // sns 연동 확인
-    public String snsLinkageCheck(String platform, String email) throws EntityNotFoundException;
+    public String snsLinkageCheck(String platform, String email) throws Exception;
 }
