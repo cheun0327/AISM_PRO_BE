@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface MyAlbumRepository extends JpaRepository<User, String> {
@@ -17,5 +18,5 @@ public interface MyAlbumRepository extends JpaRepository<User, String> {
             "join Song song on myAlbum.songId = song.Id " +
             "where myAlbum.userId = :userID and myAlbum.authority = :option"
     )
-    List<Object> findByUserID(@Param("userID") String userID, @Param("option") String option);
+    List<Object[]> findByUserID(@Param("userID") String userID, @Param("option") String option);
 }
