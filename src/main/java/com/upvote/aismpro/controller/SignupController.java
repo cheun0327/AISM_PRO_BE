@@ -14,6 +14,12 @@ public class SignupController {
     @Autowired
     private SignupServiceInter signup;
 
+    // oAuth 로그인 정보 연동 안된 사용자가 연동하기 선택했을때
+    @GetMapping("/linkage")
+    public void linking() {
+
+    }
+
     // 닉네임 중복 확인
     @GetMapping("/isValidNickName/{nickName}")
     public @ResponseBody

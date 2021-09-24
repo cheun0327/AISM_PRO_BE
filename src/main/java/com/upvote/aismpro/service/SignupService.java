@@ -18,6 +18,10 @@ public class SignupService implements SignupServiceInter{
     @Autowired
     private OAuthRepository oAuthRepository;
 
+    public void linkingSns(User user) {
+
+    }
+
     @Override
     public void signup(User user) throws Exception{
         try {
@@ -25,6 +29,14 @@ public class SignupService implements SignupServiceInter{
             userRepository.save(user);
         } catch (Exception e) {
             throw new Exception("새로운 User 등록에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void emailDoubleCheck(String email) {
+        List<User> findUsers = userRepository.findByEmail(email);
+        if (!findUsers.isEmpty()) {
+            throw new IllegalStateException("이미 존재하는 이메일입니다.");
         }
     }
 
