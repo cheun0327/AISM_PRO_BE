@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class LoginController {
@@ -80,6 +81,12 @@ public class LoginController {
             e.printStackTrace();
             return Collections.singletonMap("result", false);
         }
+    }
+
+    // 로그인 성공 이후 사용자 정보 전달
+    @GetMapping("getUserInfo")
+    public Optional<User> getUserInfo(@RequestParam("userID") String userID) {
+        return login.getUserInfo(userID);
     }
 
 }

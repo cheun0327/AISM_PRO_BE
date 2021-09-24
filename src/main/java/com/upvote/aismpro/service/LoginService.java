@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,5 +31,26 @@ public class LoginService implements LoginServiceInter{
             throw new EntityNotFoundException("해당 sns 연동 정보가 없습니다.");
         }
     }
+
+    @Override
+    public void nickDoubleCheck(String nickName) {
+
+    }
+
+    @Override
+    public void signup(User input) throws Exception {
+
+    }
+
+    // 사용자 정보 가져오기
+    @Override
+    public Optional<User> getUserInfo(String userID) {
+        return userRepository.findById(userID);
+    }
+
+    private String createRandomId() {
+        return UUID.randomUUID().toString();
+    }
+
 
 }
