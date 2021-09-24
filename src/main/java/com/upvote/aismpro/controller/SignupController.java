@@ -20,13 +20,27 @@ public class SignupController {
 
     }
 
-    // 닉네임 중복 확인
-    @GetMapping("/isValidNickName/{nickName}")
+    // 이메일 중복 확인
+    @GetMapping("/isValidEmail/{email}")
     public @ResponseBody
     Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
         System.out.println("== nickName Double Check : " + nickName);
         try {
             signup.nickDoubleCheck(nickName);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
+        return Collections.singletonMap("result", true);
+    }
+
+    // 닉네임 중복 확인
+    @GetMapping("/isValidNickName/{email}")
+    public @ResponseBody
+    Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
+        System.out.println("== email Double Check : " + email);
+        try {
+            signup.emailDoubleCheck(email);
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return Collections.singletonMap("result", false);
