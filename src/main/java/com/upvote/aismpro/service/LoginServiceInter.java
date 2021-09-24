@@ -8,5 +8,4 @@ public interface LoginServiceInter {
     public void nickDoubleCheck(String nickName);
     // 회원가입 실행
     public void signup(User input) throws Exception;
-
 }
