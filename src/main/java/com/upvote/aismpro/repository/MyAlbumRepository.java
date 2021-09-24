@@ -12,6 +12,10 @@ import java.util.List;
 @Repository
 public interface MyAlbumRepository extends JpaRepository<User, String> {
 
-    @Query("SELECT myAlbum from MyAlbum myAlbum where myAlbum.userId = :userID")
-    List<MyAlbum> findByUserID(@Param("userID") String userID);
+    @Query("SELECT myAlbum.userId, myAlbum.songId, song.songName, song.fileName, myAlbum.authority " +
+            "from MyAlbum myAlbum " +
+            "join Song song on myAlbum.songId = song.Id " +
+            "where myAlbum.userId = :userID and myAlbum.authority = :option"
+    )
+    List<Object> findByUserID(@Param("userID") String userID, @Param("option") String option);
 }
