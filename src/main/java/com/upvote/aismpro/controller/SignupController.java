@@ -6,6 +6,7 @@ import com.upvote.aismpro.service.SignupServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Map;
 
@@ -14,10 +15,13 @@ public class SignupController {
     @Autowired
     private SignupServiceInter signup;
 
-    // oAuth 로그인 정보 연동 안된 사용자가 연동하기 선택했을때
-    @GetMapping("/linkage")
-    public void linking() {
-
+    // oAuth 로그인 정보 연동 안된 사용자가 연동하기 페이지에서 연동 on을 클릭했을때
+    // sns로그인 팝업창 뜨고, 인증되면 백에서 알아서 oAuth DB에 넣어주고
+    // 리액트는 true 받으면 on/off 토글 변화
+    // {platform : "", email: ""}
+    @GetMapping("/snsLinking")
+    public void linking(HttpSession session, @RequestParam("platform") String platform, @RequestParam("email") String email) {
+        System.out.println(session.getAttribute("userId"));
     }
 
     // 이메일 중복 확인

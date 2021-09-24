@@ -24,17 +24,14 @@ public class LoginService implements LoginServiceInter{
     // sns 로그인 완료시 받은 데이터로 연동 되었는지 확인
     @Override
     public String snsLinkageCheck(String platform, String email) throws EntityNotFoundException{
-        try {
-            OAuth findUser = (OAuth) oAuthRepository.findByPlatformAndEmail(platform, email);
-            return findUser.getUserId();
-        } catch (Exception e){
-            throw new EntityNotFoundException("linkage not found");
-        }
+        OAuth findUser = oAuthRepository.findByPlatformAndEmail(platform, email)
+                .orElseThrow(() -> new EntityNotFoundException("linkage not found"));
+        return findUser.getUserId();
     }
 
     // 사용자 정보 가져오기
     @Override
-    public User getUserInfo(String userID) {
+    public User getUserInfo(String userID) throws EntityNotFoundException{
         return userRepository.findById(userID)
                 .orElseThrow(() -> new EntityNotFoundException("user not found"));
     }
