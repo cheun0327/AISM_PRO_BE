@@ -105,6 +105,7 @@ public class LoginController {
 
             map.put("result", true);
             map.put("userId", userId);
+
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class LoginController {
     }
 
     // 로그인 성공 이후 사용자 정보 전달
-    @GetMapping("getUserInfo")
+    @GetMapping("/getUserInfo")
     public User getUserInfo(@RequestParam("userID") String userID) {
         return login.getUserInfo(userID);
     }
