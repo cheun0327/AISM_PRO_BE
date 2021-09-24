@@ -1,0 +1,42 @@
+package com.upvote.aismpro.controller;
+
+
+import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.service.SignupServiceInter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Map;
+
+@RestController
+public class SignupController {
+    @Autowired
+    private SignupServiceInter signup;
+
+    // 닉네임 중복 확인
+    @GetMapping("/isValidNickName/{nickName}")
+    public @ResponseBody
+    Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
+        System.out.println("== nickName Double Check : " + nickName);
+        try {
+            signup.nickDoubleCheck(nickName);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
+        return Collections.singletonMap("result", true);
+    }
+
+    // 회원가입 실행
+    @PostMapping("/signup.do")
+    public @ResponseBody Map<String, Boolean> signup(@RequestBody User user) {
+        try {
+            signup.signup(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.singletonMap("result", false);
+        }
+        return Collections.singletonMap("result", true);
+    }
+}

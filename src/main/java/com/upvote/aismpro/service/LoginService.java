@@ -1,12 +1,13 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.entity.Oauth;
+import com.upvote.aismpro.entity.OAuth;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.OauthRepository;
+import com.upvote.aismpro.repository.OAuthRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,30 +19,27 @@ public class LoginService implements LoginServiceInter{
     private UserRepository userRepository;
 
     @Autowired
-    private OauthRepository oauthRepository;
+    private OAuthRepository oAuthRepository;
 
-
-    public void snsLogin(String platform, String email) {
-        List<Oauth> findUsers =  oauthRepository.findByPlatformAndEmail(platform, email);
-
-    }
-
+    // sns 로그인 완료시 받은 데이터로 연동 되었는지 확인
     @Override
-    public void signup(User user) throws Exception{
+    public String snsLinkageCheck(String platform, String email) throws EntityNotFoundException{
         try {
-            user.setId(createRandomId());
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new Exception("새로운 User 등록에 실패하였습니다.");
+            OAuth findUser = (OAuth) oAuthRepository.findByPlatformAndEmail(platform, email);
+            return findUser.getUserId();
+        } catch (Exception e){
+            throw new EntityNotFoundException("해당 sns 연동 정보가 없습니다.");
         }
     }
 
     @Override
     public void nickDoubleCheck(String nickName) {
-        List<User> findUsers = userRepository.findByNickName(nickName);
-        if (!findUsers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
-        }
+
+    }
+
+    @Override
+    public void signup(User input) throws Exception {
+
     }
 
     // 사용자 정보 가져오기
@@ -53,5 +51,6 @@ public class LoginService implements LoginServiceInter{
     private String createRandomId() {
         return UUID.randomUUID().toString();
     }
+
 
 }
