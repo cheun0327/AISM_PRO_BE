@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MyAlbumController {
@@ -16,7 +18,7 @@ public class MyAlbumController {
     private MyAlbumService myAlbumService;
 
     @GetMapping("/getAllSong")
-    public List<Object> getAllSong(@RequestParam("userID") String userID, @RequestParam("option") String option) {
+    public List<Map<String, Object>> getAllSong(@RequestParam("userID") String userID, @RequestParam("option") String option) {
         return myAlbumService.getAllSong(userID, option);
     }
 }
