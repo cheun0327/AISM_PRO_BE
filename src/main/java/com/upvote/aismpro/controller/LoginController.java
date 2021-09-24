@@ -26,12 +26,13 @@ public class LoginController {
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public @ResponseBody Map<String, Object> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo) {
+    public @ResponseBody Map<String, Object> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
         // 카카오 로그인 정보 json
         LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
         // 카카오 로그인 유저 정보 json
         LinkedHashMap<String, String> kakaoProfileInfo = (LinkedHashMap<String, String>) kakaoProfile.get("kakao_account");
 
+        System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
         // Oauth info에서 이메일로 정보 찾고 없으면 있으면 로그인 시키고 아니면 없다고 알려줌(회원가입하거나, 연동해야함)
         try {
             String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
