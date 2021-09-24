@@ -15,8 +15,8 @@ public class MyAlbumController {
     @Autowired
     private MyAlbumService myAlbumService;
 
-    @GetMapping("/getSong")
-    public List<MyAlbum> getSongs(@RequestParam("userID") String userID) {
-        return myAlbumService.getSongs(userID);
+    @GetMapping("/getAllSong")
+    public List<MyAlbum> getAllSong(@RequestParam("userID") String userID) {
+        return myAlbumService.getAllSong(userID);
     }
 }

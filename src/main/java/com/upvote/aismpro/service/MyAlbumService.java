@@ -14,7 +14,7 @@ public class MyAlbumService implements MyAlbumServiceInter{
     private MyAlbumRepository myAlbumRepository;
 
     @Override
-    public List<MyAlbum> getSongs(String userID){
+    public List<MyAlbum> getAllSong(String userID){
         return myAlbumRepository.findByUserID(userID);
     }
 }
