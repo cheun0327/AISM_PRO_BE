@@ -63,6 +63,15 @@ public class LoginController {
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
+
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "kakao");
+            tmpSession.setAttribute("snsEmail", kakaoProfileInfo.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
             return Collections.singletonMap("result", false);
         }
     }
@@ -95,6 +104,15 @@ public class LoginController {
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
+
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "google");
+            tmpSession.setAttribute("snsEmail", googleProfile.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
             return Collections.singletonMap("result", false);
         }
     }
@@ -123,6 +141,14 @@ public class LoginController {
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "naver");
+            tmpSession.setAttribute("snsEmail", naverProfile.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
             return Collections.singletonMap("result", false);
         }
     }

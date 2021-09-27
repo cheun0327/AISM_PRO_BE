@@ -6,6 +6,7 @@ import com.upvote.aismpro.service.SignupServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Map;
@@ -21,9 +22,7 @@ public class SignupController {
     // {platform : "", email: ""}
     @GetMapping("/snsLinking")
     public void linking(HttpSession session, @RequestParam("platform") String platform, @RequestParam("email") String email) {
-        System.out.println(session.getAttribute("userId"));
-        System.out.println(session.getAttribute("userEmail"));
-        System.out.println(session.getAttribute("userNickName"));
+
     }
 
     // 이메일 중복 확인
@@ -56,9 +55,26 @@ public class SignupController {
 
     // 회원가입 실행
     @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(@RequestBody User user) {
+    public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
         try {
             signup.signup(user);
+            // signup.linking
+            String snsTmpPlatform = tmpSession.getAttribute("platform").toString();
+            String snsTmpEmail = tmpSession.getAttribute("snsEmail").toString();
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
+            //session 파기
+            System.out.println("세션 파기");
+            tmpSession.invalidate();
+
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
+            // 새로운 seeion 생성 후 로그인
+            System.out.println(session.getAttribute("userId").toString() + session.getAttribute("userEmail").toString());
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.singletonMap("result", false);
