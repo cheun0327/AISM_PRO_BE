@@ -57,25 +57,27 @@ public class SignupController {
     @PostMapping("/signup.do")
     public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
         try {
+            // 일반 회원가입
             signup.signup(user);
 
+            // 시도했던 소셜 로그인 정보 저장
             String snsTmpPlatform = tmpSession.getAttribute("platform").toString();
             String snsTmpEmail = tmpSession.getAttribute("snsEmail").toString();
             System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
 
+            // 회원가입 계정과 oAuth 연동
             signup.linking(user.getId(), snsTmpPlatform, snsTmpEmail);
 
-            //session 파기
-            System.out.println("세션 파기");
+            //session 삭제
             tmpSession.invalidate();
 
+            // 새로운 로그인 session 생성 = 로그인
             HttpSession session = request.getSession();
 
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
 
-            // 새로운 seeion 생성 후 로그인
             System.out.println(session.getAttribute("userId").toString() + session.getAttribute("userEmail").toString());
         } catch (Exception e) {
             e.printStackTrace();
