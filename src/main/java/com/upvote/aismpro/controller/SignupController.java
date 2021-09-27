@@ -58,10 +58,12 @@ public class SignupController {
     public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
         try {
             signup.signup(user);
-            // signup.linking
+
             String snsTmpPlatform = tmpSession.getAttribute("platform").toString();
             String snsTmpEmail = tmpSession.getAttribute("snsEmail").toString();
             System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
+            signup.linking(user.getId(), snsTmpPlatform, snsTmpEmail);
 
             //session 파기
             System.out.println("세션 파기");
