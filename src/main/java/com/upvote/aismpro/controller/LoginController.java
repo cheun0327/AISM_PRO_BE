@@ -3,6 +3,7 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
+import com.upvote.aismpro.loginverifier.NaverTokenVerifier;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -20,6 +22,9 @@ public class LoginController {
 
     @Autowired
     GoogleTokenVerifier googleVerifier;
+
+    @Autowired
+    NaverTokenVerifier naverTokenVerifier;
 
     @Autowired
     private LoginService login;
@@ -94,13 +99,12 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/login/naver")
-    public @ResponseBody Map<String, Object> naverLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> naverLogin) {
-
-        // Naver 회원 정보 가공
+    @GetMapping("/login/naver")
+    public @ResponseBody Map<String, Object> naverLogin(HttpServletRequest request, @RequestParam("access_token") String access_token) throws IOException {
+        Map<String, Object> naverProfile = naverTokenVerifier.getUserInfo(access_token);
 
         try {
-            String userId = login.snsLinkageCheck("naver", "여기에 이메일 넣어주세요.");
+            String userId = login.snsLinkageCheck("Naver", (String) ((String) naverProfile.get("email")).replace("\"", ""));
             Map<String, Object> map = new HashMap<>();
 
             // sns 로그인 정보로 og 회원 정보 가져오기
@@ -115,6 +119,7 @@ public class LoginController {
 
             map.put("result", true);
             map.put("userId", userId);
+
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
@@ -123,9 +128,8 @@ public class LoginController {
     }
 
     // 로그인 성공 이후 사용자 정보 전달
-    @GetMapping("getUserInfo")
+    @GetMapping("/getUserInfo")
     public User getUserInfo(@RequestParam("userID") String userID) {
         return login.getUserInfo(userID);
     }
-
 }
