@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.entity.OAuth;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.OAuthRepository;
 import com.upvote.aismpro.repository.UserRepository;
@@ -29,6 +30,19 @@ public class SignupService implements SignupServiceInter{
             userRepository.save(user);
         } catch (Exception e) {
             throw new Exception("새로운 User 등록에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void linking(String userId, String platform, String email) throws Exception{
+        try {
+            OAuth oAuth = new OAuth();
+            oAuth.setUserId(userId);
+            oAuth.setPlatform(platform);
+            oAuth.setEmail(email);
+            oAuthRepository.save(oAuth);
+        } catch (Exception e) {
+            throw new Exception("oAuth 등록에 실패하였습니다.");
         }
     }
 
