@@ -122,7 +122,7 @@ public class LoginController {
         Map<String, Object> naverProfile = naverTokenVerifier.getUserInfo(access_token);
 
         try {
-            String userId = login.snsLinkageCheck("Naver", (String) ((String) naverProfile.get("email")).replace("\"", ""));
+            String userId = login.snsLinkageCheck("naver", (String) ((String) naverProfile.get("email")).replace("\"", ""));
             Map<String, Object> map = new HashMap<>();
 
             // sns 로그인 정보로 og 회원 정보 가져오기

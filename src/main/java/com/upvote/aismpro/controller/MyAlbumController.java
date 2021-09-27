@@ -17,8 +17,12 @@ public class MyAlbumController {
     @Autowired
     private MyAlbumService myAlbumService;
 
-    @GetMapping("/getAllSong")
-    public List<Map<String, Object>> getAllSong(@RequestParam("userID") String userID, @RequestParam("option") String option) {
-        return myAlbumService.getAllSong(userID, option);
+    @GetMapping("/getSongByOption")
+    public List<Map<String, Object>> getSongByOption(@RequestParam("userID") String userID, @RequestParam("option") String option) {
+        switch (option) {
+            case "Play": return myAlbumService.getPlayList(userID, option);
+            case "Like": return myAlbumService.getLikeSong(userID, option);
+            default: return myAlbumService.getMyComposeSongOrBuySong(userID, option);
+        }
     }
 }
