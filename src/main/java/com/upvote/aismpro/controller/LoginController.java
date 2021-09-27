@@ -48,8 +48,13 @@ public class LoginController {
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
 
+            session.setMaxInactiveInterval(6*60*60);
+
+            System.out.println("세션 확인 " + session.getAttribute("userNickName"));
+
             map.put("result", true);
             map.put("userId", userId);
+
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
@@ -61,6 +66,8 @@ public class LoginController {
     public @ResponseBody Map<String, Object> googleLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> googleInfo) {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
+
+        System.out.println("google 로그인 : " + googleProfile.get("email"));
 
         try {
             String userId = login.snsLinkageCheck("google", googleProfile.get("email"));
@@ -75,6 +82,8 @@ public class LoginController {
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
+
+            session.setMaxInactiveInterval(6*60*60);
 
             map.put("result", true);
             map.put("userId", userId);

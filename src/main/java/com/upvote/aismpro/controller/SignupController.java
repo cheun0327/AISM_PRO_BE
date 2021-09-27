@@ -22,6 +22,8 @@ public class SignupController {
     @GetMapping("/snsLinking")
     public void linking(HttpSession session, @RequestParam("platform") String platform, @RequestParam("email") String email) {
         System.out.println(session.getAttribute("userId"));
+        System.out.println(session.getAttribute("userEmail"));
+        System.out.println(session.getAttribute("userNickName"));
     }
 
     // 이메일 중복 확인
