@@ -3,15 +3,18 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
+import com.upvote.aismpro.loginverifier.NaverTokenVerifier;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -21,46 +24,138 @@ public class LoginController {
     GoogleTokenVerifier googleVerifier;
 
     @Autowired
-    private LoginService login;
+    NaverTokenVerifier naverTokenVerifier;
 
-    // 구글 토큰 유효성 검증
-    @PostMapping("/tokenVerify")
-    public void tokenVerify(@RequestBody Map param){
-        System.out.println("RequestBody value : " + param.get("tokenId"));
-        googleVerifier.tokenVerify((String) param.get("tokenId"));
-    }
+    @Autowired
+    private LoginService login;
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public void kakaoLogin(@RequestBody Map<Object, Object> kakaoInfo) {
-        System.out.println(kakaoInfo);
+    public @ResponseBody Map<String, Object> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
+        // 카카오 로그인 정보 json
+        LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
+        // 카카오 로그인 유저 정보 json
+        LinkedHashMap<String, String> kakaoProfileInfo = (LinkedHashMap<String, String>) kakaoProfile.get("kakao_account");
+
+        System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
         // Oauth info에서 이메일로 정보 찾고 없으면 있으면 로그인 시키고 아니면 없다고 알려줌(회원가입하거나, 연동해야함)
-
-    }
-
-    // 닉네임 중복 확인
-    @GetMapping ("/isValidNickName/{nickName}")
-    public @ResponseBody Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
-        System.out.println("== nickName Double Check : " + nickName);
         try {
-            login.nickDoubleCheck(nickName);
-        } catch (IllegalStateException e) {
+            String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
+            Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
+            session.setMaxInactiveInterval(6*60*60);
+
+            System.out.println("세션 확인 " + session.getAttribute("userNickName"));
+
+            map.put("result", true);
+            map.put("userId", userId);
+
+            return map;
+        } catch (EntityNotFoundException e){
             e.printStackTrace();
+
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "kakao");
+            tmpSession.setAttribute("snsEmail", kakaoProfileInfo.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
             return Collections.singletonMap("result", false);
         }
-        return Collections.singletonMap("result", true);
     }
 
-    // 회원가입 실행
-    @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(@RequestBody User user) {
+    @PostMapping("/login/google")
+    public @ResponseBody Map<String, Object> googleLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> googleInfo) {
+        // 구글 로그인 정보 json
+        LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
+
+        System.out.println("google 로그인 : " + googleProfile.get("email"));
+
         try {
-            login.signup(user);
-        } catch (Exception e) {
+            String userId = login.snsLinkageCheck("google", googleProfile.get("email"));
+            Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
+            session.setMaxInactiveInterval(6*60*60);
+
+            map.put("result", true);
+            map.put("userId", userId);
+            return map;
+        } catch (EntityNotFoundException e){
             e.printStackTrace();
+
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "google");
+            tmpSession.setAttribute("snsEmail", googleProfile.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
             return Collections.singletonMap("result", false);
         }
-        return Collections.singletonMap("result", true);
     }
 
+    @GetMapping("/login/naver")
+    public @ResponseBody Map<String, Object> naverLogin(HttpServletRequest request, @RequestParam("access_token") String access_token) throws IOException {
+        Map<String, Object> naverProfile = naverTokenVerifier.getUserInfo(access_token);
+
+        try {
+            String userId = login.snsLinkageCheck("naver", (String) ((String) naverProfile.get("email")).replace("\"", ""));
+            Map<String, Object> map = new HashMap<>();
+
+            // sns 로그인 정보로 og 회원 정보 가져오기
+            User user = login.getUserInfo(userId);
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userNickName", user.getNickName());
+
+            map.put("result", true);
+            map.put("userId", userId);
+
+            return map;
+        } catch (EntityNotFoundException e){
+            e.printStackTrace();
+            // Session 설정
+            HttpSession tmpSession = request.getSession();
+
+            tmpSession.setAttribute("platform", "naver");
+            tmpSession.setAttribute("snsEmail", naverProfile.get("email"));
+
+            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+
+            return Collections.singletonMap("result", false);
+        }
+    }
+
+    // 로그인 성공 이후 사용자 정보 전달
+    @GetMapping("/getUserInfo")
+    public User getUserInfo(@RequestParam("userID") String userID) {
+        return login.getUserInfo(userID);
+    }
 }
