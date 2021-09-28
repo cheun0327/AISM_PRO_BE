@@ -4,7 +4,7 @@ import com.upvote.aismpro.entity.MyAlbum;
 import com.upvote.aismpro.repository.MyAlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.lwawt.macosx.CSystemTray;
+
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
