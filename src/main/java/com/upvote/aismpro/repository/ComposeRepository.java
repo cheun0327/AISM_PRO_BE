@@ -1,6 +1,8 @@
 package com.upvote.aismpro.repository;
 
+
 import com.upvote.aismpro.entity.SongDetail;
+import com.upvote.aismpro.entity.Compose;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,8 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface ComposeRepository extends JpaRepository<SongDetail, String> {
+public interface ComposeRepository extends JpaRepository<Compose, String> {
     @Query("select distinct compose.first_mood from Compose compose where compose.genre = :genre")
     List<String> findFirstMoodByGenre(@Param("genre") String genre);
 

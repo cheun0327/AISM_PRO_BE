@@ -5,6 +5,7 @@ import com.upvote.aismpro.repository.SongDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
@@ -15,7 +16,6 @@ public class ComposeService implements ComposeServiceInter {
 
     @Autowired
     private SongDetailRepository songDetailRepository;
-
 
     // 모든 장르 가져오기
     @Override
