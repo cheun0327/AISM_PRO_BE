@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.repository.ComposeRepository;
+import com.upvote.aismpro.repository.SongDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,21 +13,26 @@ public class ComposeService implements ComposeServiceInter {
     @Autowired
     private ComposeRepository composeRepository;
 
-    @Override
+    @Autowired
+    private SongDetailRepository songDetailRepository;
+
+
     // 모든 장르 가져오기
+    @Override
     public List<String> getAllGenre() {
-        return composeRepository.findAllGenre();
+        return songDetailRepository.findGenre();
     }
 
     // 모든 1번 분위기 가져오기
     @Override
     public List<String> getFirstMood() {
-        return composeRepository.findAllFirstMood();
+        return songDetailRepository.findFirstMood();
     }
+
     // 모든 2번 분위기 가져오기
     @Override
     public List<String> getSecondMood() {
-        return composeRepository.findAllSecondMood();
+        return songDetailRepository.findSecondMood();
     }
 
     // 장르 -> 첫번째 분위기 가져오기

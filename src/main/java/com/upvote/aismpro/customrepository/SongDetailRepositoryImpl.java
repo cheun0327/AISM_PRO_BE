@@ -16,6 +16,33 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
+    public List<String> findGenre() {
+        QSongDetail songDetail = QSongDetail.songDetail;
+
+        return queryFactory.select(songDetail.genre)
+                .distinct()
+                .from(songDetail)
+                .fetch();
+    }
+
+    public List<String> findFirstMood() {
+        QSongDetail songDetail = QSongDetail.songDetail;
+
+        return queryFactory.select(songDetail.mood1)
+                .distinct()
+                .from(songDetail)
+                .fetch();
+    }
+
+    public List<String> findSecondMood() {
+        QSongDetail songDetail = QSongDetail.songDetail;
+
+        return queryFactory.select(songDetail.mood2)
+                .distinct()
+                .from(songDetail)
+                .fetch();
+    }
+
     public List<String> findSongIdBySearchParamQD(String type, String length, List<String> genre, List<String> mood1, List<String> mood2) {
         QSongDetail songDetail = QSongDetail.songDetail;
 
