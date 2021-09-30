@@ -10,39 +10,32 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory query;
+    private final QCompose compose = QCompose.compose;
 
     public List<String> findGenre() {
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.genre)
+        return query.select(compose.genre)
                 .distinct()
                 .from(compose)
                 .fetch();
     }
 
     public List<String> findFirstMood() {
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.first_mood)
+        return query.select(compose.first_mood)
                 .distinct()
                 .from(compose)
                 .fetch();
     }
 
     public List<String> findSecondMood() {
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.second_mood)
+        return query.select(compose.second_mood)
                 .distinct()
                 .from(compose)
                 .fetch();
     }
 
     public List<String> findFirstMoodByGenre(String genre) {
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.first_mood)
+        return query.select(compose.first_mood)
                 .distinct()
                 .from(compose)
                 .where(
@@ -52,9 +45,7 @@ public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
     }
 
     public List<String> findSecondMoodByFirstMood(String genre, String firstMood) {
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.second_mood)
+        return query.select(compose.second_mood)
                 .distinct()
                 .from(compose)
                 .where(
@@ -63,11 +54,8 @@ public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
                 .fetch();
     }
 
-
     public String findSampleSoundByKeywords(String genre, String firstMood, String secondMood){
-        QCompose compose = QCompose.compose;
-
-        return queryFactory.select(compose.sample)
+        return query.select(compose.sample)
                 .distinct()
                 .from(compose)
                 .where(
