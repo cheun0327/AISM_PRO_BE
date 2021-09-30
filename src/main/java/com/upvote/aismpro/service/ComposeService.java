@@ -4,6 +4,7 @@ import com.upvote.aismpro.repository.ComposeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
@@ -15,6 +16,8 @@ public class ComposeService implements ComposeServiceInter {
     @Override
     // 모든 장르 가져오기
     public List<String> getAllGenre() {
+        System.out.println("findAll : " + composeRepository.findAll());
+        System.out.println("findAllSize : " + composeRepository.findAll().size());
         return composeRepository.findAllGenre();
     }
 
