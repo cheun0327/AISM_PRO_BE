@@ -29,7 +29,7 @@ public class LibraryService implements LibraryServiceInter{
         List<String> sd = songDetailRepository.findSongIdBySearchParamQD(
                 librarySearchDto.getType(), librarySearchDto.getLength(),
                 genreLi, mood1Li, mood2Li);
-        System.out.println(sd);
+        System.out.println(sd.size());
     }
 }
 
