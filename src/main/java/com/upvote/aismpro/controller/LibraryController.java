@@ -22,8 +22,8 @@ public class LibraryController {
     // get으로 gnere=pop,country&mood1=감미로운,강렬한,즐거운&mood2=유쾌한,어쩌구,저쩌구 이렇게 오는게 맞는거같다
     @GetMapping("/librarySearch")
     public void librarySearch(
-            @RequestParam("type") String type,
-            @RequestParam("length") String length,
+            @RequestParam("type") Integer type,
+            @RequestParam("length") Integer length,
             @RequestParam("genre") String genre,
             @RequestParam("mood1") String mood1,
             @RequestParam("mood2") String mood2
