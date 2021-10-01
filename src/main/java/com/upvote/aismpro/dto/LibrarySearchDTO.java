@@ -2,15 +2,17 @@ package com.upvote.aismpro.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class LibrarySearchDTO {
-    private Integer type;
-    private Integer length;
-    private String genre;
-    private String mood1;
-    private String mood2;
+    private List<String> type;
+    private List<String> length;
+    private List<String> genre;
+    private List<String> mood1;
+    private List<String> mood2;
 
-    public LibrarySearchDTO(Integer type, Integer length, String genre, String mood1, String mood2){
+    public LibrarySearchDTO(List<String> type, List<String> length, List<String> genre, List<String> mood1, List<String> mood2){
         this.type = type;
         this.length = length;
         this.genre = genre;
