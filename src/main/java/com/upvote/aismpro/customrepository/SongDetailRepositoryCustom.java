@@ -10,4 +10,5 @@ import java.util.List;
 public interface SongDetailRepositoryCustom {
     //List<SongDetail> findBySearchParamQD(String type, String length, String genre, String mood1, String mood2);
     List<String> findSongIdBySearchParamQD(LibrarySearchDTO librarySearchDTO);
+    //List<String> findSongIdAndPlayListBySearchParamQD(LibrarySearchDTO librarySearchDTO);
 }

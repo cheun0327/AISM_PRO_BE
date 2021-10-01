@@ -17,13 +17,16 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
+public class SongDetailRepositoryQD implements SongDetailRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     private QSongDetail songDetail = QSongDetail.songDetail;
 
+//    public List<String> findSongIdAndPlayListBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
+//
+//    }
+
     public List<String> findSongIdBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
-        // QSongDetail songDetail = QSongDetail.songDetail;
         return queryFactory.select(songDetail.songId)
                 .from(songDetail)
                 .where(

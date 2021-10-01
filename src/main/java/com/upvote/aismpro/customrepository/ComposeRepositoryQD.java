@@ -15,7 +15,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
+public class ComposeRepositoryQD implements ComposeRepositoryCustom {
     private final JPAQueryFactory query;
     private final QCompose compose = QCompose.compose;
 

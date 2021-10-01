@@ -1,6 +1,7 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 import com.upvote.aismpro.service.LibraryServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,12 @@ public class LibraryController {
     // 장르마다 mood1 카테고리 다를 수 있지않나
     // get으로 gnere=pop,country&mood1=감미로운,강렬한,즐거운&mood2=유쾌한,어쩌구,저쩌구 이렇게 오는게 맞는거같다
     @PostMapping("/librarySearch")
-    public Map<String, Object> librarySearch(
-            @RequestBody LibrarySearchDTO libSearchDto
-//            @RequestParam("type") Integer type,
-//            @RequestParam("length") Integer length,
-//            @RequestParam("genre") String genre,
-//            @RequestParam("mood1") String mood1,
-//            @RequestParam("mood2") String mood2
-    ) {
+    public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
+        Map<String, Object> map = new HashMap<>();
+
+        List<Song> songList = libraryService.getSearchResult(libSearchDto);
+
+        map.put("song", songList);
         return Collections.singletonMap("result", libraryService.getSearchResult(libSearchDto));
     }
 

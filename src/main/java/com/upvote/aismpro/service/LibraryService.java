@@ -1,8 +1,10 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.SongDetail;
 import com.upvote.aismpro.repository.SongDetailRepository;
+import com.upvote.aismpro.repository.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,11 @@ public class LibraryService implements LibraryServiceInter{
     @Autowired
     private SongDetailRepository songDetailRepository;
 
+    @Autowired
+    private SongRepository songRepository;
+
     @Override
-    public List<String> getSearchResult(LibrarySearchDTO librarySearchDto) {
+    public List<Song> getSearchResult(LibrarySearchDTO librarySearchDto) {
         //List<String> genreLi = Arrays.asList(librarySearchDto.getGenre().split(","));
         //List<String> mood1Li = Arrays.asList(librarySearchDto.getMood1().split(","));
         //List<String> mood2Li = Arrays.asList(librarySearchDto.getMood2().split(","));
@@ -25,9 +30,10 @@ public class LibraryService implements LibraryServiceInter{
 //        List <SongDetail> sd = songDetailRepository.findSongId(
 //                librarySearchDto.getType(), librarySearchDto.getLength(), "Pop", "리드미컬한", "신나는");
         System.out.println("songDetailService");
-        List<String> sd = songDetailRepository.findSongIdBySearchParamQD(librarySearchDto);
-        System.out.println(sd);
-        return sd;
+        List<String> songIdList = songDetailRepository.findSongIdBySearchParamQD(librarySearchDto);
+        List<Song> songList = songRepository.findAllByIdListQD(songIdList);
+        System.out.println(songList);
+        return songList;
     }
 }
 
