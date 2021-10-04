@@ -2,6 +2,7 @@ package com.upvote.aismpro.repository;
 
 import com.upvote.aismpro.customrepository.SongDetailRepositoryCustom;
 import com.upvote.aismpro.customrepository.SongDetailRepositoryImpl;
+import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.SongDetail;
 import lombok.RequiredArgsConstructor;
