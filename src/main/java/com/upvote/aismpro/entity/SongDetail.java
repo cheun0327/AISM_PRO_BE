@@ -31,8 +31,8 @@ public class SongDetail {
     private String mood3;
 
     @Column
-    private Integer type;
+    private String type;
 
     @Column
-    private Integer length;
+    private String length;
 }
