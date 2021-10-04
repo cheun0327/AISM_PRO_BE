@@ -1,10 +1,10 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.ComposeInfo;
+import com.upvote.aismpro.entity.Compose;
 import com.upvote.aismpro.service.ComposeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,6 +30,20 @@ public class ComposeController {
         composeInfo.put("Second_Mood", allSecondMood);
 
         return composeInfo;
+    }
+
+    // 작곡하기 키워드 받는 메서드
+    @PostMapping("/compose")
+    public Map<String, Object> compose(@RequestBody ComposeInfo composeInfo) throws InterruptedException {
+        Map<String, Object> song_info = new HashMap<String, Object>();
+
+        System.out.println(composeInfo);
+
+        Thread.sleep(3000);
+
+        song_info.put("result", "success");
+
+        return song_info;
     }
 
     @GetMapping("/getAllGenre")
