@@ -74,7 +74,8 @@ public class LibraryService implements LibraryServiceInter{
 
             Optional<User> creator = userRepository.findById(s.getCreatorID());
             if (creator.isPresent())    tmp.setCreator(creator.get().getNickName());
-            else    throw new EntityNotFoundException();
+            else System.out.println("creator null 값");;
+
 
             tmp.setFileName(s.getFileName() + ".wav");
             tmp.setThumbnail("thisis/thumbnail.png");
