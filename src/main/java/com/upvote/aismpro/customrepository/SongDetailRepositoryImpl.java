@@ -30,10 +30,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
                         typeIn(librarySearchDTO.getType())
                 )
                 .where(
-                        songDetail.length.in(librarySearchDTO.getLength())
-                                .or(genreIn(librarySearchDTO.getGenre()))
-                                .or(mood1In(librarySearchDTO.getFirst_mood()))
-                                .or(mood2In(librarySearchDTO.getSecond_mood()))
+                        queryWrapper(librarySearchDTO)
                 )
                 .fetch();
     }
@@ -42,7 +39,6 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
         return queryFactory.select(songDetail)
                 .from(songDetail)
                 .where(
-                        // type and length or genre or mood1 or mood2 or
                         typeIn(librarySearchDTO.getType())
                 )
                 .where(
@@ -58,14 +54,14 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
 
     private BooleanExpression queryWrapper(LibrarySearchDTO librarySearchDTO){
         if (librarySearchDTO.getLength().isEmpty() && librarySearchDTO.getGenre().isEmpty()
-                && librarySearchDTO.getFirst_mood().isEmpty() && librarySearchDTO.getSecond_mood().isEmpty()){
+                && librarySearchDTO.getFirst_Mood().isEmpty() && librarySearchDTO.getSecond_Mood().isEmpty()){
             return null;
         }
         else {
             return songDetail.length.in(librarySearchDTO.getLength())
                     .or(genreIn(librarySearchDTO.getGenre()))
-                    .or(mood1In(librarySearchDTO.getFirst_mood()))
-                    .or(mood2In(librarySearchDTO.getSecond_mood()));
+                    .or(mood1In(librarySearchDTO.getFirst_Mood()))
+                    .or(mood2In(librarySearchDTO.getSecond_Mood()));
         }
     }
 
