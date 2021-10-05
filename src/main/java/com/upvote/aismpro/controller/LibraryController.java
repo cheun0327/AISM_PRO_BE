@@ -20,7 +20,8 @@ public class LibraryController {
     // get으로 gnere=pop,country&mood1=감미로운,강렬한,즐거운&mood2=유쾌한,어쩌구,저쩌구 이렇게 오는게 맞는거같다
     @PostMapping("/librarySearch")
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
-        libSearchDto.toString();
+        System.out.println("libcontroller");
+        libSearchDto.print();
         return libraryService.getSearchResult(libSearchDto);
     }
 
