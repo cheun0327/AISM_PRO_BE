@@ -77,8 +77,8 @@ public class LibraryService implements LibraryServiceInter{
             else System.out.println("creator null 값");;
 
 
-            tmp.setFileName(s.getFileName() + ".wav");
-            tmp.setThumbnail("thisis/thumbnail.png");
+            tmp.setFileName("sample01.wav");
+            tmp.setThumbnail("sample01.png");
 
             SongDetail sd =  songDetailList.stream().filter(SD -> s.getId().equals(SD.getSongId())).findFirst().get();
             List<String> tag = new ArrayList<>(Arrays.asList(new String[]{sd.getMood1(), sd.getMood2(), sd.getMood3()}));
