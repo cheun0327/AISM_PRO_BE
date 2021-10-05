@@ -2,9 +2,9 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 
-import java.util.List;
+import java.util.Map;
 
 public interface LibraryServiceInter {
 
-    public List<String> getSearchResult(LibrarySearchDTO librarySearchDto);
+    public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDto);
 }

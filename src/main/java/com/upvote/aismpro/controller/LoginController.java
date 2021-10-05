@@ -1,6 +1,7 @@
 package com.upvote.aismpro.controller;
 
 
+import com.google.gson.JsonObject;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
 import com.upvote.aismpro.loginverifier.NaverTokenVerifier;
@@ -96,11 +97,22 @@ public class LoginController {
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
-
+            System.out.println(session.getId());
             session.setMaxInactiveInterval(6*60*60);
 
+            Map<String, String> data = new HashMap<String, String>() {{
+                    put("sessionId", session.getId());
+                    put("userId", userId);
+                    put("userEmail", user.getEmail());
+                    put("userNickName", user.getNickName());
+                }};
             map.put("result", true);
-            map.put("userId", userId);
+            map.put("data", data);
+//            map.put("sessionId", session.getId());
+//            map.put("userId", userId);
+//            map.put("userEmail", user.getEmail());
+//            map.put("userNickName", user.getNickName());
+
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
