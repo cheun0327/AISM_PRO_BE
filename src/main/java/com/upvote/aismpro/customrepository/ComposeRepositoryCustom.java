@@ -3,11 +3,7 @@ package com.upvote.aismpro.customrepository;
 import java.util.List;
 
 public interface ComposeRepositoryCustom {
-    List<String> findGenre();
-
-    List<String> findFirstMood();
-
-    List<String> findSecondMood();
+    List<String> findKeyword(String keyword);
 
     List<String> findFirstMoodByGenre(String genre);
 

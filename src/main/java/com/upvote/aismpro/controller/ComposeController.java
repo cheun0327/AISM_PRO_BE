@@ -1,10 +1,10 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.ComposeInfo;
+import com.upvote.aismpro.entity.Compose;
 import com.upvote.aismpro.service.ComposeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,9 +21,9 @@ public class ComposeController {
     public Map<String, Object> getEachComposeInfo() {
         Map<String, Object> composeInfo = new LinkedHashMap<>();
 
-        List<String> allGenre = composeService.getAllGenre();
-        List<String> allFirstMood = composeService.getFirstMood();
-        List<String> allSecondMood = composeService.getSecondMood();
+        List<String> allGenre = composeService.getKeywords("Genre");
+        List<String> allFirstMood = composeService.getKeywords("FirstMood");
+        List<String> allSecondMood = composeService.getKeywords("SecondMood");
 
         composeInfo.put("Genre", allGenre);
         composeInfo.put("First_Mood", allFirstMood);
@@ -32,9 +32,23 @@ public class ComposeController {
         return composeInfo;
     }
 
+    // 작곡하기 키워드 받는 메서드
+    @PostMapping("/compose")
+    public Map<String, Object> compose(@RequestBody ComposeInfo composeInfo) throws InterruptedException {
+        Map<String, Object> song_info = new HashMap<String, Object>();
+
+        System.out.println(composeInfo);
+
+        Thread.sleep(3000);
+
+        song_info.put("result", "success");
+
+        return song_info;
+    }
+
     @GetMapping("/getAllGenre")
     public List<String> getAllGenre() {
-        return composeService.getAllGenre();
+        return composeService.getKeywords("Genre");
     }
 
     @GetMapping("/getFirstMood")

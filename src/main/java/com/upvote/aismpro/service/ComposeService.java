@@ -14,22 +14,10 @@ public class ComposeService implements ComposeServiceInter {
     @Autowired
     private ComposeRepository composeRepository;
 
-    // 모든 장르 가져오기
+    // 키워드 가져오기
     @Override
-    public List<String> getAllGenre() {
-        return composeRepository.findGenre();
-    }
-
-    // 모든 1번 분위기 가져오기
-    @Override
-    public List<String> getFirstMood() {
-        return composeRepository.findFirstMood();
-    }
-
-    // 모든 2번 분위기 가져오기
-    @Override
-    public List<String> getSecondMood() {
-        return composeRepository.findSecondMood();
+    public List<String> getKeywords(String keyword) {
+        return composeRepository.findKeyword(keyword);
     }
 
     // 장르 -> 첫번째 분위기 가져오기
