@@ -28,7 +28,7 @@ dependencies {
 	implementation 'org.jetbrains:annotations:20.1.0'
 	implementation "com.querydsl:querydsl-core:4.4.0"
 	implementation "com.querydsl:querydsl-jpa:4.4.0"
-
+	implementation 'commons-io:commons-io:2.6'
 
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
