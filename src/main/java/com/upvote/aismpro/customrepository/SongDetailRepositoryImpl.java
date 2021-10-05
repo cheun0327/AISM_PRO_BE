@@ -17,38 +17,49 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class SongDetailRepositoryQD implements SongDetailRepositoryCustom{
+public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     private QSongDetail songDetail = QSongDetail.songDetail;
-
-//    public List<String> findSongIdAndPlayListBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
-//
-//    }
 
     public List<String> findSongIdBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
         return queryFactory.select(songDetail.songId)
                 .from(songDetail)
                 .where(
-                        typeIn(librarySearchDTO.getType()),
-                        lengthIn(librarySearchDTO.getLength())
+                        // type and length or genre or mood1 or mood2 or
+                        typeIn(librarySearchDTO.getType())
+                )
+                .where(
+                        songDetail.length.in(librarySearchDTO.getLength())
                                 .or(genreIn(librarySearchDTO.getGenre()))
-                                .or(mood1In(librarySearchDTO.getMood1()))
-                                .or(mood2In(librarySearchDTO.getMood2()))
+                                .or(mood1In(librarySearchDTO.getFirst_mood()))
+                                .or(mood2In(librarySearchDTO.getSecond_mood()))
+                )
+                .fetch();
+    }
+
+    public List<SongDetail> findSongDetailBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
+        return queryFactory.select(songDetail)
+                .from(songDetail)
+                .where(
+                        // type and length or genre or mood1 or mood2 or
+                        typeIn(librarySearchDTO.getType())
+                )
+                .where(
+                        songDetail.length.in(librarySearchDTO.getLength())
+                                .or(genreIn(librarySearchDTO.getGenre()))
+                                .or(mood1In(librarySearchDTO.getFirst_mood()))
+                                .or(mood2In(librarySearchDTO.getSecond_mood()))
                 )
                 .fetch();
     }
 
     // BooleanExpression : 모든 조건이 null 일때 모든 데이터를 불러올 수 있으므로 조심!!
     private BooleanExpression typeIn(List<String> type) {
-        if (type.contains("song")){
-            System.out.println("song 포함!");
-        }
         return type.isEmpty() ? null : songDetail.type.in(type);
     }
 
     private BooleanExpression lengthIn(List<String> length) {
-        //System.out.println(length.isEmpty()?"null 맞음":length.stream().map(Integer::parseInt).collect(Collectors.toList()));
         return length.isEmpty() ? null : songDetail.length.in(length);
     }
 

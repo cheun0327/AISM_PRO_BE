@@ -13,12 +13,12 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class SongRepositoryQD implements SongRepositoryCustom{
+public class SongRepositoryImpl implements SongRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     private QSong song = QSong.song;
 
-    public List<Song> findAllByIdListQD(List<String> songIdList){
+    public List<Song> findSongByIdListQD(List<String> songIdList){
         return queryFactory.select(song)
                 .from(song)
                 .where(songIdIn(songIdList))

@@ -6,5 +6,5 @@ import com.upvote.aismpro.entity.Song;
 import java.util.List;
 
 public interface SongRepositoryCustom {
-    List<Song> findAllByIdListQD(List<String> songIdList);
+    List<Song> findSongByIdListQD(List<String> songIdList);
 }
