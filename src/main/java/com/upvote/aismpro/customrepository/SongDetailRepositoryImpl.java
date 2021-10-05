@@ -46,10 +46,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
                         typeIn(librarySearchDTO.getType())
                 )
                 .where(
-                        songDetail.length.in(librarySearchDTO.getLength())
-                                .or(genreIn(librarySearchDTO.getGenre()))
-                                .or(mood1In(librarySearchDTO.getFirst_mood()))
-                                .or(mood2In(librarySearchDTO.getSecond_mood()))
+                        queryWrapper(librarySearchDTO)
                 )
                 .fetch();
     }
@@ -57,6 +54,19 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
     // BooleanExpression : 모든 조건이 null 일때 모든 데이터를 불러올 수 있으므로 조심!!
     private BooleanExpression typeIn(List<String> type) {
         return type.isEmpty() ? null : songDetail.type.in(type);
+    }
+
+    private BooleanExpression queryWrapper(LibrarySearchDTO librarySearchDTO){
+        if (librarySearchDTO.getLength().isEmpty() && librarySearchDTO.getGenre().isEmpty()
+                && librarySearchDTO.getFirst_mood().isEmpty() && librarySearchDTO.getSecond_mood().isEmpty()){
+            return null;
+        }
+        else {
+            return songDetail.length.in(librarySearchDTO.getLength())
+                    .or(genreIn(librarySearchDTO.getGenre()))
+                    .or(mood1In(librarySearchDTO.getFirst_mood()))
+                    .or(mood2In(librarySearchDTO.getSecond_mood()));
+        }
     }
 
     private BooleanExpression lengthIn(List<String> length) {

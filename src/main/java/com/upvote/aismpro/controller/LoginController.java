@@ -102,6 +102,7 @@ public class LoginController {
 
             map.put("result", true);
             map.put("sessionId", session.getId());
+            map.put("userId", userId);
             map.put("userEmail", user.getEmail());
             map.put("userNickName", user.getNickName());
 
