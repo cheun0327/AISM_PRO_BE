@@ -28,8 +28,16 @@ dependencies {
 	implementation 'org.jetbrains:annotations:20.1.0'
 	implementation "com.querydsl:querydsl-core:4.4.0"
 	implementation "com.querydsl:querydsl-jpa:4.4.0"
+<<<<<<< HEAD
+	implementation "javax.xml.bind:jaxb-api"
+	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
+
+	runtimeOnly "io.jsonwebtoken:jjwt-impl:0.11.2"
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+=======
 	implementation 'commons-io:commons-io:2.6'
 
+>>>>>>> 3939fffebed34e2c263a04aa8c719b622c61bc74
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 

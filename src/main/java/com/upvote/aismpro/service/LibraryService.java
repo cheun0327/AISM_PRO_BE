@@ -67,6 +67,7 @@ public class LibraryService implements LibraryServiceInter{
     List<SongBarDTO> getSongBarList(List<Song> songList, List<SongDetail> songDetailList) {
         List<SongBarDTO> songBarList = new ArrayList<>();
 
+        Integer cnt = 0;
         for (Song s : songList) {
             SongBarDTO tmp = new SongBarDTO();
             tmp.setSongId(s.getId());
@@ -76,15 +77,15 @@ public class LibraryService implements LibraryServiceInter{
             if (creator.isPresent())    tmp.setCreator(creator.get().getNickName());
             else System.out.println("creator null 값");;
 
-
-            tmp.setFileName("sample01.wav");
-            tmp.setThumbnail("sample01.png");
+            tmp.setFileName("sample0" + String.valueOf(cnt % 5+1) + ".wav");
+            tmp.setThumbnail("sample0" + String.valueOf(cnt % 5+1) +".png");
 
             SongDetail sd =  songDetailList.stream().filter(SD -> s.getId().equals(SD.getSongId())).findFirst().get();
             List<String> tag = new ArrayList<>(Arrays.asList(new String[]{sd.getMood1(), sd.getMood2(), sd.getMood3()}));
             tmp.setTag(tag);
 
             songBarList.add(tmp);
+            cnt++;
         }
         return songBarList;
     }
