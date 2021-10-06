@@ -1,6 +1,5 @@
 package com.upvote.aismpro.controller;
 
-
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.SignupServiceInter;
@@ -78,7 +77,7 @@ public class SignupController {
             tmpSession.invalidate();
 
             //userId로 token 생성
-            String token = securityService.createToken(user.getId());
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
             Map<String, String> data = new HashMap<String, String>() {{
                 put("token", token);
