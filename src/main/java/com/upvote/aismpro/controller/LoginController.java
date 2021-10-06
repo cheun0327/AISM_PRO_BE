@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
 import com.upvote.aismpro.loginverifier.NaverTokenVerifier;
+import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ import java.util.Map;
 
 @RestController
 public class LoginController {
+
+    @Autowired
+    private SecurityService securityService;
 
     @Autowired
     GoogleTokenVerifier googleVerifier;
@@ -91,27 +95,27 @@ public class LoginController {
             // sns 로그인 정보로 og 회원 정보 가져오기
             User user = login.getUserInfo(userId);
 
-            // Session 설정
-            HttpSession session = request.getSession();
+            //userId로 token 생성
+            String token = securityService.createToken(userId);
 
+            // Session 설정
+            /*
+            HttpSession session = request.getSession();
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
             System.out.println("세션 생성" + session.getId());
             session.setMaxInactiveInterval(6*60*60);
+             */
 
             Map<String, String> data = new HashMap<String, String>() {{
-                    put("sessionId", session.getId());
+                    put("token", token);
                     put("userId", userId);
                     put("userEmail", user.getEmail());
                     put("userNickName", user.getNickName());
                 }};
             map.put("result", true);
             map.put("data", data);
-//            map.put("sessionId", session.getId());
-//            map.put("userId", userId);
-//            map.put("userEmail", user.getEmail());
-//            map.put("userNickName", user.getNickName());
 
             return map;
         } catch (EntityNotFoundException e){
