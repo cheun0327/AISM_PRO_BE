@@ -80,6 +80,7 @@ public class ComposeController {
         String imgName = file.getOriginalFilename();
         String path = "/Users/BaekGyu/Intellij-workspace/AISM_PRO/AISM_PRO_FR/src/components/content/image/song/" + imgName;
         File dst = new File(path);
+        
         try {
             file.transferTo(dst);
 
