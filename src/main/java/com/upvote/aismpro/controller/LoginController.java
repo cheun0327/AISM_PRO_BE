@@ -52,7 +52,7 @@ public class LoginController {
             User user = login.getUserInfo(userId);
 
             //userId로 token 생성
-            String token = securityService.createToken(userId);
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
             Map<String, String> data = new HashMap<String, String>() {{
                 put("token", token);
@@ -94,7 +94,7 @@ public class LoginController {
             User user = login.getUserInfo(userId);
 
             //userId로 token 생성
-            String token = securityService.createToken(userId);
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
             Map<String, String> data = new HashMap<String, String>() {{
                     put("token", token);
@@ -133,7 +133,7 @@ public class LoginController {
             User user = login.getUserInfo(userId);
 
             //userId로 token 생성
-            String token = securityService.createToken(userId);
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
             Map<String, String> data = new HashMap<String, String>() {{
                 put("token", token);
