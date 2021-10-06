@@ -41,8 +41,6 @@ public class ComposeController {
     public Map<String, Object> compose(@RequestBody ComposeInfo composeInfo) throws InterruptedException {
         Map<String, Object> song_info = new HashMap<String, Object>();
 
-        System.out.println(composeInfo);
-
         Thread.sleep(3000);
 
         song_info.put("result", "success");
@@ -78,7 +76,7 @@ public class ComposeController {
         Map<String, Object> map = new HashMap<>();
 
         String imgName = file.getOriginalFilename();
-        String path = "/Users/BaekGyu/Intellij-workspace/AISM_PRO/AISM_PRO_FR/src/components/content/image/song/" + imgName;
+        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/song/" + imgName;
         File dst = new File(path);
         
         try {
