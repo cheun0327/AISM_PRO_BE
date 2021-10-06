@@ -97,7 +97,7 @@ public class LoginController {
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userNickName", user.getNickName());
-            System.out.println(session.getId());
+            System.out.println("세션 생성" + session.getId());
             session.setMaxInactiveInterval(6*60*60);
 
             Map<String, String> data = new HashMap<String, String>() {{
