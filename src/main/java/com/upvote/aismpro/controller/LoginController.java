@@ -51,19 +51,17 @@ public class LoginController {
             // sns 로그인 정보로 og 회원 정보 가져오기
             User user = login.getUserInfo(userId);
 
-            // Session 설정
-            HttpSession session = request.getSession();
+            //userId로 token 생성
+            String token = securityService.createToken(userId);
 
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getEmail());
-            session.setAttribute("userNickName", user.getNickName());
-
-            session.setMaxInactiveInterval(6*60*60);
-
-            System.out.println("세션 확인 " + session.getAttribute("userNickName"));
-
+            Map<String, String> data = new HashMap<String, String>() {{
+                put("token", token);
+                put("userId", userId);
+                put("userEmail", user.getEmail());
+                put("userNickName", user.getNickName());
+            }};
             map.put("result", true);
-            map.put("userId", userId);
+            map.put("data", data);
 
             return map;
         } catch (EntityNotFoundException e){
@@ -97,16 +95,6 @@ public class LoginController {
 
             //userId로 token 생성
             String token = securityService.createToken(userId);
-
-            // Session 설정
-            /*
-            HttpSession session = request.getSession();
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getEmail());
-            session.setAttribute("userNickName", user.getNickName());
-            System.out.println("세션 생성" + session.getId());
-            session.setMaxInactiveInterval(6*60*60);
-             */
 
             Map<String, String> data = new HashMap<String, String>() {{
                     put("token", token);
@@ -144,15 +132,17 @@ public class LoginController {
             // sns 로그인 정보로 og 회원 정보 가져오기
             User user = login.getUserInfo(userId);
 
-            // Session 설정
-            HttpSession session = request.getSession();
+            //userId로 token 생성
+            String token = securityService.createToken(userId);
 
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getEmail());
-            session.setAttribute("userNickName", user.getNickName());
-
+            Map<String, String> data = new HashMap<String, String>() {{
+                put("token", token);
+                put("userId", userId);
+                put("userEmail", user.getEmail());
+                put("userNickName", user.getNickName());
+            }};
             map.put("result", true);
-            map.put("userId", userId);
+            map.put("data", data);
 
             return map;
         } catch (EntityNotFoundException e){

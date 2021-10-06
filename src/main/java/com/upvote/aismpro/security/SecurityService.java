@@ -18,7 +18,7 @@ public class SecurityService {
     private static final String SECRETE_KEY = "qohjkbdlxfklbskcnwpdkvnzkwjerlqkspfksnxnbcfghjghd";
 
     public String createToken(String subject) {
-        long expTime = 1*1000*60;
+        long expTime = 10*1000*60*60; // 10 hour
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
