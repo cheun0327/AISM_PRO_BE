@@ -20,7 +20,7 @@ public class GoogleTokenVerifier {
     private final NetHttpTransport transport = new NetHttpTransport();
     private final JsonFactory jsonFactory = new GsonFactory();
 
-    public int tokenVerify(String tokenId) {
+    public Boolean tokenVerify(String tokenId) {
 
         System.out.println("idToken : " + "882280880458-ok1aj04ukbpc4hj5aidvohf09vrqndvm.apps.googleusercontent.com");
 
@@ -41,6 +41,7 @@ public class GoogleTokenVerifier {
 
         if (git == null) {
             System.out.println("Google ID Token is invalid");
+            return false;
         } else {
             GoogleIdToken.Payload payload = git.getPayload();
 
@@ -50,18 +51,12 @@ public class GoogleTokenVerifier {
             String email = payload.getEmail();
             boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
             String name = (String) payload.get("name");
-            //String pictureUrl = (String) payload.get("picture");
             String locale = (String) payload.get("locale");
+            //String pictureUrl = (String) payload.get("picture");
             //String familyName = (String) payload.get("family_name");
             //String givenName = (String) payload.get("given_name");
 
-            System.out.println("email: " + email);
-            System.out.println("emailVerify: " + emailVerified);
-            System.out.println("name: " + name);
-            System.out.println("locale: " + locale);
-
-
+            return true;
         }
-        return 0;
     }
 }

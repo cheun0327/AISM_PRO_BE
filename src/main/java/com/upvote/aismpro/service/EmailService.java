@@ -1,12 +1,14 @@
 package com.upvote.aismpro.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
@@ -49,7 +51,6 @@ public class EmailService implements EmailServiceInter {
         msg += code;
         msg += "</td></tr></tbody></table></div>";
 
-
         message.setText(msg, "utf-8", "html"); //내용
 
         return message;
@@ -77,6 +78,6 @@ public class EmailService implements EmailServiceInter {
     }
 
     public String createCode(String ePw){
-        return ePw.substring(0, 3) + "-" + ePw.substring(3, 6);
+        return ePw.substring(0, 3) + ePw.substring(3, 6);
     }
 }

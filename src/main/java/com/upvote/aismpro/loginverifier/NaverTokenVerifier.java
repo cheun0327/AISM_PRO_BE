@@ -2,6 +2,7 @@ package com.upvote.aismpro.loginverifier;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,13 +19,18 @@ public class NaverTokenVerifier {
     private String accessToken;
 
     @GetMapping("/naver/auth/getAccessToken")
-    public String getAccessToken
-            (@RequestParam String access_token) throws IOException {
+    public String getAccessToken(@RequestParam String access_token) throws IOException {
         accessToken = access_token;
 
-        Map<String, Object> map = getUserInfo(accessToken);
+        return (StringUtils.isNotBlank(accessToken)) ? "success" : "fail";
+    }
 
-        return (access_token != null) ? "success" : "fail";
+    public String getEmail(JsonObject userInfo) {
+        return (String) userInfo.get("email").toString();
+    }
+
+    public String getNickname(JsonObject userInfo) {
+        return (String) userInfo.get("nickname").toString();
     }
 
     public Map<String, Object> getUserInfo(String accessToken) throws IOException {
@@ -38,10 +44,10 @@ public class NaverTokenVerifier {
         JsonParser parser = new JsonParser();
         Object obj = parser.parse( res );
         JsonObject jsonObj = (JsonObject) obj;
-
         JsonObject response = (JsonObject) jsonObj.get("response");
-        String email = (String) response.get("email").toString();
-        String nickname = (String) response.get("nickname").toString();
+
+        String email = getEmail(response);
+        String nickname = getNickname(response);
 
         map.put("email", email);
         map.put("nickname", nickname);

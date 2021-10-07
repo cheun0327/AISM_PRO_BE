@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Server 4" uuid="a46b613a-e9ca-4738-8f09-9845c3837593">
+    <data-source source="LOCAL" name="AISM_PRO" uuid="16b59bbc-5066-4a1a-8868-964b36cd3611">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://141.164.62.192:3940/sheet</jdbc-url>
+      <jdbc-url>jdbc:mysql://141.164.62.192:3940</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
