@@ -47,13 +47,32 @@ public class LibraryService implements LibraryServiceInter{
         List<Song> songList = songRepository.findSongByIdListQD(songDetailList.stream().map(songDetail -> songDetail.getSongId()).collect(Collectors.toList()));
         // 기본 곡 정보와 상세 곡 정보로 SongBarDTO 생성
         List<SongBarDTO> songBarList = getSongBarList(songList, songDetailList);
-        map.put("song", songBarList);
+        // 검색 키워드 필터링
+        List<SongBarDTO> filtered = filterSearchKeyword(librarySearchDto.getSearch(), songBarList);
+
+        map.put("song", filtered);
 
         return map;
     }
 
+    // 검색 키워드 필터링
+    List<SongBarDTO> filterSearchKeyword(String keyword, List<SongBarDTO> songBarList) {
+        List<SongBarDTO> filtered = new ArrayList<>();
+
+        for (SongBarDTO songBar : songBarList) {
+            String[] arr = {songBar.getSongName(), songBar.getCreator(), songBar.getSongId()};
+            if (Arrays.stream(arr).anyMatch(keyword::equals)) {
+                filtered.add(songBar);
+                continue;
+            }
+            if (songBar.getTag().contains(keyword)) filtered.add(songBar);
+        }
+        return filtered;
+    }
+
     // 검색으로 받은 DTO로 플레이리스트 정보 가져옴
     List<PlayList> getPlaylistList(LibrarySearchDTO librarySearchDto) {
+        // 여기서 검색 keyword filtering
         List<PlayList> playlistList = new ArrayList<>();
 
         if (librarySearchDto.getType().contains("song")){
