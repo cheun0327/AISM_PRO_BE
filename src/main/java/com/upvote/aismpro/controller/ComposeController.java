@@ -1,11 +1,13 @@
 package com.upvote.aismpro.controller;
 
-import com.upvote.aismpro.dto.ComposeInfo;
-import com.upvote.aismpro.entity.Compose;
+import com.upvote.aismpro.dto.ComposeInfoDTO;
 import com.upvote.aismpro.service.ComposeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,10 +36,8 @@ public class ComposeController {
 
     // 작곡하기 키워드 받는 메서드
     @PostMapping("/compose")
-    public Map<String, Object> compose(@RequestBody ComposeInfo composeInfo) throws InterruptedException {
+    public Map<String, Object> compose(@RequestBody ComposeInfoDTO composeInfo) throws InterruptedException {
         Map<String, Object> song_info = new HashMap<String, Object>();
-
-        System.out.println(composeInfo);
 
         Thread.sleep(3000);
 
@@ -67,5 +67,27 @@ public class ComposeController {
             @RequestParam("firstMood") String firstMood,
             @RequestParam("secondMood") String secondMood) {
         return composeService.getSampleSoundByKeywords(genre, firstMood, secondMood);
+    }
+
+    @PostMapping("/uploadImg")
+    public Map<String, Object> uploadImg(@RequestParam("file") MultipartFile file) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+
+        String imgName = file.getOriginalFilename();
+        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/song/" + imgName;
+        File dst = new File(path);
+        
+        try {
+            file.transferTo(dst);
+
+            map.put("img", imgName);
+            map.put("result", true);
+        }catch (Exception e) {
+            e.printStackTrace();
+
+            map.put("result", false);
+        }
+
+        return map;
     }
 }

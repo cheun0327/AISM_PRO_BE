@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity(name="com.upvote.aismpro.entity.user")
+@Entity
 @NoArgsConstructor
 @Table(name = "user")
 @Data
