@@ -1,6 +1,7 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 import com.upvote.aismpro.service.LibraryServiceInter;
@@ -22,6 +23,11 @@ public class LibraryController {
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
         System.out.println("libcontroller");
         return libraryService.getSearchResult(libSearchDto);
+    }
+
+    @GetMapping("/getPlaylistInfo")
+    public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
+        return libraryService.getPlaylistInfo(category, id);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.dto.SongBarDTO;
 import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.Song;
@@ -13,7 +14,6 @@ import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,6 +68,21 @@ public class LibraryService implements LibraryServiceInter{
             if (songBar.getTag().contains(keyword)) filtered.add(songBar);
         }
         return filtered;
+    }
+
+    @Override
+    // View Detail Playlist
+    public List<PlaylistInfoDTO> getPlaylistInfo(String category, String id) {
+        List<PlaylistInfoDTO> playlistInfoDTO_li = playlistRepository.findInfoByCategoryAndPlaylistId(id);
+
+        for (PlaylistInfoDTO row : playlistInfoDTO_li) {
+            String creatorID = row.getSongCreatorID();
+            String creatorName = userRepository.findById(creatorID).get().getNickName();
+
+            row.setSongCreatorName(creatorName);
+        }
+
+        return playlistInfoDTO_li;
     }
 
     // 검색으로 받은 DTO로 플레이리스트 정보 가져옴
