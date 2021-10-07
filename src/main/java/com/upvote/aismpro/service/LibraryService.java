@@ -48,9 +48,11 @@ public class LibraryService implements LibraryServiceInter{
         // 기본 곡 정보와 상세 곡 정보로 SongBarDTO 생성
         List<SongBarDTO> songBarList = getSongBarList(songList, songDetailList);
         // 검색 키워드 필터링
-        List<SongBarDTO> filtered = filterSearchKeyword(librarySearchDto.getSearch(), songBarList);
-
-        map.put("song", filtered);
+        if (librarySearchDto.getSearch() != "" && librarySearchDto.getSearch() != null) {
+            System.out.println("키워드 검색 : " + librarySearchDto.getSearch());
+            map.put("song", filterSearchKeyword(librarySearchDto.getSearch(), songBarList));
+        }
+        else map.put("song", songBarList);
 
         return map;
     }
