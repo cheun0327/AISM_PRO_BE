@@ -27,6 +27,7 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
         if (token != null) token = token.split(" ")[1];
 
         // 이거 빼면 CORS 에러 발생 : preflight 문제
+        // prefilght로 보내지는 http method인 OPTIONS가 들어오면 그냥 통과
         // Access to XMLHttpRequest at 'http://localhost:8888/auth/getSongByOption?userID=8c451bf1-7224-3sc3-1112-854b032bbb4d&option=Create' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
         if (StringUtils.equals(request.getMethod(), "OPTIONS")) {
             System.out.println("if request options method is options, return true");
