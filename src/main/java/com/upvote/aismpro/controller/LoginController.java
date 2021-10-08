@@ -104,7 +104,7 @@ public class LoginController {
                 }};
             map.put("result", true);
             map.put("data", data);
-
+            System.out.println("google login Token : " + token);
             return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();

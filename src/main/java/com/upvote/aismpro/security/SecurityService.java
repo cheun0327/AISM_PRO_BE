@@ -2,10 +2,7 @@ package com.upvote.aismpro.security;
 
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +21,7 @@ public class SecurityService {
     private UserRepository userRepository;
 
     public String createToken(JwtRequestDTO jwtRequestDTO) {
-        long expTime = 20*1000*60;// 10*1000*60*60; // 10 hour
+        long expTime = 1*1000*10;// 10*1000*60*60; // 10 hour
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -47,7 +44,12 @@ public class SecurityService {
     }
     public Boolean validateToken(String token) {
         //final String userId = getUserIdFromToken(token);
-        return (!isTokenExpired(token));
+        try{
+            return !isTokenExpired(token);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return (false);
+        }
     }
 
     public Boolean validateTokenWithSubject(String token, String subject) {
