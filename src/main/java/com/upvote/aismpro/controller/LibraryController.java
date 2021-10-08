@@ -23,7 +23,6 @@ public class LibraryController {
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
         System.out.println("libcontroller");
         libSearchDto.print();
-
         return libraryService.getSearchResult(libSearchDto);
     }
 
