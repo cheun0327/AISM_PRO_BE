@@ -18,6 +18,9 @@ public class Song {
     private String Id;
 
     @Column(nullable = false)
+    private String createDate;
+
+    @Column(nullable = false)
     private String creatorID;
 
     @Column(nullable = false)
