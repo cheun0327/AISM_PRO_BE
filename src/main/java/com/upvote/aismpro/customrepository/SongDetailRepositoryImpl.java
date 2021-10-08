@@ -57,7 +57,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
             return null;
         }
         else {
-            return lengthIn(librarySearchDTO.getLength())
+            return songDetail.length.in(librarySearchDTO.getLength())
                     .or(genreIn(librarySearchDTO.getGenre()))
                     .or(mood1In(librarySearchDTO.getFirst_Mood()))
                     .or(mood2In(librarySearchDTO.getSecond_Mood()));
