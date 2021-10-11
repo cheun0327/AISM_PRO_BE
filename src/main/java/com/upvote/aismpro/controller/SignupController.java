@@ -30,7 +30,7 @@ public class SignupController {
     }
 
     // 이메일 중복 확인
-    @GetMapping("/isValidEmail/{email}")
+    @GetMapping("/signup/email/validate/{email}")
     public @ResponseBody
     Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
         System.out.println("== email Double Check : " + email);
@@ -44,7 +44,7 @@ public class SignupController {
     }
 
     // 닉네임 중복 확인
-    @GetMapping("/isValidNickName/{nickName}")
+    @GetMapping("/signup/nickname/validate/{nickName}")
     public @ResponseBody
     Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
         System.out.println("== nickName Double Check : " + nickName);

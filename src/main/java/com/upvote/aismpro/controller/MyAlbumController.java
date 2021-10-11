@@ -19,7 +19,7 @@ public class MyAlbumController {
     @Autowired
     private MyAlbumService myAlbumService;
 
-    @GetMapping("/api/getSongByOption")
+    @GetMapping("/getSongByOption")
     public List<Map<String, Object>> getSongByOption(@RequestParam("userID") String userID, @RequestParam("option") String option) {
         switch (option) {
             case "Play": return myAlbumService.getPlayList(userID, option);
