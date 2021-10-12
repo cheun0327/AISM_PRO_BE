@@ -11,5 +11,5 @@ public interface LibraryServiceInter {
     public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDto);
 
     // View Detail | Playlist
-    public List<PlaylistInfoDTO> getPlaylistInfo(String category, String id);
+    public List<PlaylistInfoDTO> getPlaylistInfo(String id);
 }

@@ -2,6 +2,7 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
+import com.upvote.aismpro.dto.SongBarDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 import com.upvote.aismpro.service.LibraryServiceInter;
@@ -27,8 +28,13 @@ public class LibraryController {
     }
 
     @GetMapping("/getPlaylistInfo")
-    public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
-        return libraryService.getPlaylistInfo(category, id);
+    public List<PlaylistInfoDTO> viewDetailPlayList(@RequestParam("id") String id) {
+        return libraryService.getPlaylistInfo(id);
+    }
+
+    @GetMapping("/getSongInfo")
+    public SongBarDTO viewDetailSong(@RequestParam("id") String id) {
+        return new SongBarDTO();
     }
 
 }

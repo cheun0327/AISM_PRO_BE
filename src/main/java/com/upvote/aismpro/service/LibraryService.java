@@ -54,7 +54,7 @@ public class LibraryService implements LibraryServiceInter{
 
     @Override
     // View Detail Playlist
-    public List<PlaylistInfoDTO> getPlaylistInfo(String category, String id) {
+    public List<PlaylistInfoDTO> getPlaylistInfo(String id) {
         List<PlaylistInfoDTO> playlistInfoDTO_li = playlistRepository.findInfoByCategoryAndPlaylistId(id);
 
         for (PlaylistInfoDTO row : playlistInfoDTO_li) {
