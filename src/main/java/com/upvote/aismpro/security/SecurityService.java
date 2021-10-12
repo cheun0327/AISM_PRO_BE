@@ -21,7 +21,7 @@ public class SecurityService {
     private UserRepository userRepository;
 
     public String createToken(JwtRequestDTO jwtRequestDTO) {
-        long expTime = 1*1000*10;// 10*1000*60*60; // 10 hour
+        long expTime = 30*1000*60;// 10*1000*60*60; // 10 hour
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
