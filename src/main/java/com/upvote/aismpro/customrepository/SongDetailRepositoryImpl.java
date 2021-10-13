@@ -26,11 +26,10 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
         return queryFactory.select(songDetail.songId)
                 .from(songDetail)
                 .where(
-                        // type and length or genre or mood1 or mood2 or
                         typeIn(librarySearchDTO.getType())
                 )
                 .where(
-                        queryWrapper(librarySearchDTO)
+                        orQueryWrapper(librarySearchDTO)
                 )
                 .fetch();
     }
@@ -42,7 +41,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
                         typeIn(librarySearchDTO.getType())
                 )
                 .where(
-                        queryWrapper(librarySearchDTO)
+                        orQueryWrapper(librarySearchDTO)
                 )
                 .fetch();
     }
@@ -52,7 +51,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
         return type.isEmpty() ? null : songDetail.type.in(type);
     }
 
-    private BooleanExpression queryWrapper(LibrarySearchDTO librarySearchDTO){
+    private BooleanExpression orQueryWrapper(LibrarySearchDTO librarySearchDTO){
         if (librarySearchDTO.getLength().isEmpty() && librarySearchDTO.getGenre().isEmpty()
                 && librarySearchDTO.getFirst_Mood().isEmpty() && librarySearchDTO.getSecond_Mood().isEmpty()){
             return null;

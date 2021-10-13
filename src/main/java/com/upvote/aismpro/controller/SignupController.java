@@ -1,6 +1,5 @@
 package com.upvote.aismpro.controller;
 
-
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.SignupServiceInter;
@@ -31,7 +30,7 @@ public class SignupController {
     }
 
     // 이메일 중복 확인
-    @GetMapping("/isValidEmail/{email}")
+    @GetMapping("/signup/email/validate/{email}")
     public @ResponseBody
     Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
         System.out.println("== email Double Check : " + email);
@@ -45,7 +44,7 @@ public class SignupController {
     }
 
     // 닉네임 중복 확인
-    @GetMapping("/isValidNickName/{nickName}")
+    @GetMapping("/signup/nickname/validate/{nickName}")
     public @ResponseBody
     Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
         System.out.println("== nickName Double Check : " + nickName);
@@ -78,7 +77,7 @@ public class SignupController {
             tmpSession.invalidate();
 
             //userId로 token 생성
-            String token = securityService.createToken(user.getId());
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
             Map<String, String> data = new HashMap<String, String>() {{
                 put("token", token);

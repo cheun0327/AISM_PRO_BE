@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ComposeService implements ComposeServiceInter {
@@ -17,6 +19,12 @@ public class ComposeService implements ComposeServiceInter {
     // 키워드 가져오기
     @Override
     public List<String> getKeywords(String keyword) {
+        if (keyword == "Genre") {
+            List<String> tmpKwd = composeRepository.findKeyword(keyword);
+            return Stream.of(tmpKwd.subList(8, 9), tmpKwd.subList(0, 8), tmpKwd.subList(9, 12))
+                    .flatMap(x -> x.stream())
+                    .collect(Collectors.toList());
+        }
         return composeRepository.findKeyword(keyword);
     }
 
