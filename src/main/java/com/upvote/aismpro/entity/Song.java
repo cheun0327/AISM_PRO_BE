@@ -3,10 +3,9 @@ package com.upvote.aismpro.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -20,8 +19,14 @@ public class Song {
     @Column(nullable = false)
     private String createDate;
 
-    @Column(nullable = false)
-    private String creatorID;
+//    @Column(nullable = false)
+//    private String creatorID;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+//    @OneToOne(mappedBy = "song")
+//    private MyAlbum myAlbum;
 
     @Column(nullable = false)
     private String songName;

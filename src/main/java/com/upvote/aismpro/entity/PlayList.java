@@ -1,5 +1,7 @@
 package com.upvote.aismpro.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
@@ -22,6 +24,7 @@ public class PlayList {
     private String playlistId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="userId")
     private User user;
 
@@ -38,9 +41,10 @@ public class PlayList {
     private String img;
 
     @ManyToMany
+    @JsonBackReference
     @JoinTable(name = "playlist_song",
         joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
         inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
     )
-    private List<Song> song = new ArrayList<>();
+    private List<Song> songs = new ArrayList<>();
 }

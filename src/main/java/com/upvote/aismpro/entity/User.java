@@ -1,6 +1,7 @@
 package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +27,16 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+//    @OneToMany(mappedBy = "user")
+//    private List<Song> songs = new ArrayList<Song>();
+
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<PlayList> playlists = new ArrayList<PlayList>();
+
+//    @OneToMany(mappedBy = "user")
+//    private List<MyAlbum> myAlbums = new ArrayList<MyAlbum>();
+
 
     @Builder
     public User(String nickName, String email, String picture) {
