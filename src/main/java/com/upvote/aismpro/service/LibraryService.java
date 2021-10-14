@@ -75,15 +75,20 @@ public class LibraryService implements LibraryServiceInter{
     @Override
     // View Detail Playlist
     public List<PlaylistInfoDTO> getPlaylistInfo(String category, String id) {
-        List<PlaylistInfoDTO> playlistInfoDTO_li = playlistRepository.findInfoByCategoryAndPlaylistId(id);
+        List<PlaylistInfoDTO> playlistInfoDTO_li = new ArrayList<>();
 
-        for (PlaylistInfoDTO row : playlistInfoDTO_li) {
-            String creatorID = row.getSongCreatorID();
-            String creatorName = userRepository.findById(creatorID).get().getNickName();
+        PlayList playlist = playlistRepository.getById(id);
 
-            row.setSongCreatorName(creatorName);
+        for (Song plSong : playlist.getSongs()) {
+            PlaylistInfoDTO playlistInfoDTO = new PlaylistInfoDTO(
+                    playlist.getUser().getNickName(), playlist.getName(),
+                    playlist.getState(), playlist.getImg(),
+                    plSong.getCreateDate(), "작곡가 아이디",
+                    plSong.getSongName(), plSong.getFileName()
+            );
+            playlistInfoDTO.setSongCreatorName("작곡가 이름");
+            playlistInfoDTO_li.add(playlistInfoDTO);
         }
-
         return playlistInfoDTO_li;
     }
 
@@ -95,6 +100,19 @@ public class LibraryService implements LibraryServiceInter{
         if (librarySearchDto.getType().contains("song")){
             playlistList = playlistRepository.findAll();
         }
+//        List<PlaylistInfoDTO> playlistInfoDTOList = new ArrayList<>();
+//
+//        for (PlayList playList : playlistList) {
+//            for (Song song : playList.getSongs()) {
+//                PlaylistInfoDTO dto = new PlaylistInfoDTO(
+//                        playList.getUser().getNickName(), playList.getName(),
+//                        playList.getState(), playList.getImg(),
+//                        song.getCreateDate(), song.getUser().getId(),
+//                        song.getSongName(), song.getFileName()
+//                );
+//
+//            }
+//        }
 
         return playlistList;
     }
@@ -106,17 +124,18 @@ public class LibraryService implements LibraryServiceInter{
         Integer cnt = 0;
         for (Song s : songList) {
             SongBarDTO tmp = new SongBarDTO();
-            tmp.setSongId(s.getId());
+            tmp.setSongId(s.getSongId());
             tmp.setSongName(s.getSongName());
 
-            Optional<User> creator = userRepository.findById(s.getCreatorID());
-            if (creator.isPresent())    tmp.setCreator(creator.get().getNickName());
-            else System.out.println("creator null 값");;
+            User creator = s.getUser();
+
+            if (creator != null)    tmp.setCreator(creator.getNickName());
+            else                    tmp.setCreator("작곡가 없음");
 
             tmp.setFileName("sample0" + String.valueOf(cnt % 5+1) + ".wav");
             tmp.setThumbnail("sample0" + String.valueOf(cnt % 5+1) +".png");
 
-            SongDetail sd =  songDetailList.stream().filter(SD -> s.getId().equals(SD.getSongId())).findFirst().get();
+            SongDetail sd =  songDetailList.stream().filter(SD -> s.getSongId().equals(SD.getSongId())).findFirst().get();
             List<String> tag = new ArrayList<>(Arrays.asList(new String[]{sd.getMood1(), sd.getMood2(), sd.getMood3()}));
             tmp.setTag(tag);
 

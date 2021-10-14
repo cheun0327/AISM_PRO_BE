@@ -19,6 +19,16 @@ public class MyAlbum {
     @Column(nullable = false)
     private String songId;
 
+
+//    @ManyToOne
+//    @JoinColumn(name = "userId")
+//    private User user;
+//
+//
+//    @OneToOne
+//    @JoinColumn(name = "songId")
+//    private Song song;
+
     @Column(nullable = false)
     private String authority;
 }
