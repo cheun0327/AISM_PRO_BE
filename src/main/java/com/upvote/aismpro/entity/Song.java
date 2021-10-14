@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @Data
 public class Song {
     @Id
-    @Column(nullable = false)
-    private String Id;
+    @Column(name="songId", nullable = false)
+    private String songId;
 
     @Column(nullable = false)
     private String createDate;

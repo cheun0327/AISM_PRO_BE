@@ -1,20 +1,28 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.entity.MyAlbum;
+import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.repository.MyAlbumRepository;
+import com.upvote.aismpro.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MyAlbumService implements MyAlbumServiceInter{
 
     @Autowired
     private MyAlbumRepository myAlbumRepository;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
+
+    public List<PlayList> getPlaylistTest(String id) {
+        List<String>  ids = new ArrayList<>();
+        ids.add("1j0leaa8qcqzk5ha39v1");
+        ids.add("1j0leaa8qcqzk5ha39v9");
+        return playlistRepository.findAllById(ids);
+    }
 
     @Override
     // 내가 작곡한 음원 | 구매한 음원 가져오기
@@ -38,9 +46,11 @@ public class MyAlbumService implements MyAlbumServiceInter{
     // 플레이 리스트 가져오기
     public List<Map<String, Object>> getPlayList(String userID, String option) {
         // List 형태 곡 정보 가져옴
-        List<Object[]> song_li = myAlbumRepository.findPlayListByUserID(userID);
+        // List<Object[]> song_li = myAlbumRepository.findPlayListByUserID(userID);
 
-        return convertDataType4Service(song_li, option);
+        List<Object[]> song_li = new ArrayList<>();
+
+         return convertDataType4Service(song_li, option);
     }
 
     // Repository -> Controller Data Type 변환

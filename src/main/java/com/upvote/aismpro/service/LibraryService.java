@@ -75,7 +75,7 @@ public class LibraryService implements LibraryServiceInter{
     @Override
     // View Detail Playlist
     public List<PlaylistInfoDTO> getPlaylistInfo(String category, String id) {
-        List<PlaylistInfoDTO> playlistInfoDTO_li = playlistRepository.findInfoByCategoryAndPlaylistId(id);
+        List<PlaylistInfoDTO> playlistInfoDTO_li = new ArrayList<>();//playlistRepository.findInfoByCategoryAndPlaylistId(id);
 
         for (PlaylistInfoDTO row : playlistInfoDTO_li) {
             String creatorID = row.getSongCreatorID();
@@ -106,7 +106,7 @@ public class LibraryService implements LibraryServiceInter{
         Integer cnt = 0;
         for (Song s : songList) {
             SongBarDTO tmp = new SongBarDTO();
-            tmp.setSongId(s.getId());
+            tmp.setSongId(s.getSongId());
             tmp.setSongName(s.getSongName());
 
             Optional<User> creator = userRepository.findById(s.getCreatorID());
@@ -116,7 +116,7 @@ public class LibraryService implements LibraryServiceInter{
             tmp.setFileName("sample0" + String.valueOf(cnt % 5+1) + ".wav");
             tmp.setThumbnail("sample0" + String.valueOf(cnt % 5+1) +".png");
 
-            SongDetail sd =  songDetailList.stream().filter(SD -> s.getId().equals(SD.getSongId())).findFirst().get();
+            SongDetail sd =  songDetailList.stream().filter(SD -> s.getSongId().equals(SD.getSongId())).findFirst().get();
             List<String> tag = new ArrayList<>(Arrays.asList(new String[]{sd.getMood1(), sd.getMood2(), sd.getMood3()}));
             tmp.setTag(tag);
 

@@ -14,23 +14,23 @@ public interface MyAlbumRepository extends JpaRepository<User, String> {
     // 내가 작곡한 음원 | 구매한 음원 가져오기
     @Query("SELECT myAlbum.userId, myAlbum.songId, song.songName, song.fileName, myAlbum.authority " +
             "from MyAlbum myAlbum " +
-            "join Song song on myAlbum.songId = song.Id " +
+            "join Song song on myAlbum.songId = song.songId " +
             "where myAlbum.userId = :userID and myAlbum.authority = :option"
     )
     List<Object[]> findByUserIDAndOption(@Param("userID") String userID, @Param("option") String option);
 
     // 좋아요 리스트 가져오기
-    @Query("SELECT song.creatorID, song.Id, song.songName, song.fileName " +
+    @Query("SELECT song.creatorID, song.songId, song.songName, song.fileName " +
             "from Favor favor " +
-            "join Song song on favor.songId = song.Id " +
+            "join Song song on favor.songId = song.songId " +
             "where favor.userId = :userID"
     )
     List<Object[]> findLikeSongByUserID(@Param("userID") String userID);
 
     // 플레이 리스트 가져오기
-    @Query("select playlist.userId, playlist.playlistId, playlist.name, playlist.img,  playlist.state " +
-    "from PlayList playlist " +
-    "where playlist.userId = :userID"
-    )
-    List<Object[]> findPlayListByUserID(@Param("userID") String userID);
+//    @Query("select playlist.userId, playlist.playlistId, playlist.name, playlist.img,  playlist.state " +
+//    "from PlayList playlist " +
+//    "where playlist.userId = :userID"
+//    )
+//    List<Object[]> findPlayListByUserID(@Param("userID") String userID);
 }
