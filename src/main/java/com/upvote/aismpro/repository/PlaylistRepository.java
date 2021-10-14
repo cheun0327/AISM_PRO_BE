@@ -22,6 +22,4 @@ public interface PlaylistRepository extends JpaRepository<PlayList, String>, Pla
             "where playlist.playlistId = :ID"
     )
     List<PlaylistInfoDTO> findInfoByCategoryAndPlaylistId(@Param("ID") String ID);
-
-//    List<PlaylistInfoDTO> findInfoByCategoryAndPlaylistId(@Param("ID") String ID);
 }

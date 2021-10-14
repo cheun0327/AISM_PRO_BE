@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -13,6 +15,7 @@ import javax.persistence.*;
 public class User {
 
     @Id
+    @Column(name = "userId", nullable = false)
     private String id;
 
     @Column(nullable = false)

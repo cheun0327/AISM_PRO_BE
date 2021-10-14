@@ -3,10 +3,9 @@ package com.upvote.aismpro.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -14,7 +13,7 @@ import javax.persistence.Table;
 @Data
 public class Song {
     @Id
-    @Column(nullable = false)
+    @Column(name = "songId", nullable = false)
     private String Id;
 
     @Column(nullable = false)
