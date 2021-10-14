@@ -100,19 +100,6 @@ public class LibraryService implements LibraryServiceInter{
         if (librarySearchDto.getType().contains("song")){
             playlistList = playlistRepository.findAll();
         }
-//        List<PlaylistInfoDTO> playlistInfoDTOList = new ArrayList<>();
-//
-//        for (PlayList playList : playlistList) {
-//            for (Song song : playList.getSongs()) {
-//                PlaylistInfoDTO dto = new PlaylistInfoDTO(
-//                        playList.getUser().getNickName(), playList.getName(),
-//                        playList.getState(), playList.getImg(),
-//                        song.getCreateDate(), song.getUser().getId(),
-//                        song.getSongName(), song.getFileName()
-//                );
-//
-//            }
-//        }
 
         return playlistList;
     }
