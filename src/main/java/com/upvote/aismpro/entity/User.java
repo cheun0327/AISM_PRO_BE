@@ -35,6 +35,10 @@ public class User {
     @JsonManagedReference
     private List<PlayList> playlists = new ArrayList<PlayList>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonManagedReference
+    private List<Album> albums = new ArrayList<Album>();
+
     @Builder
     public User(String nickName, String email, String picture) {
         this.nickName = nickName;
