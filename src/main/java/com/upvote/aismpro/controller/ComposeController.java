@@ -47,7 +47,6 @@ public class ComposeController {
         return song_info;
     }
 
-    //@GetMapping("/getAllGenre")
     @GetMapping("/compose/genre")
     public List<String> getAllGenre() {
         return composeService.getKeywords("Genre");
