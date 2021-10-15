@@ -1,5 +1,6 @@
 package com.upvote.aismpro.repository;
 
+import com.upvote.aismpro.dto.AlbumDTO;
 import com.upvote.aismpro.entity.Album;
 import com.upvote.aismpro.entity.AlbumPK;
 import org.springframework.data.jpa.repository.JpaRepository;
