@@ -27,7 +27,8 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Song> songs = new ArrayList<Song>();
 
@@ -35,7 +36,7 @@ public class User {
     @JsonManagedReference
     private List<PlayList> playlists = new ArrayList<PlayList>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Album> albums = new ArrayList<Album>();
 

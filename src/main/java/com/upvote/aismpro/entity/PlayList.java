@@ -25,7 +25,7 @@ public class PlayList {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name="creatorId", referencedColumnName = "userId")
+    @JoinColumn(name="creatorId")
     private User user;
 
     @Column(nullable = false)

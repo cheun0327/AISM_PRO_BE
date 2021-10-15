@@ -3,25 +3,28 @@ package com.upvote.aismpro.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@IdClass(AlbumPK.class)
 @NoArgsConstructor
 @Table(name = "Album")
 @Data
-@IdClass(AlbumPK.class)
 public class Album {
     @Id
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @JoinColumn(name = "userId")
+
     private User user;
 
     @Id
     @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "songId", referencedColumnName = "songId")
+    @JoinColumn(name = "songId")
     private Song song;
 
     @Column(nullable = false)
