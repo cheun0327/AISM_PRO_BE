@@ -2,7 +2,6 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
-import com.upvote.aismpro.dto.SongBarDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 import com.upvote.aismpro.service.LibraryServiceInter;
@@ -27,16 +26,10 @@ public class LibraryController {
         return libraryService.getSearchResult(libSearchDto);
     }
 
-    @GetMapping("/getPlaylistInfo")
-    public List<PlaylistInfoDTO> viewDetailPlayList(@RequestParam("id") String id) {
-        return libraryService.getPlaylistInfo(id);
-    }
-
-    @GetMapping("/getSongInfo")
-    public SongBarDTO viewDetailSong(@RequestParam("id") String id) {
-        return new SongBarDTO();
+    //@GetMapping("/getPlaylistInfo")
+    @GetMapping("/playlist")
+    public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
+        return libraryService.getPlaylistInfo(category, id);
     }
 
 }
-
-// :8888/librarySearch?type=2&lenth=30&genre=Pop,Country&mood1=리드미컬한,암울한&mood2=경쾌한,즐거운,감미로운,차분한,고요한,암담한

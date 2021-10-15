@@ -12,10 +12,18 @@ import javax.persistence.*;
 @IdClass(PlayListSongPK.class)
 public class PlayListSong {
     @Id
-    @Column(nullable = false)
+    @Column(name="playlistId", nullable = false)
     private String playlistId;
 
     @Id
-    @Column(nullable = false)
+    @Column(name="songId", nullable = false)
     private String songId;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "playlistId")
+//    private PlayList playList;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "songId")
+//    private Song song;
 }

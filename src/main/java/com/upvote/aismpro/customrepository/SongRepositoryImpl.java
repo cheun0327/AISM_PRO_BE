@@ -26,7 +26,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     private BooleanExpression songIdIn(List<String> songIdList) {
-        return songIdList.isEmpty() ? null : song.Id.in(songIdList);
+        return songIdList.isEmpty() ? null : song.songId.in(songIdList);
     }
 
 }
