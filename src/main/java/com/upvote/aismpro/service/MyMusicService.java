@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MyMusicService implements MyMusicServiceInter{
@@ -19,7 +20,7 @@ public class MyMusicService implements MyMusicServiceInter{
     @Autowired
     private AlbumRepository albumRepository;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    static final private ModelMapper modelMapper = new ModelMapper();
 
     @Override
     // 플레이 리스트 가져오기
@@ -53,13 +54,9 @@ public class MyMusicService implements MyMusicServiceInter{
     @Override
     public List<AlbumDTO> getMyComposeSongOrBuySong(String userID, String option) {
         List<Album> albumEntity = albumRepository.findAll();
-        List<AlbumDTO> albums = new ArrayList<AlbumDTO>();
 
-        for (Album album : albumEntity) {
-            AlbumDTO albumDTO = modelMapper.map(album, AlbumDTO.class);
-            albums.add(albumDTO);
-        }
-
-        return albums;
+        return albumEntity.stream()
+                .map(album -> modelMapper.map(album, AlbumDTO.class))
+                .collect(Collectors.toList());
     }
 }

@@ -23,7 +23,7 @@ public class Album {
 
     @Id
     @ManyToOne
-//    @JsonBackReference
+    @JsonBackReference
     @JoinColumn(name = "songId")
     private Song song;
 
