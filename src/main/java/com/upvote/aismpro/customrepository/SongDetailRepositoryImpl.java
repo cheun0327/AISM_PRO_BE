@@ -22,6 +22,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private QSongDetail songDetail = QSongDetail.songDetail;
 
+    // 검색 입력 값으로 곡 기본 정보 가져오기
     public List<String> findSongIdBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
         return queryFactory.select(songDetail.songId)
                 .from(songDetail)
@@ -34,6 +35,7 @@ public class SongDetailRepositoryImpl implements SongDetailRepositoryCustom{
                 .fetch();
     }
 
+    // 검색 입력 값으로 곡 상세 정보 가져오기
     public List<SongDetail> findSongDetailBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
         return queryFactory.select(songDetail)
                 .from(songDetail)

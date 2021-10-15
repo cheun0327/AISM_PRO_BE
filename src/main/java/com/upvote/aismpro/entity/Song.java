@@ -1,5 +1,6 @@
 package com.upvote.aismpro.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,18 +20,30 @@ public class Song {
     @Column(nullable = false)
     private String createDate;
 
-//    @Column(nullable = false)
-//    private String creatorID;
-    @ManyToOne
-    @JoinColumn(name = "userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @JoinColumn(name = "creatorID", referencedColumnName="userId")
     private User user;
 
-//    @OneToOne(mappedBy = "song")
-//    private MyAlbum myAlbum;
+    @OneToOne(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private SongDetail songDetail;
 
     @Column(nullable = false)
     private String songName;
 
     @Column(nullable = false)
     private String fileName;
+
+    // user 추가
+    public void setUser (User user) {
+        this.user = user;
+        user.getSongs().add(this);
+    }
+
+    public void print() {
+        System.out.println("songId : " + this.songId);
+        System.out.println("createDate : " + this.createDate);
+        System.out.println("songName : " + this.songName);
+        System.out.println("fileName : " + this.fileName);
+    }
 }

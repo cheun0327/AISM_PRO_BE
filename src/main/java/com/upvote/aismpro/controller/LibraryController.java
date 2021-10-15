@@ -26,12 +26,9 @@ public class LibraryController {
         return libraryService.getSearchResult(libSearchDto);
     }
 
-    //@GetMapping("/getPlaylistInfo")
     @GetMapping("/playlist")
     public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
         return libraryService.getPlaylistInfo(category, id);
     }
 
 }
-
-// :8888/librarySearch?type=2&lenth=30&genre=Pop,Country&mood1=리드미컬한,암울한&mood2=경쾌한,즐거운,감미로운,차분한,고요한,암담한

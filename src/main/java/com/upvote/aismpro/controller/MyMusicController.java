@@ -25,10 +25,4 @@ public class MyMusicController {
         }
     }
 
-//    @GetMapping("/playlist/test/{id}")
-//    public void getPlaylist(@PathVariable("id") String id) {
-//        PlayList pl = myAlbumService.getPlaylistTest(id);
-//        System.out.println(pl.getUser().getEmail());
-//        System.out.println(pl.getSongs().size());
-//    }
 }
