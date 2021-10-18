@@ -15,4 +15,12 @@ public class PlaylistDTO {
     private String state;
     private String img;
     //private List<SongBarDTO> songs;
+
+    public void print() {
+        System.out.println("pl id : " + this.playlistId);
+        System.out.println("creator id : " + this.creatorId);
+        System.out.println("name " + this.name);
+        System.out.println("state : " + this.state);
+        System.out.println("img : " + this.img);
+    }
 }

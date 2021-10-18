@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
@@ -38,41 +39,18 @@ public class LibraryService implements LibraryServiceInter{
     @Autowired
     private UserRepository userRepository;
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private CustomModelMapper modelMapper;
 
-    @Bean
-    public ModelMapper standardMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD);
-        return modelMapper;
-    }
-
-    @Bean
-    public ModelMapper looseMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
-        return modelMapper;
-    }
-
-    @Bean
-    public ModelMapper playlistMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD);
-        modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
-                .addMapping(PlayList::getPlaylistId, PlaylistDTO::setPlaylistId)
-                .addMapping(PlayList::getName, PlaylistDTO::setName)
-                .addMapping(PlayList::getState, PlaylistDTO::setState)
-                .addMapping(PlayList::getImg, PlaylistDTO::setImg);
-        return modelMapper;
-    }
 
     @Override
     public List<PlayList> getPlaylistDto() {
         List<PlayList> rawpl = playlistRepository.findAll();
 
-//        for (PlayList pl : rawpl) {
-//            PlaylistDTO pldto = playlistMapper.map(pl, PlaylistDTO.class);
-//        }
+        for (PlayList pl : rawpl) {
+            PlaylistDTO pldto = modelMapper.playlistMapper().map(pl, PlaylistDTO.class);
+            pldto.print();
+        }
 
         return rawpl;
     }
