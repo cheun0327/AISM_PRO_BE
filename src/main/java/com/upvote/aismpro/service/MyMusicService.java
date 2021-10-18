@@ -6,12 +6,14 @@ import com.upvote.aismpro.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class MyMusicService implements MyMusicServiceInter{
 
     @Autowired
@@ -58,5 +60,9 @@ public class MyMusicService implements MyMusicServiceInter{
         return albumEntity.stream()
                 .map(album -> modelMapper.map(album, AlbumDTO.class))
                 .collect(Collectors.toList());
+
+//        return albumRepository.findAll();
+
+//        return albumRepository.findByUserID(userID);
     }
 }

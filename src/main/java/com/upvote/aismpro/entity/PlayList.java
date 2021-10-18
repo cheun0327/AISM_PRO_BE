@@ -23,13 +23,10 @@ public class PlayList {
     @Column(name = "playlistId", nullable = false)
     private String playlistId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name="creatorId")
     private User user;
-
-//    @Column(nullable = false)
-//    private String userId;
 
     @Column(nullable = false)
     private String name;
@@ -40,7 +37,7 @@ public class PlayList {
     @Column(nullable = false)
     private String img;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinTable(name = "playlist_song",
         joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),

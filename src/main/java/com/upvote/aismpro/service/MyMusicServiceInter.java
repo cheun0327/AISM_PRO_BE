@@ -1,7 +1,6 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.AlbumDTO;
-import com.upvote.aismpro.entity.Album;
 
 import java.util.List;
 import java.util.Map;

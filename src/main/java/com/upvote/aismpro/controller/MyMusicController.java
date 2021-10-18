@@ -1,10 +1,9 @@
 package com.upvote.aismpro.controller;
 
-import com.upvote.aismpro.dto.AlbumDTO;
+
 import com.upvote.aismpro.entity.Album;
-import com.upvote.aismpro.entity.PlayList;
-import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.service.AlbumService;
+import com.upvote.aismpro.dto.AlbumDTO;
 import com.upvote.aismpro.service.MyMusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,9 @@ public class MyMusicController {
     @Autowired
     private MyMusicService myMusicService;
 
+    @Autowired
+    private AlbumService albumService;
+
     @GetMapping("/getSongByOption")
     public List<Map<String, Object>> getSongByOption(@RequestParam("userID") String userID, @RequestParam("option") String option) {
         switch (option) {
@@ -29,8 +31,15 @@ public class MyMusicController {
         }
     }
 
+
+    @GetMapping("/album")
+    public List<Album> getAllAlbum() {
+        return albumService.getAlbum();
+    }
+
     @GetMapping("/getSong")
     public List<AlbumDTO> getSong(@RequestParam("userID") String userID, @RequestParam("option") String option) {
         return myMusicService.getMyComposeSongOrBuySong(userID, option);
+
     }
 }

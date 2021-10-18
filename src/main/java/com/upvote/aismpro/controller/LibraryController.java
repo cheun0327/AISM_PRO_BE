@@ -26,10 +26,10 @@ public class LibraryController {
         return libraryService.getSearchResult(libSearchDto);
     }
 
-    //@GetMapping("/getPlaylistInfo")
     @GetMapping("/playlist")
     public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
         return libraryService.getPlaylistInfo(category, id);
     }
 
 }
+
