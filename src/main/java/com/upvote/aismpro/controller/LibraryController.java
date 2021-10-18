@@ -1,7 +1,9 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
+import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 import com.upvote.aismpro.service.LibraryServiceInter;
@@ -16,9 +18,7 @@ public class LibraryController {
     @Autowired
     private LibraryServiceInter libraryService;
 
-    // 장르가 중복 선택 가능한가
-    // 장르마다 mood1 카테고리 다를 수 있지않나
-    // get으로 gnere=pop,country&mood1=감미로운,강렬한,즐거운&mood2=유쾌한,어쩌구,저쩌구 이렇게 오는게 맞는거같다
+    // 라이브러리 검색
     @PostMapping("/library/search")
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
         System.out.println("libcontroller");
@@ -26,9 +26,15 @@ public class LibraryController {
         return libraryService.getSearchResult(libSearchDto);
     }
 
+    // 플레이리스트 가져오기
     @GetMapping("/playlist")
     public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
         return libraryService.getPlaylistInfo(category, id);
+    }
+
+    @GetMapping("/paylistdto")
+    public List<PlayList> playlistdto() {
+        return libraryService.getPlaylistDto();
     }
 
 }

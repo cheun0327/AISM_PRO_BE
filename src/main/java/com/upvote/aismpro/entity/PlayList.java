@@ -24,7 +24,6 @@ public class PlayList {
     private String playlistId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinColumn(name="creatorId")
     private User user;
 
@@ -38,7 +37,6 @@ public class PlayList {
     private String img;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinTable(name = "playlist_song",
         joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
         inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
