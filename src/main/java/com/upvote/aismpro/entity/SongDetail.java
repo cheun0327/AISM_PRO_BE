@@ -1,5 +1,6 @@
 package com.upvote.aismpro.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ public class SongDetail {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="songId")
+    @JsonBackReference
     private Song song;
 
     @Column

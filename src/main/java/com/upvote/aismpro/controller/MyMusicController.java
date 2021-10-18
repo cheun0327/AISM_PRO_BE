@@ -31,7 +31,6 @@ public class MyMusicController {
         }
     }
 
-
     @GetMapping("/album")
     public List<Album> getAllAlbum() {
         return albumService.getAlbum();

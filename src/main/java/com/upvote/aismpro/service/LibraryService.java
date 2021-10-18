@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.dto.SongBarDTO;
 import com.upvote.aismpro.entity.PlayList;
@@ -11,7 +12,11 @@ import com.upvote.aismpro.repository.PlaylistRepository;
 import com.upvote.aismpro.repository.SongDetailRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +37,45 @@ public class LibraryService implements LibraryServiceInter{
 
     @Autowired
     private UserRepository userRepository;
+
+    private final ModelMapper modelMapper = new ModelMapper();
+
+    @Bean
+    public ModelMapper standardMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STANDARD);
+        return modelMapper;
+    }
+
+    @Bean
+    public ModelMapper looseMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.LOOSE);
+        return modelMapper;
+    }
+
+    @Bean
+    public ModelMapper playlistMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STANDARD);
+        modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
+                .addMapping(PlayList::getPlaylistId, PlaylistDTO::setPlaylistId)
+                .addMapping(PlayList::getName, PlaylistDTO::setName)
+                .addMapping(PlayList::getState, PlaylistDTO::setState)
+                .addMapping(PlayList::getImg, PlaylistDTO::setImg);
+        return modelMapper;
+    }
+
+    @Override
+    public List<PlayList> getPlaylistDto() {
+        List<PlayList> rawpl = playlistRepository.findAll();
+
+//        for (PlayList pl : rawpl) {
+//            PlaylistDTO pldto = playlistMapper.map(pl, PlaylistDTO.class);
+//        }
+
+        return rawpl;
+    }
 
     @Override
     // 라이브러리 페이지 검색 결과 반환

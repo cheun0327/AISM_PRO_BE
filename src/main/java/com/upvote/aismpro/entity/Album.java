@@ -19,11 +19,11 @@ public class Album {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "userId")
-
     private User user;
 
     @Id
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "songId")
     private Song song;
 
