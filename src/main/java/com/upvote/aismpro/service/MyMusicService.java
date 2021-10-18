@@ -48,7 +48,7 @@ public class MyMusicService implements MyMusicServiceInter{
     @Override
     // 좋아요 리스트 가져오기
     public List<Map<String, Object>> getLikeSong(String userID, String option) {
-        List<Map<String, Object>> song_map = new ArrayList<>();
+       List<Map<String, Object>> song_map = new ArrayList<>();
 
         return song_map;
     }

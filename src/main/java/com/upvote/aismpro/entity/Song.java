@@ -2,7 +2,6 @@ package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +27,7 @@ public class Song {
     private User user;
 
     @OneToOne(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonBackReference
+    @JsonManagedReference
     private SongDetail songDetail;
 
     @Column(nullable = false)
