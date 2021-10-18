@@ -28,10 +28,8 @@ public class Song {
     private User user;
 
     @OneToOne(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonBackReference
     private SongDetail songDetail;
-
-    @OneToMany(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Album> albums = new ArrayList<Album>();
 
     @Column(nullable = false)
     private String songName;
