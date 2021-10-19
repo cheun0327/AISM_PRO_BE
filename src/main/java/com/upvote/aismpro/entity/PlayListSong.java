@@ -19,11 +19,4 @@ public class PlayListSong {
     @Column(name="songId", nullable = false)
     private String songId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "playlistId")
-//    private PlayList playList;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "songId")
-//    private Song song;
 }

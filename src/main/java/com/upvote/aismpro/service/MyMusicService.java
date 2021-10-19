@@ -22,6 +22,18 @@ public class MyMusicService implements MyMusicServiceInter{
     @Autowired
     private AlbumRepository albumRepository;
 
+    @Autowired
+    private CreateRepository createRepository;
+
+    @Autowired
+    private BuyRepository buyRepository;
+
+    @Autowired
+    private SellRepository sellRepository;
+
+    @Autowired
+    private  LikeRepository likeRepository;
+
     private ModelMapper modelMapper = new ModelMapper();
 
     @Override
@@ -64,5 +76,29 @@ public class MyMusicService implements MyMusicServiceInter{
         }
 
         return albums;
+    }
+
+    // like list 가져오기
+    @Override
+    public List<Like> getLikeList(String userId) {
+        return userRepository.getById(userId).getLikes();
+    }
+
+    // create list 가져오기
+    @Override
+    public List<Create> getCreateList(String userId) {
+        return userRepository.getById(userId).getCreates();
+    }
+
+    // buy list 가져오기
+    @Override
+    public List<Buy> getBuyList(String userId) {
+        return userRepository.getById(userId).getBuys();
+    }
+
+    // sell list 가젼오기
+    @Override
+    public List<Sell> getSellList(String userId) {
+        return userRepository.getById(userId).getSells();
     }
 }
