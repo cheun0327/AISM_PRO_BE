@@ -36,13 +36,13 @@ public class Song {
     private String genre;
 
     @Column
-    private String mood1;
+    private String firstMood;
 
     @Column
-    private String mood2;
+    private String secondMood;
 
     @Column
-    private String mood3;
+    private String thirdMood;
 
     @Column
     private String type;

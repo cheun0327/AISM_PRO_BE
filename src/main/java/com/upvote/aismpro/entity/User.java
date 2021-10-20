@@ -1,5 +1,6 @@
 package com.upvote.aismpro.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -28,18 +29,23 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Create> creates = new ArrayList<Create>();
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Buy> buys = new ArrayList<Buy>();
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Sell> sells = new ArrayList<Sell>();
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Like> likes = new ArrayList<Like>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonBackReference
     private List<PlayList> playlists = new ArrayList<PlayList>();
 
     @Builder

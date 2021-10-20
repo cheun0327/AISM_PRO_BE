@@ -17,12 +17,10 @@ public class Create {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonBackReference
     @JoinColumn(name = "songId")
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinColumn(name = "userId")
     private User user;
 }
