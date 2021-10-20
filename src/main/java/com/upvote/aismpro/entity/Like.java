@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-@Table(name = "like")
+@Table(name = "likes")
 @Data
 public class Like {
     @Id

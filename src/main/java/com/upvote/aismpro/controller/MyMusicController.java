@@ -23,7 +23,6 @@ public class MyMusicController {
     @Autowired
     private MyMusicService myMusicService;
 
-
     @GetMapping("/getSongByOption")
     public List<Map<String, Object>> getSongByOption(@RequestParam("userID") String userID, @RequestParam("option") String option) {
         switch (option) {
@@ -48,6 +47,7 @@ public class MyMusicController {
     public List<Buy> getBuy(@PathVariable("userId") String userId) {
         return myMusicService.getBuyList(userId);
     }
+
     @GetMapping("/sell/{userId}")
     public List<Sell> getSell(@PathVariable("userId") String userId) {
         return myMusicService.getSellList(userId);
