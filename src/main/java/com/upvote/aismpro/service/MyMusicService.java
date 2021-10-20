@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.AlbumDTO;
+import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
 import org.modelmapper.ModelMapper;
@@ -55,5 +56,11 @@ public class MyMusicService implements MyMusicServiceInter{
     @Override
     public List<Sell> getSellList(String userId) {
         return userRepository.getById(userId).getSells();
+    }
+
+    // play list 가져오기
+    @Override
+    public List<PlayList> getPlayList(String userId) {
+        return userRepository.getById(userId).getPlaylists();
     }
 }

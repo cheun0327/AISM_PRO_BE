@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.AlbumDTO;
+import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.entity.*;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface MyMusicServiceInter{
     // buy list 가져오기
     public List<Buy> getBuyList(String userId);
 
-    // sell list 가젼오기
+    // sell list 가져오기
     public List<Sell> getSellList(String userId);
+
+    // play list 가져오기
+    public List<PlayList> getPlayList(String userId);
 }
