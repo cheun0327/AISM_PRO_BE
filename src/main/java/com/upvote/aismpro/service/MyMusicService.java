@@ -22,7 +22,19 @@ public class MyMusicService implements MyMusicServiceInter{
     @Autowired
     private AlbumRepository albumRepository;
 
-    static final private ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private CreateRepository createRepository;
+
+    @Autowired
+    private BuyRepository buyRepository;
+
+    @Autowired
+    private SellRepository sellRepository;
+
+    @Autowired
+    private  LikeRepository likeRepository;
+
+    private ModelMapper modelMapper = new ModelMapper();
 
     @Override
     // 플레이 리스트 가져오기
@@ -53,16 +65,27 @@ public class MyMusicService implements MyMusicServiceInter{
         return song_map;
     }
 
+    // like list 가져오기
     @Override
-    public List<AlbumDTO> getMyComposeSongOrBuySong(String userID, String option) {
-        List<Album> albumEntity = albumRepository.findAll();
+    public List<Like> getLikeList(String userId) {
+        return userRepository.getById(userId).getLikes();
+    }
 
-        return albumEntity.stream()
-                .map(album -> modelMapper.map(album, AlbumDTO.class))
-                .collect(Collectors.toList());
+    // create list 가져오기
+    @Override
+    public List<Create> getCreateList(String userId) {
+        return userRepository.getById(userId).getCreates();
+    }
 
-//        return albumRepository.findAll();
+    // buy list 가져오기
+    @Override
+    public List<Buy> getBuyList(String userId) {
+        return userRepository.getById(userId).getBuys();
+    }
 
-//        return albumRepository.findByUserID(userID);
+    // sell list 가젼오기
+    @Override
+    public List<Sell> getSellList(String userId) {
+        return userRepository.getById(userId).getSells();
     }
 }

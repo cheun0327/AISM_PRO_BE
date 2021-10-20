@@ -23,12 +23,8 @@ public class Song {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "creatorID", referencedColumnName="userId")
+    @JoinColumn(name = "creatorId", referencedColumnName="userId")
     private User user;
-
-    @OneToOne(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonManagedReference
-    private SongDetail songDetail;
 
     @Column(nullable = false)
     private String songName;
@@ -36,11 +32,23 @@ public class Song {
     @Column(nullable = false)
     private String fileName;
 
-    // user 추가
-    public void setUser (User user) {
-        this.user = user;
-        user.getSongs().add(this);
-    }
+    @Column
+    private String genre;
+
+    @Column
+    private String mood1;
+
+    @Column
+    private String mood2;
+
+    @Column
+    private String mood3;
+
+    @Column
+    private String type;
+
+    @Column
+    private String length;
 
     public void print() {
         System.out.println("songId : " + this.songId);
@@ -49,4 +57,3 @@ public class Song {
         System.out.println("fileName : " + this.fileName);
     }
 }
-

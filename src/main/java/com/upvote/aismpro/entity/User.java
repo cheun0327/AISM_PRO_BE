@@ -27,14 +27,20 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Song> songs = new ArrayList<Song>();
+    @OneToMany(mappedBy = "user")
+    private List<Create> creates = new ArrayList<Create>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Buy> buys = new ArrayList<Buy>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Sell> sells = new ArrayList<Sell>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes = new ArrayList<Like>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PlayList> playlists = new ArrayList<PlayList>();
-
-    @OneToMany(mappedBy = "user")
-    private List<Album> albums = new ArrayList<Album>();
 
     @Builder
     public User(String nickName, String email, String picture) {
@@ -48,17 +54,28 @@ public class User {
         if (playlist.getUser() != this) playlist.setUser(this);
     }
 
-    // song 추가
-    public void addSong(Song song) {
-        this.songs.add(song);
-        if (song.getUser() != this) song.setUser(this);
+    // create 추가
+    public void addCreate(Create create) {
+        this.creates.add(create);
+        if (create.getUser() != this) create.setUser(this);
     }
 
-    public void setSongList(List<Song> songs) {
-        this.songs = songs;
-        if (this.songs != null && this.songs.size() > 0) {
-            for (Song s : songs)    s.setUser(this);
-        }
+    // buy 추가
+    public void addBuy(Buy buy) {
+        this.buys.add(buy);
+        if (buy.getUser() != this) buy.setUser(this);
+    }
+
+    // sell 추가
+    public void addSell(Sell sell) {
+        this.sells.add(sell);
+        if (sell.getUser() != this) sell.setUser(this);
+    }
+
+    // like 추가
+    public void addLike(Like like) {
+        this.likes.add(like);
+        if (like.getUser() != this) like.setUser(this);
     }
 
     public void setPlaylistList(List<PlayList> playlists) {
