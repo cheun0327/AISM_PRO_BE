@@ -17,7 +17,7 @@ public class Create {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+//    @JsonBackReference
     @JoinColumn(name = "songId")
     private Song song;
 

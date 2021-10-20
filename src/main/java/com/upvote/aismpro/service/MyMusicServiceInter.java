@@ -7,13 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface MyMusicServiceInter{
-
-    // 좋아요 리스트 가져오기
-    public List<Map<String, Object>> getLikeSong(String userID, String option);
-
-    // 플레이 리스트 가져오기
-    public List<Map<String, Object>> getPlayList(String userID, String option);
-
     // like list 가져오기
     public List<Like> getLikeList(String userId);
 

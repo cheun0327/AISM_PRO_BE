@@ -20,9 +20,6 @@ public class MyMusicService implements MyMusicServiceInter{
     private UserRepository userRepository;
 
     @Autowired
-    private AlbumRepository albumRepository;
-
-    @Autowired
     private CreateRepository createRepository;
 
     @Autowired
@@ -35,35 +32,6 @@ public class MyMusicService implements MyMusicServiceInter{
     private  LikeRepository likeRepository;
 
     private ModelMapper modelMapper = new ModelMapper();
-
-    @Override
-    // 플레이 리스트 가져오기
-    public List<Map<String, Object>> getPlayList(String userID, String option) {
-        List<Map<String, Object>> playlist_map = new ArrayList<>();
-
-        List<PlayList> playlist = userRepository.getById(userID).getPlaylists();
-
-        for (PlayList pl : playlist) {
-            Map<String, Object> map = new HashMap<String, Object>() {{
-                put("userID", userID);
-                put("playlistID", pl.getPlaylistId());
-                put("playlistName", pl.getName());
-                put("img", pl.getImg());
-                put("state", pl.getState());
-            }};
-            playlist_map.add(map);
-        }
-
-         return playlist_map;
-    }
-
-    @Override
-    // 좋아요 리스트 가져오기
-    public List<Map<String, Object>> getLikeSong(String userID, String option) {
-       List<Map<String, Object>> song_map = new ArrayList<>();
-
-        return song_map;
-    }
 
     // like list 가져오기
     @Override
