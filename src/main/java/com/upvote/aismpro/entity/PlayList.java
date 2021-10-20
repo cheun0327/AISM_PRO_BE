@@ -17,29 +17,28 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "playlist")
 @Data
-//@IdClass(PlayListPK.class)
 public class PlayList {
     @Id
     @Column(name = "playlistId", nullable = false)
     private String playlistId;
 
+    @Column(nullable = false)
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="creatorId")
     private User user;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "playlist_song",
+            joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
+            inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
+    )
+    private List<Song> songs = new ArrayList<>();
 
     @Column(nullable = false)
     private String state;
 
     @Column(nullable = false)
     private String img;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "playlist_song",
-        joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
-        inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
-    )
-    private List<Song> songs = new ArrayList<>();
 }

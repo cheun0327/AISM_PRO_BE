@@ -19,7 +19,6 @@ public class ComposeController {
     @Autowired
     private ComposeService composeService;
 
-    //@GetMapping("/getEachComposeInfo")
     @GetMapping("/compose")
     public Map<String, Object> getEachComposeInfo() {
         Map<String, Object> composeInfo = new LinkedHashMap<>();
@@ -52,19 +51,16 @@ public class ComposeController {
         return composeService.getKeywords("Genre");
     }
 
-    //@GetMapping("/getFirstMood")
     @GetMapping("/compose/first-mood")
     public List<String> getFirstMoodByGenre(@RequestParam("genre") String genre) {
         return composeService.getFirstMoodByGenre(genre);
     }
 
-    //@GetMapping("/getSecondMood")
     @GetMapping("/compose/second-mood")
     public List<String> getSecondMoodByGenreAndFirstMood(@RequestParam("genre") String genre, @RequestParam("firstMood") String firstMood) {
         return composeService.getSecondMoodByFirstMood(genre, firstMood);
     }
 
-    //@GetMapping("/getSampleSound")
     @GetMapping("/compose/sample-sound")
     public String[] getSampleSoundByKeywords(
             @RequestParam("genre") String genre,
@@ -73,7 +69,6 @@ public class ComposeController {
         return composeService.getSampleSoundByKeywords(genre, firstMood, secondMood);
     }
 
-    //@PostMapping("/uploadImg")
     @PostMapping("/compose/img")
     public Map<String, Object> uploadImg(@RequestParam("file") MultipartFile file) throws IOException {
         Map<String, Object> map = new HashMap<>();

@@ -42,7 +42,6 @@ public class LibraryService implements LibraryServiceInter{
     @Autowired
     private CustomModelMapper modelMapper;
 
-
     @Override
     public List<PlayList> getPlaylistDto() {
         List<PlayList> rawpl = playlistRepository.findAll();
@@ -163,5 +162,3 @@ public class LibraryService implements LibraryServiceInter{
         return playlistInfoDTO_li;
     }
 }
-
-
