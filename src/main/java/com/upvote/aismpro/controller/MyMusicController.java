@@ -1,10 +1,8 @@
 package com.upvote.aismpro.controller;
 
 
-import com.upvote.aismpro.entity.Like;
-import com.upvote.aismpro.entity.Create;
-import com.upvote.aismpro.entity.Buy;
-import com.upvote.aismpro.entity.Sell;
+import com.upvote.aismpro.dto.PlaylistInfoDTO;
+import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +36,8 @@ public class MyMusicController {
         return myMusicService.getSellList(userId);
     }
 
-
+    @GetMapping("/playlist/{userId}")
+    public List<PlayList> getPlaylist(@PathVariable("userId") String userId) {
+        return myMusicService.getPlayList(userId);
+    }
 }
