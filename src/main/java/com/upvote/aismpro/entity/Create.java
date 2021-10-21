@@ -2,6 +2,7 @@ package com.upvote.aismpro.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +19,11 @@ public class Create {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
+    @JsonManagedReference
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
+    @JsonManagedReference
     private User user;
 }
