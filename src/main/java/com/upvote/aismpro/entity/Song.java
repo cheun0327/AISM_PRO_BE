@@ -50,6 +50,9 @@ public class Song {
     @Column
     private String length;
 
+    @Column
+    private String thumbnail;
+
     public void print() {
         System.out.println("songId : " + this.songId);
         System.out.println("createDate : " + this.createDate);
