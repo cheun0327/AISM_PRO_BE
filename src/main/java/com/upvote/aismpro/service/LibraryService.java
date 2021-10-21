@@ -35,9 +35,8 @@ public class LibraryService implements LibraryServiceInter{
 
         Map<String, Object> map = new HashMap<>();
 
-        List<PlayList> playlistList = getPlaylistList(librarySearchDto);
-        System.out.println("\n\nplaylist done\n\n");
-        map.put("playlist", playlistList);
+        List<PlaylistDTO> playlists = getPlaylists(librarySearchDto.getType());
+        map.put("playlist", playlists);
 
         List<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDto);
         List<SongDTO> songDTOList = songList.stream().map(s -> modelMapper.songMapper().map(s, SongDTO.class)).collect(Collectors.toList());
@@ -58,31 +57,24 @@ public class LibraryService implements LibraryServiceInter{
     }
 
     @Override
-    public List<PlayList> getPlaylistDto() {
-        List<PlayList> rawpl = playlistRepository.findAll();
-
-        for (PlayList pl : rawpl) {
-            PlaylistDTO pldto = modelMapper.playlistMapper().map(pl, PlaylistDTO.class);
-            pldto.print();
-        }
-
-        return rawpl;
+    public List<PlaylistDTO> getAllPlaylists() {
+        return playlistRepository.findAll()
+                .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                .collect(Collectors.toList());
     }
 
 
     // 검색으로 받은 DTO로 플레이리스트 정보 가져옴
-    List<PlayList> getPlaylistList(LibrarySearchDTO librarySearchDto) {
+    public List<PlaylistDTO> getPlaylists(List<String> types) {
         // 여기서 검색 keyword filtering
-        List<PlayList> playlistList = new ArrayList<>();
 
-        if (librarySearchDto.getType().contains("song")){
-            playlistList = playlistRepository.findAll();
-            for(PlayList pl : playlistList) {
-                System.out.println(pl.getUser().getNickName());
-            }
+        if (types.contains("song")){
+            return playlistRepository.findAll()
+                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
         }
 
-        return playlistList;
+        return new ArrayList<>();
     }
 
     // 검색 키워드 필터링
