@@ -3,6 +3,7 @@ package com.upvote.aismpro.settings;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
@@ -17,7 +18,6 @@ import java.util.List;
 
 @Configuration
 public class ModelMapperConfig {
-
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Bean
@@ -37,7 +37,7 @@ public class ModelMapperConfig {
     @Bean
     public ModelMapper playlistMapper() {
         modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD);
+                .setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
                 .addMapping(PlayList::getPlaylistId, PlaylistDTO::setPlaylistId)
                 .addMapping(PlayList::getName, PlaylistDTO::setName)
@@ -57,10 +57,8 @@ public class ModelMapperConfig {
                 .addMapping(src -> src.getSong().getSongId(), CreateDTO::setSongId)
                 .addMapping(src -> src.getSong().getSongName(), CreateDTO::setSongName)
                 .addMapping(src -> src.getUser().getNickName(), CreateDTO::setCreatorName)
-                .addMapping(src -> new ArrayList<String>(
-                        Arrays.asList(src.getSong().getFirstMood(),
-                                src.getSong().getSecondMood(), src.getSong().getThirdMood())
-                ), CreateDTO::setTag)
+                .addMapping(src -> Arrays.asList(src.getSong().getFirstMood(),
+                                src.getSong().getSecondMood(), src.getSong().getThirdMood()), CreateDTO::setTag)
                 .addMapping(src -> src.getSong().getThumbnail(), CreateDTO::setThumbnail)
                 .addMapping(src -> src.getSong().getFileName(), CreateDTO::setFileName)
                 .addMapping(src -> src.getSong().getCreateDate(), CreateDTO::setCreateDate)

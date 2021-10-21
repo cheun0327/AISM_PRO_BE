@@ -1,9 +1,12 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.AlbumDTO;
+import com.upvote.aismpro.dto.CreateDTO;
+import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.settings.ModelMapperConfig;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,7 @@ public class MyMusicService implements MyMusicServiceInter{
     @Autowired
     private  LikeRepository likeRepository;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private ModelMapperConfig modelMapper = new ModelMapperConfig();
 
     // like list 가져오기
     @Override
@@ -43,7 +46,16 @@ public class MyMusicService implements MyMusicServiceInter{
     // create list 가져오기
     @Override
     public List<Create> getCreateList(String userId) {
-        return userRepository.getById(userId).getCreates();
+        List<Create> create_entities = userRepository.getById(userId).getCreates();
+
+        ModelMapper createMapper = modelMapper.createMapper();
+
+        for (Create entity : create_entities) {
+            CreateDTO createDTO = createMapper.map(entity, CreateDTO.class);
+            createDTO.print();
+        }
+
+        return create_entities;
     }
 
     // buy list 가져오기
