@@ -6,6 +6,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,13 +47,22 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
-//    @Bean
-//    public ModelMapper playlistDetailMapper() {
-//        modelMapper.getConfiguration()
-//                .setMatchingStrategy(MatchingStrategies.STRICT);
-//
-//        modelMapper.createTypeMap(PlayList.class, PlayListDTO)
-//    }
+
+    @Bean
+    public ModelMapper playlistDetailMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.createTypeMap(PlayList.class, PlaylistDetailDTO.class)
+                .addMapping(PlayList::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
+                .addMapping(PlayList::getName, PlaylistDetailDTO::setPlaylistName)
+                .addMapping(PlayList::getState, PlaylistDetailDTO::setPlaylistState)
+                .addMapping(PlayList::getImg, PlaylistDetailDTO::setPlaylistImg)
+                .addMapping(src -> src.getUser().getId(), PlaylistDetailDTO::setPlaylistCreatorId)
+                .addMapping(src -> src.getUser().getNickName(), PlaylistDetailDTO::setPlaylistCreatorName);
+
+        return modelMapper;
+    }
 
     Converter<Song, List<String>> songTagCvt = new Converter<Song, List<String>>() {
         @Override

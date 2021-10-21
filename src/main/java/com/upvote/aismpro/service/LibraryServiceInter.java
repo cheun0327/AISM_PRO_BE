@@ -1,9 +1,6 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistInfoDTO;
-import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.PlayList;
 
 import java.util.List;

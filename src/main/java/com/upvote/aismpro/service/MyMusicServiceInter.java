@@ -21,4 +21,7 @@ public interface MyMusicServiceInter{
 
     // play list 가져오기
     public List<PlayList> getPlayList(String userId);
+
+    // playlist detail 가져오가
+    public PlaylistDetailDTO getPlayListDetail(String playlistId);
 }
