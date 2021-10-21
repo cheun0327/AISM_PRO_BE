@@ -21,7 +21,7 @@ public class LibraryController {
     // 라이브러리 검색
     @PostMapping("/library/search")
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
-        return libraryService.getSearchResult(libSearchDto);
+        return libraryService.getSearch(libSearchDto);
     }
 
 
