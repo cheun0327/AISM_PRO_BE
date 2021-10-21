@@ -1,8 +1,10 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.BuyDTO;
 import com.upvote.aismpro.dto.CreateDTO;
 import com.upvote.aismpro.dto.LikeDTO;
+import com.upvote.aismpro.dto.SellDTO;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
+
+import static com.upvote.aismpro.entity.QCreate.create;
 
 @Service
 @Transactional
@@ -59,14 +63,24 @@ public class MyMusicService implements MyMusicServiceInter{
 
     // buy list 가져오기
     @Override
-    public List<Buy> getBuyList(String userId) {
-        return userRepository.getById(userId).getBuys();
+    public List<BuyDTO> getBuyList(String userId) {
+        List<BuyDTO> buys = new ArrayList<>();
+
+        for (Buy buy : userRepository.getById(userId).getBuys()) {
+            buys.add(modelMapper.buyMapper().map(buy, BuyDTO.class));
+        }
+        return buys;
     }
 
     // sell list 가젼오기
     @Override
-    public List<Sell> getSellList(String userId) {
-        return userRepository.getById(userId).getSells();
+    public List<SellDTO> getSellList(String userId) {
+        List<SellDTO> sells = new ArrayList<>();
+
+        for (Sell sell : userRepository.getById(userId).getSells()) {
+            sells.add(modelMapper.buyMapper().map(sell, SellDTO.class));
+        }
+        return sells;
     }
 
     // play list 가져오기
