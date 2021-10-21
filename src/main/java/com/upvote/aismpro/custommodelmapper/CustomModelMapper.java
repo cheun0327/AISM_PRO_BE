@@ -6,6 +6,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,6 +46,54 @@ public class CustomModelMapper {
 
         return modelMapper;
     }
+
+
+    @Bean
+    public ModelMapper playlistDetailMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.createTypeMap(PlayList.class, PlaylistDetailDTO.class)
+                .addMapping(PlayList::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
+                .addMapping(PlayList::getName, PlaylistDetailDTO::setPlaylistName)
+                .addMapping(PlayList::getState, PlaylistDetailDTO::setPlaylistState)
+                .addMapping(PlayList::getImg, PlaylistDetailDTO::setPlaylistImg)
+                .addMapping(src -> src.getUser().getId(), PlaylistDetailDTO::setPlaylistCreatorId)
+                .addMapping(src -> src.getUser().getNickName(), PlaylistDetailDTO::setPlaylistCreatorName);
+
+        return modelMapper;
+    }
+
+    Converter<Song, List<String>> songTagCvt = new Converter<Song, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<Song, List<String>> context) {
+            return new ArrayList<String>(Arrays.asList(
+                    context.getSource().getFirstMood(),
+                    context.getSource().getSecondMood(),
+                    context.getSource().getThirdMood()
+            ));
+        }
+    };
+
+    @Bean
+    public ModelMapper songMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(Song.class, SongDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTag))
+                .addMapping(Song::getSongId, SongDTO::setSongId)
+                .addMapping(Song::getSongName, SongDTO::setSongName)
+                .addMapping(src -> src.getUser().getNickName(), SongDTO::setCreatorName)
+                .addMapping(Song::getThumbnail, SongDTO::setThumbnail)
+                .addMapping(Song::getFileName, SongDTO::setFileName)
+                .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
+                .addMapping(Song::getGenre, SongDTO::setGenre)
+                .addMapping(Song::getLength, SongDTO::setLength);
+        return modelMapper;
+    }
+
 
     Converter<Create, List<String>> createTagCvt = new Converter<Create, List<String>>() {
         @Override

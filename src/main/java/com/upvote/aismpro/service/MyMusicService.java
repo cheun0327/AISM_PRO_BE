@@ -2,10 +2,7 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.CreateDTO;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.BuyDTO;
-import com.upvote.aismpro.dto.CreateDTO;
-import com.upvote.aismpro.dto.LikeDTO;
-import com.upvote.aismpro.dto.SellDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
 
@@ -18,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.upvote.aismpro.entity.QCreate.create;
 
@@ -39,6 +37,9 @@ public class MyMusicService implements MyMusicServiceInter{
 
     @Autowired
     private  LikeRepository likeRepository;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
 
     @Autowired
     private CustomModelMapper modelMapper;
@@ -93,5 +94,11 @@ public class MyMusicService implements MyMusicServiceInter{
     @Override
     public List<PlayList> getPlayList(String userId) {
         return userRepository.getById(userId).getPlaylists();
+    }
+
+    // playlist detail 가져오가
+    @Override
+    public PlaylistDetailDTO getPlayListDetail(String playlistId) {
+        return modelMapper.playlistDetailMapper().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
     }
 }

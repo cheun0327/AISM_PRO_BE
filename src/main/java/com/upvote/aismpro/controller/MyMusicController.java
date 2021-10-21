@@ -2,7 +2,6 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.CreateDTO;
 import com.upvote.aismpro.dto.LikeDTO;
-import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
@@ -41,5 +40,10 @@ public class MyMusicController {
     @GetMapping("/playlist/{userId}")
     public List<PlayList> getPlaylist(@PathVariable("userId") String userId) {
         return myMusicService.getPlayList(userId);
+    }
+
+    @GetMapping("/playlist/detail/{playlistId}")
+    public PlaylistDetailDTO getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
+        return myMusicService.getPlayListDetail(playlistId);
     }
 }
