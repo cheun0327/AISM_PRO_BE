@@ -40,4 +40,9 @@ public class MyMusicController {
     public List<PlayList> getPlaylist(@PathVariable("userId") String userId) {
         return myMusicService.getPlayList(userId);
     }
+
+    @GetMapping("/playlist/detail/{playlistId}")
+    public List<PlayList> getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
+        return myMusicService.getPlayList("");
+    }
 }

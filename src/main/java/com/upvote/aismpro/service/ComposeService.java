@@ -1,12 +1,10 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.repository.ComposeRepository;
-import com.upvote.aismpro.repository.SongDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
