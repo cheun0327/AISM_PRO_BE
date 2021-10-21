@@ -42,7 +42,7 @@ public class MyMusicController {
     }
 
     @GetMapping("/playlist/detail/{playlistId}")
-    public List<PlayList> getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
-        return myMusicService.getPlayList("");
+    public PlaylistDetailDTO getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
+        return myMusicService.getPlayListDetail(playlistId);
     }
 }
