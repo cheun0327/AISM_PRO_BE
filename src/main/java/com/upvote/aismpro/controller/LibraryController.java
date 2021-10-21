@@ -23,17 +23,5 @@ public class LibraryController {
     public Map<String, Object> librarySearch(@RequestBody LibrarySearchDTO libSearchDto) {
         return libraryService.getSearchResult(libSearchDto);
     }
-
-    // 플레이리스트 가져오기
-    @GetMapping("/playlist")
-    public List<PlaylistInfoDTO> viewDetail(@RequestParam("category") String category, @RequestParam("id") String id) {
-        return libraryService.getPlaylistInfo(category, id);
-    }
-
-    @GetMapping("/paylistdto")
-    public List<PlayList> playlistdto() {
-        return libraryService.getPlaylistDto();
-    }
-
 }
 
