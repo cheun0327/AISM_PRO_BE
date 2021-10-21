@@ -14,7 +14,6 @@ public class PlaylistDTO {
     private String name;
     private String state;
     private String img;
-    //private List<SongBarDTO> songs;
 
     public void print() {
         System.out.println("pl id : " + this.playlistId);

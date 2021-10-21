@@ -20,7 +20,7 @@ public interface MyMusicServiceInter{
     public List<SellDTO> getSellList(String userId);
 
     // play list 가져오기
-    public List<PlayList> getPlayList(String userId);
+    public List<PlaylistDTO> getPlayList(String userId);
 
     // playlist detail 가져오가
     public PlaylistDetailDTO getPlayListDetail(String playlistId);

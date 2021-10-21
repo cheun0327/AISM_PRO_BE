@@ -42,52 +42,41 @@ public class MyMusicService implements MyMusicServiceInter{
     // like list 가져오기
     @Override
     public List<LikeDTO> getLikeList(String userId) {
-        List<LikeDTO> likes = new ArrayList<>();
-
-        for (Like like : userRepository.getById(userId).getLikes()) {
-            likes.add(modelMapper.likeMapper().map(like, LikeDTO.class));
-        }
-
-        return likes;
+        return userRepository.getById(userId).getLikes()
+                .stream().map(like -> modelMapper.likeMapper().map(like, LikeDTO.class))
+                .collect(Collectors.toList());
     }
 
     // create list 가져오기
     @Override
     public List<CreateDTO> getCreateList(String userId) {
-        List<CreateDTO> creates = new ArrayList<>();
-
-        for (Create create : userRepository.getById(userId).getCreates()) {
-            creates.add(modelMapper.createMapper().map(create, CreateDTO.class));
-        }
-        return creates;
+        return userRepository.getById(userId).getCreates()
+                .stream().map(create -> modelMapper.createMapper().map(create, CreateDTO.class))
+                .collect(Collectors.toList());
     }
 
     // buy list 가져오기
     @Override
     public List<BuyDTO> getBuyList(String userId) {
-        List<BuyDTO> buys = new ArrayList<>();
-
-        for (Buy buy : userRepository.getById(userId).getBuys()) {
-            buys.add(modelMapper.buyMapper().map(buy, BuyDTO.class));
-        }
-        return buys;
+        return userRepository.getById(userId).getBuys()
+                .stream().map(buy -> modelMapper.buyMapper().map(buy, BuyDTO.class))
+                .collect(Collectors.toList());
     }
 
     // sell list 가젼오기
     @Override
     public List<SellDTO> getSellList(String userId) {
-        List<SellDTO> sells = new ArrayList<>();
-
-        for (Sell sell : userRepository.getById(userId).getSells()) {
-            sells.add(modelMapper.buyMapper().map(sell, SellDTO.class));
-        }
-        return sells;
+        return userRepository.getById(userId).getSells()
+                .stream().map(sell -> modelMapper.sellMapper().map(sell, SellDTO.class))
+                .collect(Collectors.toList());
     }
 
     // play list 가져오기
     @Override
-    public List<PlayList> getPlayList(String userId) {
-        return userRepository.getById(userId).getPlaylists();
+    public List<PlaylistDTO> getPlayList(String userId) {
+        return userRepository.getById(userId).getPlaylists()
+                .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                .collect(Collectors.toList());
     }
 
     // playlist detail 가져오가
