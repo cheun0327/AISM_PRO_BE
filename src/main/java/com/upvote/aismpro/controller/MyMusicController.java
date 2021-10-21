@@ -1,5 +1,7 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.CreateDTO;
+import com.upvote.aismpro.dto.LikeDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
@@ -16,12 +18,12 @@ public class MyMusicController {
     private MyMusicService myMusicService;
 
     @GetMapping("/like/{userId}")
-    public List<Like> getLike(@PathVariable("userId") String userId) {
+    public List<LikeDTO> getLike(@PathVariable("userId") String userId) {
         return myMusicService.getLikeList(userId);
     }
 
     @GetMapping("/create/{userId}")
-    public List<Create> getCreate(@PathVariable("userId") String userId) {
+    public List<CreateDTO> getCreate(@PathVariable("userId") String userId) {
         return myMusicService.getCreateList(userId);
     }
 
