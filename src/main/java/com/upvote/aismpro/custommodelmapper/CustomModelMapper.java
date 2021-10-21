@@ -36,17 +36,13 @@ public class CustomModelMapper {
     @Bean
     public ModelMapper playlistMapper() {
         modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD);
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
         modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
-                .addMapping(PlayList::getPlaylistId, PlaylistDTO::setPlaylistId)
-                .addMapping(PlayList::getName, PlaylistDTO::setName)
-                .addMapping(PlayList::getState, PlaylistDTO::setState)
-                .addMapping(PlayList::getImg, PlaylistDTO::setImg)
                 .addMapping(src -> src.getUser().getId(), PlaylistDTO::setCreatorId);
 
         return modelMapper;
     }
-
 
     @Bean
     public ModelMapper playlistDetailMapper() {

@@ -37,7 +37,7 @@ public class MyMusicController {
     }
 
     @GetMapping("/playlist/{userId}")
-    public List<PlayList> getPlaylist(@PathVariable("userId") String userId) {
+    public List<PlaylistDTO> getPlaylist(@PathVariable("userId") String userId) {
         return myMusicService.getPlayList(userId);
     }
 
