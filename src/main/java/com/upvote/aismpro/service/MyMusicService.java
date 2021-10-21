@@ -1,17 +1,16 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.dto.AlbumDTO;
-import com.upvote.aismpro.dto.PlaylistInfoDTO;
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.CreateDTO;
+import com.upvote.aismpro.dto.LikeDTO;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,18 +31,30 @@ public class MyMusicService implements MyMusicServiceInter{
     @Autowired
     private  LikeRepository likeRepository;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private CustomModelMapper modelMapper;
 
     // like list 가져오기
     @Override
-    public List<Like> getLikeList(String userId) {
-        return userRepository.getById(userId).getLikes();
+    public List<LikeDTO> getLikeList(String userId) {
+        List<LikeDTO> likes = new ArrayList<>();
+
+        for (Like like : userRepository.getById(userId).getLikes()) {
+            likes.add(modelMapper.likeMapper().map(like, LikeDTO.class));
+        }
+
+        return likes;
     }
 
     // create list 가져오기
     @Override
-    public List<Create> getCreateList(String userId) {
-        return userRepository.getById(userId).getCreates();
+    public List<CreateDTO> getCreateList(String userId) {
+        List<CreateDTO> creates = new ArrayList<>();
+
+        for (Create create : userRepository.getById(userId).getCreates()) {
+            creates.add(modelMapper.createMapper().map(create, CreateDTO.class));
+        }
+        return creates;
     }
 
     // buy list 가져오기
