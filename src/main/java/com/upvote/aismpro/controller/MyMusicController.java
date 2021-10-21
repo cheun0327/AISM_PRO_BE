@@ -3,6 +3,7 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.CreateDTO;
 import com.upvote.aismpro.dto.LikeDTO;
 import com.upvote.aismpro.dto.PlaylistInfoDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,12 @@ public class MyMusicController {
     }
 
     @GetMapping("/buy/{userId}")
-    public List<Buy> getBuy(@PathVariable("userId") String userId) {
+    public List<BuyDTO> getBuy(@PathVariable("userId") String userId) {
         return myMusicService.getBuyList(userId);
     }
 
     @GetMapping("/sell/{userId}")
-    public List<Sell> getSell(@PathVariable("userId") String userId) {
+    public List<SellDTO> getSell(@PathVariable("userId") String userId) {
         return myMusicService.getSellList(userId);
     }
 
