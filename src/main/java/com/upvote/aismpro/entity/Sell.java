@@ -22,4 +22,7 @@ public class Sell {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
+
+    @Column(name="price")
+    private Integer price;
 }
