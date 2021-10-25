@@ -4,6 +4,7 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
+import com.upvote.aismpro.service.MyMusicServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 public class MyMusicController {
 
     @Autowired
-    private MyMusicService myMusicService;
+    private MyMusicServiceInter myMusicService;
 
     @GetMapping("/like/{userId}")
     public List<LikeDTO> getLike(@PathVariable("userId") String userId) {
