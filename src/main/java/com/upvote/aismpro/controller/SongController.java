@@ -6,9 +6,7 @@ import com.upvote.aismpro.service.SongServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
@@ -25,11 +23,27 @@ public class SongController {
     public ResponseEntity<SongDTO> getSongDetail(@PathVariable("songId") String songId) {
         try{
             SongDTO songDTO = songService.getSongDetail(songId);
-            return new ResponseEntity<SongDTO>(songDTO, HttpStatus.OK);
+            return new ResponseEntity<>(songDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    @GetMapping("/like/count/{songId}")
+    public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") String songId) {
+        return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);
+    }
+
+    @PostMapping("/like/{userId}/{songId}")
+    public ResponseEntity<Object> createLike(@PathVariable("userId") String userId, @PathVariable("songId") String songId) {
+        songService.creatLike(userId, songId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/like/{likeId}")
+    public ResponseEntity<Object> deleteLike(@PathVariable("likeId") String likeId){
+        songService.deleteLike(likeId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
