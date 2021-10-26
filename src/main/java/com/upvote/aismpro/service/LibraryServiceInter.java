@@ -13,5 +13,5 @@ public interface LibraryServiceInter {
     public List<PlaylistDTO> getAllPlaylists();
 
     // 라이브러리 검색 결과 반환
-    public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto);
+    public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) throws Exception;
 }

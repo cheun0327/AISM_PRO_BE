@@ -41,42 +41,82 @@ public class MyMusicService implements MyMusicServiceInter{
 
     // like list 가져오기
     @Override
-    public List<LikeDTO> getLikeList(String userId) {
-        return userRepository.getById(userId).getLikes()
-                .stream().map(like -> modelMapper.likeMapper().map(like, LikeDTO.class))
-                .collect(Collectors.toList());
+    public List<LikeDTO> getLikeList(String userId) throws Exception {
+        try {
+            return userRepository.getById(userId).getLikes()
+                    .stream().map(like -> modelMapper.likeMapper().map(like, LikeDTO.class))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // create list 가져오기
     @Override
-    public List<CreateDTO> getCreateList(String userId) {
-        return userRepository.getById(userId).getCreates()
-                .stream().map(create -> modelMapper.createMapper().map(create, CreateDTO.class))
-                .collect(Collectors.toList());
+    public List<CreateDTO> getCreateList(String userId) throws Exception {
+        try{
+            return userRepository.getById(userId).getCreates()
+                    .stream().map(create -> modelMapper.createMapper().map(create, CreateDTO.class))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // buy list 가져오기
     @Override
-    public List<BuyDTO> getBuyList(String userId) {
-        return userRepository.getById(userId).getBuys()
-                .stream().map(buy -> modelMapper.buyMapper().map(buy, BuyDTO.class))
-                .collect(Collectors.toList());
+    public List<BuyDTO> getBuyList(String userId) throws Exception {
+        try{
+            return userRepository.getById(userId).getBuys()
+                    .stream().map(buy -> modelMapper.buyMapper().map(buy, BuyDTO.class))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // sell list 가젼오기
     @Override
-    public List<SellDTO> getSellList(String userId) {
-        return userRepository.getById(userId).getSells()
-                .stream().map(sell -> modelMapper.sellMapper().map(sell, SellDTO.class))
-                .collect(Collectors.toList());
+    public List<SellDTO> getSellList(String userId) throws Exception {
+        try{
+            return userRepository.getById(userId).getSells()
+                    .stream().map(sell -> modelMapper.sellMapper().map(sell, SellDTO.class))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // play list 가져오기
     @Override
-    public List<PlaylistDTO> getPlayList(String userId) {
-        return userRepository.getById(userId).getPlaylists()
-                .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
-                .collect(Collectors.toList());
+    public List<PlaylistDTO> getPlayList(String userId) throws Exception {
+        try{
+            return userRepository.getById(userId).getPlaylists()
+                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // playlist detail 가져오가
