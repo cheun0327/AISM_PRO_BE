@@ -8,19 +8,19 @@ import java.util.Map;
 
 public interface MyMusicServiceInter{
     // like list 가져오기
-    public List<LikeDTO> getLikeList(String userId);
+    public List<LikeDTO> getLikeList(String userId) throws Exception;
 
     // create list 가져오기
-    public List<CreateDTO> getCreateList(String userId);
+    public List<CreateDTO> getCreateList(String userId) throws Exception;
 
     // buy list 가져오기
-    public List<BuyDTO> getBuyList(String userId);
+    public List<BuyDTO> getBuyList(String userId) throws Exception;
 
     // sell list 가져오기
-    public List<SellDTO> getSellList(String userId);
+    public List<SellDTO> getSellList(String userId) throws Exception;
 
     // play list 가져오기
-    public List<PlaylistDTO> getPlayList(String userId);
+    public List<PlaylistDTO> getPlayList(String userId) throws Exception;
 
     // playlist detail 가져오가
     public PlaylistDetailDTO getPlayListDetail(String playlistId);
