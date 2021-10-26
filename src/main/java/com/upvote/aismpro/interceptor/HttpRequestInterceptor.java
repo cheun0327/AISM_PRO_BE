@@ -35,7 +35,6 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
         }
 
         if (request.getRequestURI().contains("auth") == false)  {
-            System.out.println("사용자 인증 안함");
             return true;
         }
 
