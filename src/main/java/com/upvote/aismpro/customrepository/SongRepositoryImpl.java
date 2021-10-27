@@ -47,8 +47,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .from(song)
                 .where(
                         song.songId.ne(moodDTO.getSongId())
-                                .and(song.genre.eq(moodDTO.getGenre()))
-                                .and(song.firstMood.eq(moodDTO.getFirstMood()))
+                                .and(song.genre.eq(moodDTO.getGenre())
+                                        .or(song.firstMood.eq(moodDTO.getFirstMood())))
                 )
                 .fetch();
     }
