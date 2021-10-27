@@ -1,7 +1,10 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Song;
+
+import java.util.List;
 
 public interface SongServiceInter {
 
@@ -13,4 +16,6 @@ public interface SongServiceInter {
     public void creatLike(String userId, String songId);
     // 좋아요 삭제
     public void deleteLike(String likeId);
+    // 비슷한 곡 가져오기
+    public List<SongDTO> getSimilarSong(MoodDTO moodDTO);
 }
