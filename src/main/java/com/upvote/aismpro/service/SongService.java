@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.LikeDTO;
 import com.upvote.aismpro.dto.MoodDTO;
@@ -12,6 +13,7 @@ import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -63,7 +65,8 @@ public class SongService implements SongServiceInter {
                 .stream()
                 .map(s -> modelMapper.songMapper().map(s, SongDTO.class))
                 .collect(Collectors.toList());
-        System.out.println(similar);
+        Collections.shuffle(similar);
+        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
         return similar;
     }
 }
