@@ -35,10 +35,9 @@ public class MyPageService implements MyPageServiceInter{
     }
 
     public List<OAuth> linkSns(OAuth oauth) {
-        List<OAuth> oauthList = new ArrayList<OAuth>();
+        List<OAuth> oauthList = new ArrayList<>();
         try {
             oAuthRepository.save(oauth);
-
             return oauthList;
         } catch(Exception e){
             e.printStackTrace();
@@ -46,7 +45,4 @@ public class MyPageService implements MyPageServiceInter{
         }
     }
 
-//    public User putUser(User user) {
-//        userRepository.put()
-//    }
 }
