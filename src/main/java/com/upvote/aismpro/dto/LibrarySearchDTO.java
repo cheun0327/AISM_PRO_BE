@@ -1,33 +1,35 @@
 package com.upvote.aismpro.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class LibrarySearchDTO {
-    private String Search;
-    private List<String> Type;
-    private List<String> Length;
-    private List<String> Genre;
-    private List<String> First_Mood;
-    private List<String> Second_Mood;
+    private String search;
+    private List<String> type;
+    private List<String> length;
+    private List<String> genre;
+    private List<String> firstMood;
+    private List<String> secondMood;
 
-    public LibrarySearchDTO(String Search, List<String> Type, List<String> Length, List<String> Genre, List<String> First_Mood, List<String> Second_Mood){
-        this.Search = Search;
-        this.Type = Type;
-        this.Length = Length;
-        this.Genre = Genre;
-        this.First_Mood = First_Mood;
-        this.Second_Mood = Second_Mood;
+    public LibrarySearchDTO(String search, List<String> type, List<String> length, List<String> genre, List<String> firstMood, List<String> secondMood){
+        this.search = search;
+        this.type = type;
+        this.length = length;
+        this.genre = genre;
+        this.firstMood = firstMood;
+        this.secondMood = secondMood;
     }
 
     public void print(){
-        System.out.println(this.Search);
-        System.out.println(this.Type);
-        System.out.println(this.Length);
-        System.out.println(this.Genre);
-        System.out.println(this.First_Mood);
-        System.out.println(this.Second_Mood);
+        System.out.println(this.search);
+        System.out.println(this.type);
+        System.out.println(this.length);
+        System.out.println(this.genre);
+        System.out.println(this.firstMood);
+        System.out.println(this.secondMood);
     }
 }

@@ -48,14 +48,14 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
 
     private BooleanExpression orQueryWrapper(LibrarySearchDTO librarySearchDTO) {
         if (librarySearchDTO.getLength().isEmpty() && librarySearchDTO.getGenre().isEmpty()
-            && librarySearchDTO.getFirst_Mood().isEmpty() && librarySearchDTO.getSecond_Mood().isEmpty()) {
+            && librarySearchDTO.getFirstMood().isEmpty() && librarySearchDTO.getFirstMood().isEmpty()) {
             return null;
         }
         else {
             return song.length.in(librarySearchDTO.getLength())
                     .or(genreIn(librarySearchDTO.getGenre()))
-                    .or(firstMoodIn(librarySearchDTO.getFirst_Mood()))
-                    .or(secondMoodIn(librarySearchDTO.getSecond_Mood()));
+                    .or(firstMoodIn(librarySearchDTO.getFirstMood()))
+                    .or(secondMoodIn(librarySearchDTO.getSecondMood()));
         }
     }
 

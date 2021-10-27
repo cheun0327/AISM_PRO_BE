@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MyPageService {
+public class MyPageService implements MyPageServiceInter{
+
     @Autowired
     private UserRepository userRepository;
 

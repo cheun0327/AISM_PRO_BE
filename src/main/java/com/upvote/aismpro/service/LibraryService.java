@@ -31,58 +31,75 @@ public class LibraryService implements LibraryServiceInter{
     private CustomModelMapper modelMapper;
 
     @Override
-    public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) {
+    public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) throws Exception {
 
         Map<String, Object> map = new HashMap<>();
 
-        List<PlayList> playlistList = getPlaylistList(librarySearchDto);
-        System.out.println("\n\nplaylist done\n\n");
-        map.put("playlist", playlistList);
+        try{
+            // song type 있으면 플레이리스트 가져옴.
+            List<PlaylistDTO> playlists = getPlaylists(librarySearchDto.getType());
+            map.put("playlist", playlists);
 
-        List<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDto);
-        List<SongDTO> songDTOList = songList.stream().map(s -> modelMapper.songMapper().map(s, SongDTO.class)).collect(Collectors.toList());
+            // 필터 옵션으로 song 가져옴.
+            List<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDto);
+            // song -> songDTO 매핑.
+            List<SongDTO> songDTOList = songList.stream().map(s -> modelMapper.songMapper().map(s, SongDTO.class)).collect(Collectors.toList());
 
-        Integer cnt = 0;
-        for (SongDTO sd: songDTOList) {
-            sd.setFileName("sample0" + String.valueOf(cnt % 5+1) + ".wav");
-            sd.setThumbnail("sample0" + String.valueOf(cnt % 5+1) +".png");
-            cnt++;
+            Integer cnt = 0;
+            for (SongDTO sd: songDTOList) {
+                sd.setFileName("sample0" + String.valueOf(cnt % 5+1) + ".wav");
+                sd.setThumbnail("sample0" + String.valueOf(cnt % 5+1) +".png");
+                cnt++;
+            }
+
+            map.put("song", songDTOList);
+
+            // 검색어 필터링
+            if (!Objects.equals(librarySearchDto.getSearch(), "") && librarySearchDto.getSearch() != null) {
+                map.put("song", filterSearchKeyword(librarySearchDto.getSearch(), songDTOList));
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
         }
 
-        map.put("song", songDTOList);
-
-        if (!Objects.equals(librarySearchDto.getSearch(), "") && librarySearchDto.getSearch() != null) {
-            map.put("song", filterSearchKeyword(librarySearchDto.getSearch(), songDTOList));
-        }
         return map;
     }
 
     @Override
-    public List<PlayList> getPlaylistDto() {
-        List<PlayList> rawpl = playlistRepository.findAll();
-
-        for (PlayList pl : rawpl) {
-            PlaylistDTO pldto = modelMapper.playlistMapper().map(pl, PlaylistDTO.class);
-            pldto.print();
-        }
-
-        return rawpl;
+    public List<PlaylistDTO> getAllPlaylists() {
+        return playlistRepository.findAll()
+                .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                .collect(Collectors.toList());
     }
 
 
     // 검색으로 받은 DTO로 플레이리스트 정보 가져옴
-    List<PlayList> getPlaylistList(LibrarySearchDTO librarySearchDto) {
+    public List<PlaylistDTO> getPlaylists(List<String> types) {
         // 여기서 검색 keyword filtering
-        List<PlayList> playlistList = new ArrayList<>();
-
-        if (librarySearchDto.getType().contains("song")){
-            playlistList = playlistRepository.findAll();
-            for(PlayList pl : playlistList) {
-                System.out.println(pl.getUser().getNickName());
-            }
+//        try {
+//            if (types != null && types.contains("song")){
+//                return playlistRepository.findAll()
+//                        .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+//                        .collect(Collectors.toList());
+//            }
+//
+//            return new ArrayList<>();
+//        } catch (Exception e) {
+//            System.out.println("getPalyLists 에러");
+//            e.printStackTrace();
+//            throw new NoSuchElementException();
+//        }
+        if (types != null && types.contains("song")){
+            return playlistRepository.findAll()
+                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
         }
 
-        return playlistList;
+        return new ArrayList<>();
     }
 
     // 검색 키워드 필터링
