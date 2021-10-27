@@ -1,5 +1,6 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.SongServiceInter;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -28,6 +30,11 @@ public class SongController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/song/similar")
+    public ResponseEntity<List<SongDTO>> getSimilarSong(@RequestBody MoodDTO moodDTO) {
+        return new ResponseEntity<>(songService.getSimilarSong(moodDTO), HttpStatus.OK);
     }
 
     @GetMapping("/like/count/{songId}")

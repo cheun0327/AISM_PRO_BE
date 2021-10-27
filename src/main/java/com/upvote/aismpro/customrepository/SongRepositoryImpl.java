@@ -3,6 +3,7 @@ package com.upvote.aismpro.customrepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
+import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private QSong song = QSong.song;
 
+    @Override
     public List<Song> findSongByIdListQD(List<String> songIdList){
         return queryFactory.select(song)
                 .from(song)
@@ -26,6 +28,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .fetch();
     }
 
+    @Override
     public List<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
         return queryFactory.select(song)
                 .from(song)
@@ -34,6 +37,17 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 )
                 .where(
                         orQueryWrapper(librarySearchDTO)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findSimilarSongQD(MoodDTO moodDTO) {
+        return queryFactory.select(song)
+                .from(song)
+                .where(
+                        song.genre.eq(moodDTO.getGenre())
+                                .and(song.secondMood.eq(moodDTO.getSecondMood()))
                 )
                 .fetch();
     }
