@@ -23,13 +23,13 @@ public class ComposeController {
     public Map<String, Object> getEachComposeInfo() {
         Map<String, Object> composeInfo = new LinkedHashMap<>();
 
-        List<String> allGenre = composeService.getKeywords("Genre");
-        List<String> allFirstMood = composeService.getKeywords("FirstMood");
-        List<String> allSecondMood = composeService.getKeywords("SecondMood");
+        List<String> allGenre = composeService.getKeywords("genre");
+        List<String> allFirstMood = composeService.getKeywords("firstMood");
+        List<String> allSecondMood = composeService.getKeywords("secondMood");
 
-        composeInfo.put("Genre", allGenre);
-        composeInfo.put("First_Mood", allFirstMood);
-        composeInfo.put("Second_Mood", allSecondMood);
+        composeInfo.put("genre", allGenre);
+        composeInfo.put("firstMood", allFirstMood);
+        composeInfo.put("secondMood", allSecondMood);
 
         return composeInfo;
     }
@@ -48,7 +48,7 @@ public class ComposeController {
 
     @GetMapping("/compose/genre")
     public List<String> getAllGenre() {
-        return composeService.getKeywords("Genre");
+        return composeService.getKeywords("genre");
     }
 
     @GetMapping("/compose/first-mood")

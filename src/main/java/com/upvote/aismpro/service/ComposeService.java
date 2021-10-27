@@ -19,7 +19,7 @@ public class ComposeService implements ComposeServiceInter {
     // 키워드 가져오기
     @Override
     public List<String> getKeywords(String keyword) {
-        if (keyword.equals("Genre")) {
+        if (keyword.equals("genre")) {
             List<String> tmpKwd = composeRepository.findKeyword(keyword);
             return Stream.of(tmpKwd.subList(8, 9), tmpKwd.subList(0, 8), tmpKwd.subList(9, 12))
                     .flatMap(x -> x.stream())

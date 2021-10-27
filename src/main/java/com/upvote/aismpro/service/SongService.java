@@ -1,7 +1,9 @@
 package com.upvote.aismpro.service;
 
+import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.LikeDTO;
+import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.Song;
@@ -11,6 +13,8 @@ import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,5 +56,17 @@ public class SongService implements SongServiceInter {
     @Override
     public void deleteLike(String likeId) {
         likeRepository.deleteById(likeId);
+    }
+
+    @Override
+    // 비슷한 곡 가져오기
+    public List<SongDTO> getSimilarSong(MoodDTO moodDTO) {
+        List<SongDTO> similar = songRepository.findSimilarSongQD(moodDTO)
+                .stream()
+                .map(s -> modelMapper.songMapper().map(s, SongDTO.class))
+                .collect(Collectors.toList());
+        Collections.shuffle(similar);
+        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
+        return similar;
     }
 }
