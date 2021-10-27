@@ -14,13 +14,13 @@ public class SecurityController {
     @Autowired
     private SecurityService securityService;
 
-    @PostMapping("/createToken")
+    @PostMapping("/token")
     public Map<String, Object> createToken(@RequestBody JwtRequestDTO jwtRequest) {
         String token = securityService.createToken(jwtRequest);
         return Collections.singletonMap("token", token);
     }
 
-    @GetMapping("/validateToken")
+    @GetMapping("/token/validate")
     public Map<String, Object> validateToken(@RequestParam("token") String token) {
         System.out.println(token);
         try {
@@ -31,7 +31,7 @@ public class SecurityController {
         return Collections.singletonMap("isValid", securityService.validateToken(token));
     }
 
-    @GetMapping("/validateTokenWithSubject")
+    @GetMapping("/token/validate/subject")
     public Map<String, Object> validateTokenWithSubject(@RequestParam("token") String token,
                                              @RequestParam("subject") String subject) {
         System.out.println(token);
@@ -44,17 +44,18 @@ public class SecurityController {
         return Collections.singletonMap("isValid", securityService.validateTokenWithSubject(token, subject));
     }
 
-    @GetMapping("/getUserByToken")
+    @GetMapping("/token/user")
     public Map<String, String> getUserByToken(@RequestParam("token") String token) {
         User user = securityService.getUser(token);
         return new HashMap<String, String>() {{
+            put("result", "success");
             put("userId", user.getId());
             put("userEmail", user.getEmail());
             put("userNickName", user.getNickName());
         }};
     }
 
-    @GetMapping("/getSubject")
+    @GetMapping("/token/subject")
     // header에서 token 읽어오게 변경
     public Map<String, Object> getSubject(@RequestParam("token") String token) {
         String subject = securityService.getSubject(token);

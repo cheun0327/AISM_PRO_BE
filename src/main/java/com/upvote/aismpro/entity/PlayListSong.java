@@ -12,10 +12,11 @@ import javax.persistence.*;
 @IdClass(PlayListSongPK.class)
 public class PlayListSong {
     @Id
-    @Column(nullable = false)
+    @Column(name="playlistId", nullable = false)
     private String playlistId;
 
     @Id
-    @Column(nullable = false)
+    @Column(name="songId", nullable = false)
     private String songId;
+
 }

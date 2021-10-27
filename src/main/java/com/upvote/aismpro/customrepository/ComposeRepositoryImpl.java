@@ -34,19 +34,19 @@ public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
     @Override
     public List<String> findKeyword(String keyword) {
         switch(keyword) {
-            case "Genre":
+            case "genre":
                 return query.select(compose.genre)
                         .distinct()
                         .from(compose)
                         .fetch();
 
-            case "FirstMood":
+            case "firstMood":
                 return query.select(compose.first_mood)
                         .distinct()
                         .from(compose)
                         .fetch();
 
-            case "SecondMood":
+            case "secondMood":
                 return query.select(compose.second_mood)
                         .distinct()
                         .from(compose)
