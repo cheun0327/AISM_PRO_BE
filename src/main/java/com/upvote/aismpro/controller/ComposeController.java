@@ -27,9 +27,9 @@ public class ComposeController {
         List<String> allFirstMood = composeService.getKeywords("firstMood");
         List<String> allSecondMood = composeService.getKeywords("secondMood");
 
-        composeInfo.put("Genre", allGenre);
-        composeInfo.put("First_Mood", allFirstMood);
-        composeInfo.put("Second_Mood", allSecondMood);
+        composeInfo.put("genre", allGenre);
+        composeInfo.put("firstMood", allFirstMood);
+        composeInfo.put("secondMood", allSecondMood);
 
         return composeInfo;
     }
