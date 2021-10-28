@@ -59,7 +59,7 @@ public class SignupController {
 
     // 회원가입 실행
     @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
+    public Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
         try {
             Map<String, Object> map = new HashMap<>();
             // 일반 회원가입

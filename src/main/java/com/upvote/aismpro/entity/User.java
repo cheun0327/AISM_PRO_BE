@@ -28,6 +28,9 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @Column
+    private String platform;
+
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<Create> creates = new ArrayList<Create>();
