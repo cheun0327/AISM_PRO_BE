@@ -2,22 +2,22 @@ package com.upvote.aismpro.controller;
 
 
 import com.google.gson.JsonObject;
+import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.loginverifier.GoogleTokenVerifier;
 import com.upvote.aismpro.loginverifier.NaverTokenVerifier;
 import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class LoginController {
@@ -80,44 +80,35 @@ public class LoginController {
     }
 
     @PostMapping("/login/google")
-    public @ResponseBody Map<String, Object> googleLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> googleInfo) {
+    public ResponseEntity<LoginUserDTO> googleLogin(HttpSession tmpSession, @RequestBody LinkedHashMap<String, Object> googleInfo) {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
 
         System.out.println("google 로그인 : " + googleProfile.get("email"));
 
         try {
-            String userId = login.snsLinkageCheck("google", googleProfile.get("email"));
-            Map<String, Object> map = new HashMap<>();
+            User user = login.checkUser("google", googleProfile.get("name"), googleProfile.get("email"));
 
-            // sns 로그인 정보로 og 회원 정보 가져오기
-            User user = login.getUserInfo(userId);
-
-            //userId로 token 생성
+            // token 생성
             String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
-            Map<String, String> data = new HashMap<String, String>() {{
-                    put("token", token);
-                    put("userId", userId);
-                    put("userEmail", user.getEmail());
-                    put("userNickName", user.getNickName());
-                }};
-            map.put("result", true);
-            map.put("data", data);
-            System.out.println("google login Token : " + token);
-            return map;
-        } catch (EntityNotFoundException e){
+            return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
+
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
 
-            // Session 설정
-            HttpSession tmpSession = request.getSession();
+            System.out.println(tmpSession.getId());
 
             tmpSession.setAttribute("platform", "google");
-            tmpSession.setAttribute("snsEmail", googleProfile.get("email"));
+            tmpSession.setAttribute("name", googleProfile.get("name"));
+            tmpSession.setAttribute("email", googleProfile.get("email"));
+            System.out.println(tmpSession.getMaxInactiveInterval());
 
-            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-            return Collections.singletonMap("result", false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
