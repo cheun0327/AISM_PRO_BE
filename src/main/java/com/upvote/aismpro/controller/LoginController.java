@@ -80,7 +80,7 @@ public class LoginController {
     }
 
     @PostMapping("/login/google")
-    public ResponseEntity<LoginUserDTO> googleLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> googleInfo) {
+    public ResponseEntity<LoginUserDTO> googleLogin(HttpSession tmpSession, @RequestBody LinkedHashMap<String, Object> googleInfo) {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
 
@@ -92,18 +92,17 @@ public class LoginController {
             // token 생성
             String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
-            System.out.println("google login Token : " + token);
-
             return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
 
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            // Session 설정
-            HttpSession tmpSession = request.getSession();
+
+            System.out.println(tmpSession.getId());
 
             tmpSession.setAttribute("platform", "google");
             tmpSession.setAttribute("name", googleProfile.get("name"));
-            tmpSession.setAttribute("snsEmail", googleProfile.get("email"));
+            tmpSession.setAttribute("email", googleProfile.get("email"));
+            System.out.println(tmpSession.getMaxInactiveInterval());
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 

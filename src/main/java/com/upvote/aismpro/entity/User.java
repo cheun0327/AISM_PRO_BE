@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -52,9 +53,16 @@ public class User {
     private List<PlayList> playlists = new ArrayList<PlayList>();
 
     @Builder
-    public User(String nickName, String email, String picture) {
+    public User(String nickName, String email) {
         this.nickName = nickName;
         this.email = email;
+    }
+
+    public User(String name, String email, String platform) {
+        this.id = UUID.randomUUID().toString();
+        this.nickName = name;
+        this.email = email;
+        this.platform = platform;
     }
 
     // playlist 추가
