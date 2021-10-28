@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
@@ -80,7 +82,7 @@ public class LoginController {
     }
 
     @PostMapping("/login/google")
-    public ResponseEntity<LoginUserDTO> googleLogin(HttpSession tmpSession, @RequestBody LinkedHashMap<String, Object> googleInfo) {
+    public ResponseEntity<LoginUserDTO> googleLogin(HttpServletRequest request, HttpServletResponse response, @RequestBody LinkedHashMap<String, Object> googleInfo) {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
 
@@ -97,12 +99,16 @@ public class LoginController {
         } catch (NoSuchElementException e) {
             e.printStackTrace();
 
-            System.out.println(tmpSession.getId());
+            HttpSession session = request.getSession();
+            System.out.println("생성 세션 : " + session.getId());
 
-            tmpSession.setAttribute("platform", "google");
-            tmpSession.setAttribute("name", googleProfile.get("name"));
-            tmpSession.setAttribute("email", googleProfile.get("email"));
-            System.out.println(tmpSession.getMaxInactiveInterval());
+            session.setAttribute("platform", "google");
+            session.setAttribute("name", googleProfile.get("name"));
+            session.setAttribute("email", googleProfile.get("email"));
+            session.setMaxInactiveInterval(6*60*60);
+
+            Cookie userCookie = new Cookie("JSESSIONID", session.getId());
+            response.addCookie(userCookie);
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 

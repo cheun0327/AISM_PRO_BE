@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
@@ -61,20 +62,24 @@ public class SignupController {
         return Collections.singletonMap("result", true);
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request, HttpSession tmpSession) throws Exception {
-        try {
-            System.out.println(request.getSession().isNew());
-            System.out.println(tmpSession.getId());
 
-            System.out.println(tmpSession.getAttribute("name").toString()+
-                    tmpSession.getAttribute("email").toString()+
-                    tmpSession.getAttribute("platform").toString());
+    @PostMapping("/signup")
+    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) throws Exception {
+        try {
+
+            Cookie[] cookies = request.getCookies();
+            System.out.println(cookies);
+            HttpSession session = request.getSession();
+
+            System.out.println("읽은 세션 : " + session.getId());
+
+            System.out.println((String) session.getAttribute("email"));
 
             User user = new User(
-                    tmpSession.getAttribute("name").toString(),
-                    tmpSession.getAttribute("email").toString(),
-                    tmpSession.getAttribute("platform").toString());
+                    session.getAttribute("name").toString(),
+                    session.getAttribute("email").toString(),
+                    session.getAttribute("platform").toString()
+            );
 
             // user 등록
             signup.signup(user);

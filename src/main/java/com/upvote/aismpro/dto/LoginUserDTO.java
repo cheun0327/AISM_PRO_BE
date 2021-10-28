@@ -18,4 +18,5 @@ public class LoginUserDTO {
         this.email = user.getEmail();
         this.nickName = user.getNickName();
     }
+
 }
