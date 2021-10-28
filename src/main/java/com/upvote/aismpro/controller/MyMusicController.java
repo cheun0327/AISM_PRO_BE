@@ -77,7 +77,13 @@ public class MyMusicController {
     }
 
     @GetMapping("/playlist/detail/{playlistId}")
-    public PlaylistDetailDTO getPlaylistDetail(@PathVariable("playlistId") String playlistId) throws Exception {
-        return myMusicService.getPlayListDetail(playlistId);
+    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") String playlistId) throws Exception {
+        try{
+            return new ResponseEntity<>(myMusicService.getPlayListDetail(playlistId), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
