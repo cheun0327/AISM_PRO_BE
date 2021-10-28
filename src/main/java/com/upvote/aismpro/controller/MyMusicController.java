@@ -1,6 +1,7 @@
 package com.upvote.aismpro.controller;
 
-
+import com.upvote.aismpro.dto.CreateDTO;
+import com.upvote.aismpro.dto.LikeDTO;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.service.MyMusicService;
@@ -76,7 +77,13 @@ public class MyMusicController {
     }
 
     @GetMapping("/playlist/detail/{playlistId}")
-    public PlaylistDetailDTO getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
-        return myMusicService.getPlayListDetail(playlistId);
+    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") String playlistId) throws Exception {
+        try{
+            return new ResponseEntity<>(myMusicService.getPlayListDetail(playlistId), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

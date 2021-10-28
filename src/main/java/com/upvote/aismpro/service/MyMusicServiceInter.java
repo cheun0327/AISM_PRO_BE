@@ -4,7 +4,6 @@ import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 
 import java.util.List;
-import java.util.Map;
 
 public interface MyMusicServiceInter{
     // like list 가져오기
@@ -23,5 +22,5 @@ public interface MyMusicServiceInter{
     public List<PlaylistDTO> getPlayList(String userId) throws Exception;
 
     // playlist detail 가져오가
-    public PlaylistDetailDTO getPlayListDetail(String playlistId);
+    public PlaylistDetailDTO getPlayListDetail(String playlistId) throws Exception;
 }

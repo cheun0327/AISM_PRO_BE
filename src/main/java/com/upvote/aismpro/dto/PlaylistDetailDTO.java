@@ -16,6 +16,5 @@ public class PlaylistDetailDTO {
     private String playlistState;
     private String playlistImg;
     private List<SongDTO> songs;
-
-
+    private List<String> keywords;
 }

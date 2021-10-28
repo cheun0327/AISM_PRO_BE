@@ -12,11 +12,4 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
 
-    private final JPAQueryFactory queryFactory;
-    private QPlayList playList = QPlayList.playList;
-
-
-//    public List<PlaylistInfoDTO> findInfoByCategoryAndPlaylistIdQD(@Param("ID") String ID){
-//
-//    }
 }
