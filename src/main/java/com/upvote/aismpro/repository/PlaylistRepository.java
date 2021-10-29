@@ -12,5 +12,5 @@ import java.util.Map;
 
 @Repository
 public interface PlaylistRepository extends JpaRepository<PlayList, String>, PlaylistRepositoryCustom {
-
+    List<PlayList> findByPlaylistIdNotAndFirstMoodOrSecondMoodOrThirdMood(String playlistID, String firstMood, String secondMood, String thirdMood);
 }

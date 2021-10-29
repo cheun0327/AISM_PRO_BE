@@ -128,15 +128,7 @@ public class MyMusicService implements MyMusicServiceInter{
     @Override
     public PlaylistDetailDTO getPlayListDetail(String playlistId) throws Exception {
         try {
-            PlaylistDetailDTO playlistInfo = modelMapper.playlistDetailMapper().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
-
-            List<String> keywords = new ArrayList<>();
-
-            playlistInfo.getSongs().forEach((song) -> keywords.addAll(song.getTag()));
-
-            playlistInfo.setKeywords(findKeywordsInPlayList(keywords, 3));
-
-            return playlistInfo;
+            return modelMapper.playlistDetailMapper().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();
@@ -144,27 +136,5 @@ public class MyMusicService implements MyMusicServiceInter{
             e.printStackTrace();
             throw new Exception();
         }
-    }
-
-    // Playlist 키워드 추출 : 곡 키워드 중복 상위 3개 추출
-    public List<String> findKeywordsInPlayList(List<String> keywords, int k) {
-        Set<String> distinct_keyword = new HashSet<>(keywords);
-        Map<String, Integer> keyword_count = new HashMap<>();
-        List<String> final_keywords = new ArrayList<>();
-
-        for(String keyword : distinct_keyword) {
-            keyword_count.put(keyword, Collections.frequency(keywords, keyword));
-        }
-
-        Collections.sort(keywords, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return keyword_count.get(o2).compareTo(keyword_count.get(o1));
-            }
-        });
-
-        final_keywords.addAll(new LinkedHashSet<>(keywords));
-
-        return final_keywords.size() >= k ? final_keywords.subList(0, k) : final_keywords;
     }
 }
