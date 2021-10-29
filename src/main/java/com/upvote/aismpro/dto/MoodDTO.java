@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MoodDTO {
+    private String songId;
     private String genre;
     private String firstMood;
     private String secondMood;
