@@ -38,34 +38,42 @@ public class LoginController {
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public @ResponseBody Map<String, Object> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
+    public ResponseEntity<Map<String, Object>> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
         // 카카오 로그인 정보 json
         LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
         // 카카오 로그인 유저 정보 json
         LinkedHashMap<String, String> kakaoProfileInfo = (LinkedHashMap<String, String>) kakaoProfile.get("kakao_account");
 
+        LinkedHashMap<String, String> kakaoNickname = (LinkedHashMap<String, String>) kakaoProfileInfo.get("profile");
+
         System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
         // Oauth info에서 이메일로 정보 찾고 없으면 있으면 로그인 시키고 아니면 없다고 알려줌(회원가입하거나, 연동해야함)
         try {
-            String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
-            Map<String, Object> map = new HashMap<>();
+            System.out.println(kakaoProfile.get("profile") + kakaoProfileInfo.get("email"));
+//            User user = login.checkUser("kakao", kakaoProfileInfo.get("name"), kakaoProfileInfo.get("email"));
+//            // token 생성
+//            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
-            // sns 로그인 정보로 og 회원 정보 가져오기
-            User user = login.getUserInfo(userId);
-
-            //userId로 token 생성
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
-
-            Map<String, String> data = new HashMap<String, String>() {{
-                put("token", token);
-                put("userId", userId);
-                put("userEmail", user.getEmail());
-                put("userNickName", user.getNickName());
-            }};
-            map.put("result", true);
-            map.put("data", data);
-
-            return map;
+            return new ResponseEntity<>(HttpStatus.OK);
+//            String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
+//            Map<String, Object> map = new HashMap<>();
+//
+//            // sns 로그인 정보로 og 회원 정보 가져오기
+//            User user = login.getUserInfo(userId);
+//
+//            //userId로 token 생성
+//            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+//
+//            Map<String, String> data = new HashMap<String, String>() {{
+//                put("token", token);
+//                put("userId", userId);
+//                put("userEmail", user.getEmail());
+//                put("userNickName", user.getNickName());
+//            }};
+//            map.put("result", true);
+//            map.put("data", data);
+//
+//            return map;
         } catch (EntityNotFoundException e){
             e.printStackTrace();
 
@@ -77,7 +85,7 @@ public class LoginController {
 
             System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
 
-            return Collections.singletonMap("result", false);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -106,9 +114,6 @@ public class LoginController {
             session.setAttribute("name", googleProfile.get("name"));
             session.setAttribute("email", googleProfile.get("email"));
             session.setMaxInactiveInterval(6*60*60);
-
-            Cookie userCookie = new Cookie("JSESSIONID", session.getId());
-            response.addCookie(userCookie);
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 

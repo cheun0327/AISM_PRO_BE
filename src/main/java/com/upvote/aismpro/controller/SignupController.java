@@ -5,6 +5,7 @@ import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.SignupServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,9 +67,6 @@ public class SignupController {
     @PostMapping("/signup")
     public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) throws Exception {
         try {
-
-            Cookie[] cookies = request.getCookies();
-            System.out.println(cookies);
             HttpSession session = request.getSession();
 
             System.out.println("읽은 세션 : " + session.getId());
