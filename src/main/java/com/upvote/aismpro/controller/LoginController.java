@@ -38,54 +38,38 @@ public class LoginController {
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public ResponseEntity<Map<String, Object>> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
+    public ResponseEntity<LoginUserDTO> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
         // 카카오 로그인 정보 json
         LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
         // 카카오 로그인 유저 정보 json
-        LinkedHashMap<String, String> kakaoProfileInfo = (LinkedHashMap<String, String>) kakaoProfile.get("kakao_account");
+        LinkedHashMap<String, Object> kakaoProfileInfo = (LinkedHashMap<String, Object>) kakaoProfile.get("kakao_account");
 
-        LinkedHashMap<String, String> kakaoNickname = (LinkedHashMap<String, String>) kakaoProfileInfo.get("profile");
+        LinkedHashMap<String, Object> profile = (LinkedHashMap<String, Object>) kakaoProfileInfo.get("profile");
 
         System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
-        // Oauth info에서 이메일로 정보 찾고 없으면 있으면 로그인 시키고 아니면 없다고 알려줌(회원가입하거나, 연동해야함)
         try {
-            System.out.println(kakaoProfile.get("profile") + kakaoProfileInfo.get("email"));
-//            User user = login.checkUser("kakao", kakaoProfileInfo.get("name"), kakaoProfileInfo.get("email"));
-//            // token 생성
-//            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+            System.out.println((String) profile.get("nickname") + kakaoProfileInfo.get("email"));
+            User user = login.checkUser("kakao", (String) profile.get("nickname"), (String) kakaoProfileInfo.get("email"));
+            // token 생성
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
-            return new ResponseEntity<>(HttpStatus.OK);
-//            String userId = login.snsLinkageCheck("kakao", kakaoProfileInfo.get("email"));
-//            Map<String, Object> map = new HashMap<>();
-//
-//            // sns 로그인 정보로 og 회원 정보 가져오기
-//            User user = login.getUserInfo(userId);
-//
-//            //userId로 token 생성
-//            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
-//
-//            Map<String, String> data = new HashMap<String, String>() {{
-//                put("token", token);
-//                put("userId", userId);
-//                put("userEmail", user.getEmail());
-//                put("userNickName", user.getNickName());
-//            }};
-//            map.put("result", true);
-//            map.put("data", data);
-//
-//            return map;
-        } catch (EntityNotFoundException e){
+            return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
+
+        } catch (NoSuchElementException e){
             e.printStackTrace();
 
             // Session 설정
-            HttpSession tmpSession = request.getSession();
+            HttpSession session = request.getSession();
 
-            tmpSession.setAttribute("platform", "kakao");
-            tmpSession.setAttribute("snsEmail", kakaoProfileInfo.get("email"));
-
-            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
+            session.setAttribute("platform", "kakao");
+            session.setAttribute("name", (String) profile.get("nickname"));
+            session.setAttribute("email", kakaoProfileInfo.get("email"));
+            session.setMaxInactiveInterval(6*60*60);
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
