@@ -24,7 +24,7 @@ public class LoginService implements LoginServiceInter{
 
     public User checkUser(String platform, String name, String email) throws Exception {
 
-        List<User> users = userRepository.findAllByPlatformAndNickNameAndEmail(platform, name, email);
+        List<User> users = userRepository.findAllByPlatformAndEmail(platform, email);
         if (users.isEmpty()) throw new NoSuchElementException();
         if (users.size() > 1) throw new IllegalAccessException();
         return users.get(0);
