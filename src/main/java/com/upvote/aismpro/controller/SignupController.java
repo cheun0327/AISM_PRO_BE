@@ -1,16 +1,22 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.SignupServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 public class SignupController {
@@ -57,9 +63,39 @@ public class SignupController {
         return Collections.singletonMap("result", true);
     }
 
+
+    @PostMapping("/signup")
+    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) throws Exception {
+        try {
+            HttpSession session = request.getSession();
+
+            System.out.println("읽은 세션 : " + session.getId());
+
+            System.out.println((String) session.getAttribute("email"));
+
+            User user = new User(
+                    session.getAttribute("name").toString(),
+                    session.getAttribute("email").toString(),
+                    session.getAttribute("platform").toString()
+            );
+
+            // user 등록
+            signup.signup(user);
+            // user token 생성
+            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+            // 로그인 정보 전달 DTO 생성
+            LoginUserDTO loginUser = new LoginUserDTO(token, user);
+
+
+            return new ResponseEntity<>(loginUser, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException();
+        }
+    }
+
     // 회원가입 실행
     @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
+    public Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
         try {
             Map<String, Object> map = new HashMap<>();
             // 일반 회원가입

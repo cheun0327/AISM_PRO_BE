@@ -45,12 +45,24 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
+    Converter<PlayList, List<String>> playlistTagCvt = new Converter<PlayList, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<PlayList, List<String>> context) {
+            return new ArrayList<String>(Arrays.asList(
+                    context.getSource().getFirstMood(),
+                    context.getSource().getSecondMood(),
+                    context.getSource().getThirdMood()
+            ));
+        }
+    };
+
     @Bean
     public ModelMapper playlistDetailMapper() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper.createTypeMap(PlayList.class, PlaylistDetailDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
                 .addMapping(PlayList::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(PlayList::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(PlayList::getState, PlaylistDetailDTO::setPlaylistState)

@@ -36,6 +36,15 @@ public class PlayList {
     )
     private List<Song> songs = new ArrayList<>();
 
+    @Column
+    private String firstMood;
+
+    @Column
+    private String secondMood;
+
+    @Column
+    private String thirdMood;
+
     @Column(nullable = false)
     private String state;
 
