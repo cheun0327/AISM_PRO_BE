@@ -45,8 +45,10 @@ public class PlaylistService implements PlaylistServiceInter{
 
     @Override
     public List<PlaylistDetailDTO> getSimilarPlaylist(MoodDTO moodDTO) throws Exception {
-        List<PlayList> similar_li = playlistRepository.findByPlaylistIdNotAndFirstMoodOrSecondMoodOrThirdMood(moodDTO.getSongId(), moodDTO.getFirstMood(), moodDTO.getSecondMood(), moodDTO.getThirdMood());
+        List<PlayList> similar_li = playlistRepository.findSimilarPlaylistQD(moodDTO);
         try {
+            Collections.shuffle(similar_li);
+            
             return similar_li.size() > 5 ?
                     similar_li
                             .stream().map(Playlist -> modelMapper.likeMapper().map(Playlist, PlaylistDetailDTO.class))

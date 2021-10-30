@@ -15,4 +15,15 @@ import java.util.List;
 public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QPlayList playlist = QPlayList.playList;
+
+    @Override
+    public List<PlayList> findSimilarPlaylistQD(MoodDTO moodDTO) {
+        return queryFactory.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.playlistId.ne(moodDTO.getSongId())
+                                .and(playlist.firstMood.eq(moodDTO.getFirstMood()))
+                )
+                .fetch();
+    }
 }
