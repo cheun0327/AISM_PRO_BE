@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Table(name = "playlist_like")
 @NoArgsConstructor
 public class PlaylistLike {
 
