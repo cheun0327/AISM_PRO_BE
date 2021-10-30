@@ -5,7 +5,6 @@ import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.QPlayList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

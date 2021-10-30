@@ -3,6 +3,7 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.MoodDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
+import com.upvote.aismpro.entity.PlayListSong;
 import com.upvote.aismpro.service.MyMusicServiceInter;
 import com.upvote.aismpro.service.PlaylistServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,16 @@ public class PlaylistController {
         } catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @PostMapping("/playlist/saved/{songId}")
+    private ResponseEntity<List<PlaylistDetailDTO>> getSavedPlaylist(@PathVariable("songId") String songId) {
+        try {
+            return new ResponseEntity<>(playlistService.getSavedPlaylistBySongID(songId), HttpStatus.OK);
+        } catch(NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
