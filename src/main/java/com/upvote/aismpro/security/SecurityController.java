@@ -24,8 +24,14 @@ public class SecurityController {
     public Map<String, Object> validateToken(@RequestParam("token") String token) {
         System.out.println(token);
         try {
+            System.out.println(token);
             Boolean isValid = securityService.validateToken(token);
+            System.out.println(isValid);
         } catch (ExpiredJwtException jwtE) {
+            jwtE.printStackTrace();
+            return Collections.singletonMap("isValid", false);
+        } catch (Exception e) {
+            e.printStackTrace();
             return Collections.singletonMap("isValid", false);
         }
         return Collections.singletonMap("isValid", securityService.validateToken(token));
