@@ -26,9 +26,10 @@ public class SignupService implements SignupServiceInter{
     @Override
     public void signup(User user) throws Exception{
         try {
-            user.setId(createRandomId());
+            System.out.println(user);
             userRepository.save(user);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("새로운 User 등록에 실패하였습니다.");
         }
     }
@@ -55,7 +56,7 @@ public class SignupService implements SignupServiceInter{
     }
 
     @Override
-    public void nickDoubleCheck(String nickName) {
+    public void nickDoubleCheck(String nickName) throws Exception {
         List<User> findUsers = userRepository.findByNickName(nickName);
         if (!findUsers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 닉네임입니다.");

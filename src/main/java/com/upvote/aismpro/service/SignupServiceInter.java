@@ -5,7 +5,7 @@ import com.upvote.aismpro.entity.User;
 
 public interface SignupServiceInter {
     // 닉네임 중복 확인
-    public void nickDoubleCheck(String nickName);
+    public void nickDoubleCheck(String nickName) throws Exception;
     // 이메일 중복 확인
     public void emailDoubleCheck(String email);
     // 회원가입 실행

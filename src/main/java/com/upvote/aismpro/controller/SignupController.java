@@ -51,16 +51,18 @@ public class SignupController {
 
     // 닉네임 중복 확인
     @GetMapping("/signup/nickname/validate/{nickName}")
-    public @ResponseBody
-    Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
+    public ResponseEntity<Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
         System.out.println("== nickName Double Check : " + nickName);
         try {
             signup.nickDoubleCheck(nickName);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (IllegalStateException e) {
             e.printStackTrace();
-            return Collections.singletonMap("result", false);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return Collections.singletonMap("result", true);
     }
 
 
@@ -78,7 +80,6 @@ public class SignupController {
                     session.getAttribute("email").toString(),
                     session.getAttribute("platform").toString()
             );
-
             // user 등록
             signup.signup(user);
             // user token 생성
@@ -86,48 +87,9 @@ public class SignupController {
             // 로그인 정보 전달 DTO 생성
             LoginUserDTO loginUser = new LoginUserDTO(token, user);
 
-
             return new ResponseEntity<>(loginUser, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException();
         }
-    }
-
-    // 회원가입 실행
-    @PostMapping("/signup.do")
-    public Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
-        try {
-            Map<String, Object> map = new HashMap<>();
-            // 일반 회원가입
-            signup.signup(user);
-
-            // 시도했던 소셜 로그인 정보 저장
-            String snsTmpPlatform = tmpSession.getAttribute("platform").toString();
-            String snsTmpEmail = tmpSession.getAttribute("snsEmail").toString();
-            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
-
-            // 회원가입 계정과 oAuth 연동
-            signup.linking(user.getId(), snsTmpPlatform, snsTmpEmail);
-
-            //session 삭제
-            tmpSession.invalidate();
-
-            //userId로 token 생성
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
-
-            Map<String, String> data = new HashMap<String, String>() {{
-                put("token", token);
-                put("userId", user.getId());
-                put("userEmail", user.getEmail());
-                put("userNickName", user.getNickName());
-            }};
-            map.put("result", true);
-            map.put("data", data);
-            //TODO
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.singletonMap("result", false);
-        }
-        return Collections.singletonMap("result", true);
     }
 }
