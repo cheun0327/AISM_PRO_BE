@@ -55,7 +55,8 @@ public class CustomModelMapper {
                 .addMapping(User::getId, UserDTO::setUserId)
                 .addMapping(User::getEmail, UserDTO::setEmail)
                 .addMapping(User::getNickName, UserDTO::setNickName)
-                .addMapping(User::getPlatform, UserDTO::setPlatform);
+                .addMapping(User::getPlatform, UserDTO::setPlatform)
+                .addMapping(User::getProfile, UserDTO::setProfile);
 
         return modelMapper;
     }
