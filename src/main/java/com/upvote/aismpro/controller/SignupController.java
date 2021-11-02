@@ -41,7 +41,7 @@ public class SignupController {
     }
 
     // 닉네임 중복 확인
-    @GetMapping("/signup/nickname/validate/{nickName}")
+    @GetMapping("/nickname/validate/{nickName}")
     public ResponseEntity<Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
         System.out.println("== nickName Double Check : " + nickName);
         try {
@@ -57,14 +57,14 @@ public class SignupController {
     }
 
 
-    @PostMapping("/signup")
-    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) {
+    @PostMapping("/signup/{nickName}")
+    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request, @PathVariable("nickName") String nickName) {
         try {
             HttpSession session = request.getSession();
             String platform = session.getAttribute("platform").toString();
 
             User user = new User(
-                    session.getAttribute("name").toString(),
+                    nickName,
                     session.getAttribute("email").toString(),
                     platform
             );
