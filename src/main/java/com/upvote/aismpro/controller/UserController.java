@@ -1,9 +1,6 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.UserDTO;
-import com.upvote.aismpro.entity.OAuth;
-import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.security.SecurityService;
 import com.upvote.aismpro.service.MyPageService;
 import com.upvote.aismpro.service.SignupServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
