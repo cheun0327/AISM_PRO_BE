@@ -22,7 +22,7 @@ public class LoginService implements LoginServiceInter{
     @Autowired
     private OAuthRepository oAuthRepository;
 
-    public User checkUser(String platform, String name, String email) throws Exception {
+    public User checkUser(String platform, String email) throws Exception {
 
         List<User> users = userRepository.findAllByPlatformAndEmail(platform, email);
         if (users.isEmpty()) throw new NoSuchElementException();

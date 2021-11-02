@@ -6,6 +6,7 @@ import com.upvote.aismpro.repository.OAuthRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,26 +22,16 @@ public class SignupService implements SignupServiceInter{
 
 
     @Override
+    @Transactional
     public void signup(User user) throws Exception{
         try {
             List<User> users = userRepository.findAllByPlatformAndEmail(user.getPlatform(), user.getEmail());
+            System.out.println(users);
             if (users.size() >= 1)  throw new IllegalAccessException();
             userRepository.save(user);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("새로운 User 등록에 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public User signupParam(String nickName, String email, String platform) throws Exception {
-        try {
-            User user = new User(
-                    createRandomId(), nickName, email, platform
-            );
-            userRepository.save(user);
-            return user;
+        } catch (IllegalAccessException e){
+            throw new IllegalAccessException();
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("새로운 User 등록에 실패하였습니다.");

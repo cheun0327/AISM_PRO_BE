@@ -10,7 +10,6 @@ public interface SignupServiceInter {
     public void emailDoubleCheck(String email);
     // 회원가입 실행
     public void signup(User input) throws Exception;
-    public User signupParam(String nickName, String email, String platform) throws Exception;
     // 연동 실행
     public void linking(String userId, String platform, String email) throws Exception;
 }

@@ -58,7 +58,7 @@ public class SignupController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) throws Exception {
+    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request) {
         try {
             HttpSession session = request.getSession();
             String platform = session.getAttribute("platform").toString();
@@ -78,6 +78,7 @@ public class SignupController {
 
             return new ResponseEntity<>(loginUser, HttpStatus.OK);
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
