@@ -19,7 +19,7 @@ public class LoginUserDTO {
         this.userId = user.getId();
         this.email = user.getEmail();
         this.nickName = user.getNickName();
-        this.profile = null;
+        this.profile = user.getProfile();
     }
 
     public LoginUserDTO(String token, User user, String platform) {
@@ -28,6 +28,6 @@ public class LoginUserDTO {
         this.email = user.getEmail();
         this.nickName = user.getNickName();
         this.platform = platform;
-        this.profile = null;
+        this.profile = user.getProfile();
     }
 }
