@@ -1,6 +1,7 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.UserDTO;
+import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.service.MyPageService;
 import com.upvote.aismpro.service.SignupServiceInter;
@@ -29,6 +30,7 @@ public class UserController {
 
     @Autowired
     private UserServiceInter userService;
+
 
     // 이메일 중복 확인
     @GetMapping("/user/email/validate/{email}")
@@ -72,28 +74,23 @@ public class UserController {
     }
 
     @PostMapping("/user/img/{userId}")
-    public Map<String, Object> uploadProfileImg(
+    public ResponseEntity<UserDTO> uploadProfileImg(
             @PathVariable("userId") String userId,
             @RequestParam("file") MultipartFile file) throws IOException {
         Map<String, Object> map = new HashMap<>();
 
         String imgName = file.getOriginalFilename();
-        String path = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgName;
-//        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/song/" + imgName;
+//        String path = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgName;
+        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgName;
         File dst = new File(path);
 
         try {
             file.transferTo(dst);
-            System.out.println(imgName);
-            map.put("img", imgName);
-            map.put("result", true);
-            userService.setProfile(userId, imgName);
+            UserDTO user = userService.setProfile(userId, imgName);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-
-            map.put("result", false);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        return map;
     }
 }
