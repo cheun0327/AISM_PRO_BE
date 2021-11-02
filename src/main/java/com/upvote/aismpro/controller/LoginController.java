@@ -49,7 +49,7 @@ public class LoginController {
         System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
         try {
             System.out.println((String) profile.get("nickname") + kakaoProfileInfo.get("email"));
-            User user = login.checkUser("kakao", (String) profile.get("nickname"), (String) kakaoProfileInfo.get("email"));
+            User user = login.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
             // token 생성
             String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
@@ -61,7 +61,19 @@ public class LoginController {
             // Session 설정
             HttpSession session = request.getSession();
 
-            session.setAttribute("platform", "kakao");
+            session.setAttribute("platform", "카카오");
+            session.setAttribute("name", (String) profile.get("nickname"));
+            session.setAttribute("email", kakaoProfileInfo.get("email"));
+            session.setMaxInactiveInterval(6*60*60);
+
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+
+            // Session 설정
+            HttpSession session = request.getSession();
+
+            session.setAttribute("platform", "카카오");
             session.setAttribute("name", (String) profile.get("nickname"));
             session.setAttribute("email", kakaoProfileInfo.get("email"));
             session.setMaxInactiveInterval(6*60*60);
@@ -81,7 +93,7 @@ public class LoginController {
         System.out.println("google 로그인 : " + googleProfile.get("email"));
 
         try {
-            User user = login.checkUser("google", googleProfile.get("name"), googleProfile.get("email"));
+            User user = login.checkUser("구글", googleProfile.get("email"));
 
             // token 생성
             String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
@@ -94,16 +106,19 @@ public class LoginController {
             HttpSession session = request.getSession();
             System.out.println("생성 세션 : " + session.getId());
 
-            session.setAttribute("platform", "google");
+            session.setAttribute("platform", "구글");
             session.setAttribute("name", googleProfile.get("name"));
             session.setAttribute("email", googleProfile.get("email"));
             session.setMaxInactiveInterval(6*60*60);
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -112,7 +127,7 @@ public class LoginController {
         Map<String, Object> naverProfile = naverTokenVerifier.getUserInfo(access_token);
 
         try {
-            String userId = login.snsLinkageCheck("naver", (String) ((String) naverProfile.get("email")).replace("\"", ""));
+            String userId = login.snsLinkageCheck("네이버", (String) ((String) naverProfile.get("email")).replace("\"", ""));
             Map<String, Object> map = new HashMap<>();
 
             // sns 로그인 정보로 og 회원 정보 가져오기
@@ -136,7 +151,7 @@ public class LoginController {
             // Session 설정
             HttpSession tmpSession = request.getSession();
 
-            tmpSession.setAttribute("platform", "naver");
+            tmpSession.setAttribute("platform", "네이버");
             tmpSession.setAttribute("snsEmail", naverProfile.get("email"));
 
             System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
