@@ -32,6 +32,9 @@ public class User {
     @Column
     private String platform;
 
+    @Column
+    private String profile;
+
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<Create> creates = new ArrayList<Create>();

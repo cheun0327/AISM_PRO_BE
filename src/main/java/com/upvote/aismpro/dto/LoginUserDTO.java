@@ -12,12 +12,14 @@ public class LoginUserDTO {
     private String email;
     private String nickName;
     private String platform;
+    private String profile;
 
     public LoginUserDTO(String token, User user) {
         this.token = token;
         this.userId = user.getId();
         this.email = user.getEmail();
         this.nickName = user.getNickName();
+        this.profile = null;
     }
 
     public LoginUserDTO(String token, User user, String platform) {
@@ -26,5 +28,6 @@ public class LoginUserDTO {
         this.email = user.getEmail();
         this.nickName = user.getNickName();
         this.platform = platform;
+        this.profile = null;
     }
 }
