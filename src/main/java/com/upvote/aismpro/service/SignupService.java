@@ -19,15 +19,28 @@ public class SignupService implements SignupServiceInter{
     @Autowired
     private OAuthRepository oAuthRepository;
 
-    public void linkingSns(User user) {
-
-    }
 
     @Override
     public void signup(User user) throws Exception{
         try {
-            System.out.println(user);
+            List<User> users = userRepository.findAllByPlatformAndEmail(user.getPlatform(), user.getEmail());
+            if (users.size() >= 1)  throw new IllegalAccessException();
             userRepository.save(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("새로운 User 등록에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public User signupParam(String nickName, String email, String platform) throws Exception {
+        try {
+            User user = new User(
+                    createRandomId(), nickName, email, platform
+            );
+            userRepository.save(user);
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("새로운 User 등록에 실패하였습니다.");
@@ -43,6 +56,7 @@ public class SignupService implements SignupServiceInter{
             oAuth.setEmail(email);
             oAuthRepository.save(oAuth);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("oAuth 등록에 실패하였습니다.");
         }
     }

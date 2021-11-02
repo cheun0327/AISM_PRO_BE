@@ -61,7 +61,7 @@ public class LoginController {
             // Session 설정
             HttpSession session = request.getSession();
 
-            session.setAttribute("platform", "kakao");
+            session.setAttribute("platform", "카카오");
             session.setAttribute("name", (String) profile.get("nickname"));
             session.setAttribute("email", kakaoProfileInfo.get("email"));
             session.setMaxInactiveInterval(6*60*60);
@@ -94,7 +94,7 @@ public class LoginController {
             HttpSession session = request.getSession();
             System.out.println("생성 세션 : " + session.getId());
 
-            session.setAttribute("platform", "google");
+            session.setAttribute("platform", "구글");
             session.setAttribute("name", googleProfile.get("name"));
             session.setAttribute("email", googleProfile.get("email"));
             session.setMaxInactiveInterval(6*60*60);
@@ -136,7 +136,7 @@ public class LoginController {
             // Session 설정
             HttpSession tmpSession = request.getSession();
 
-            tmpSession.setAttribute("platform", "naver");
+            tmpSession.setAttribute("platform", "네이버");
             tmpSession.setAttribute("snsEmail", naverProfile.get("email"));
 
             System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
