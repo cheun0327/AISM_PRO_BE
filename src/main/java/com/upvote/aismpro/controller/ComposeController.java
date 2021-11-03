@@ -74,7 +74,7 @@ public class ComposeController {
         Map<String, Object> map = new HashMap<>();
 
         String imgName = file.getOriginalFilename();
-        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/public/image/user/" + imgName;
+        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/public/image/song/" + imgName;
         File dst = new File(path);
         
         try {
