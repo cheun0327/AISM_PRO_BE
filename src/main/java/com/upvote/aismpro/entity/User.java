@@ -32,6 +32,9 @@ public class User {
     @Column
     private String platform;
 
+    @Column
+    private String profile;
+
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<Create> creates = new ArrayList<Create>();
@@ -58,9 +61,16 @@ public class User {
         this.email = email;
     }
 
-    public User(String name, String email, String platform) {
+    public User(String nickName, String email, String platform) {
         this.id = UUID.randomUUID().toString();
-        this.nickName = name;
+        this.nickName = nickName;
+        this.email = email;
+        this.platform = platform;
+    }
+
+    public User(String id, String nickName, String email, String platform) {
+        this.id = id;
+        this.nickName = nickName;
         this.email = email;
         this.platform = platform;
     }

@@ -45,6 +45,22 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
+    @Bean
+    public ModelMapper userMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(User.class, UserDTO.class)
+                .addMapping(User::getId, UserDTO::setUserId)
+                .addMapping(User::getEmail, UserDTO::setEmail)
+                .addMapping(User::getNickName, UserDTO::setNickName)
+                .addMapping(User::getPlatform, UserDTO::setPlatform)
+                .addMapping(User::getProfile, UserDTO::setProfile);
+
+        return modelMapper;
+    }
+
     Converter<PlayList, List<String>> playlistTagCvt = new Converter<PlayList, List<String>>() {
         @Override
         public List<String> convert(MappingContext<PlayList, List<String>> context) {

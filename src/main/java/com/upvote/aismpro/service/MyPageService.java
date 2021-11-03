@@ -1,5 +1,7 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.UserDTO;
 import com.upvote.aismpro.entity.OAuth;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.OAuthRepository;
@@ -19,7 +21,10 @@ public class MyPageService implements MyPageServiceInter{
     @Autowired
     private OAuthRepository oAuthRepository;
 
-    public User updateUser(String id, User user) {
+    @Autowired
+    private CustomModelMapper modelMapper;
+
+    public UserDTO updateUser(String id, UserDTO user) throws Exception {
         try {
             final User fetchedUser = userRepository.findById(id).get();
 
@@ -27,10 +32,10 @@ public class MyPageService implements MyPageServiceInter{
             if (user.getNickName() != null)  fetchedUser.setNickName(user.getNickName());
             userRepository.save(fetchedUser);
 
-            return fetchedUser;
+            return modelMapper.userMapper().map(fetchedUser, UserDTO.class);
         } catch(Exception e){
             e.printStackTrace();
-            return null;
+            throw new Exception();
         }
     }
 
