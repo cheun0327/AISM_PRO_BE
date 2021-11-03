@@ -75,6 +75,14 @@ public class User {
         this.platform = platform;
     }
 
+    public User(String id, String nickName, String email, String platform, String profile) {
+        this.id = id;
+        this.nickName = nickName;
+        this.email = email;
+        this.platform = platform;
+        this.profile = profile;
+    }
+
     // playlist 추가
     public void addPlaylist(PlayList playlist) {
         this.playlists.add(playlist);

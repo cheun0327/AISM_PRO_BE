@@ -77,16 +77,27 @@ public class UserController {
     public ResponseEntity<UserDTO> uploadProfileImg(
             @PathVariable("userId") String userId,
             @RequestParam("file") MultipartFile file) throws IOException {
-        Map<String, Object> map = new HashMap<>();
 
-        String imgName = file.getOriginalFilename();
-//        String path = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgName;
-        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgName;
-        File dst = new File(path);
+        String[] imgNameArr = file.getOriginalFilename().split("\\.");
+        String imgFolder = userId.replaceAll("-","");
+        String imgName = imgFolder + "." +imgNameArr[imgNameArr.length - 1];
+//        String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgFolder;
+        String dirPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgFolder;
+        File profileDir = new File(dirPath);
+
 
         try {
-            file.transferTo(dst);
-            UserDTO user = userService.setProfile(userId, imgName);
+            if (!profileDir.exists()) {
+                profileDir.mkdir();
+            }
+            else {
+                File[] files= profileDir.listFiles(); //파일리스트 얻어오기
+                for (File f : files) f.delete(); //파일 삭제
+            }
+
+            file.transferTo(new File(dirPath + "/" + imgName));
+            UserDTO user = userService.setProfile(userId, imgFolder + "/" + imgName);
+
             return new ResponseEntity<>(user, HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();

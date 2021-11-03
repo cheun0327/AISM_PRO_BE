@@ -19,6 +19,7 @@ public class LoginUserDTO {
         this.userId = user.getId();
         this.email = user.getEmail();
         this.nickName = user.getNickName();
+        this.platform = user.getPlatform();
         this.profile = user.getProfile();
     }
 
