@@ -81,7 +81,7 @@ public class UserController {
         String[] imgNameArr = file.getOriginalFilename().split("\\.");
         String imgFolder = userId.replaceAll("-","");
         String imgName = imgFolder + "." +imgNameArr[imgNameArr.length - 1];
-//        String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgFolder;
+//        String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/public/image/user/" + imgFolder;
         String dirPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgFolder;
         File profileDir = new File(dirPath);
 
