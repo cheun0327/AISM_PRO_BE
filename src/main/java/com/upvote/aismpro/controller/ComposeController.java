@@ -85,8 +85,6 @@ public class ComposeController {
         String dstPath = rootPath + "/" + String.join("/", dirs) + "/" + imgName;
 
         try {
-            System.out.println("create dir : " + dstDir);
-            System.out.println("create img : " + dstPath);
             Files.createDirectories(dstDir);
 
             File dst = new File(dstPath);
