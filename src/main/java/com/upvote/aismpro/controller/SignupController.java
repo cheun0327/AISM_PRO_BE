@@ -1,88 +1,60 @@
 package com.upvote.aismpro.controller;
 
-
+import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.security.SecurityService;
+import com.upvote.aismpro.service.SignupService;
 import com.upvote.aismpro.service.SignupServiceInter;
+import com.upvote.aismpro.service.UserServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 public class SignupController {
     @Autowired
-    private SignupServiceInter signup;
+    private SignupService signupService;
 
-    // oAuth 로그인 정보 연동 안된 사용자가 연동하기 페이지에서 연동 on을 클릭했을때
-    // sns로그인 팝업창 뜨고, 인증되면 백에서 알아서 oAuth DB에 넣어주고
-    // 리액트는 true 받으면 on/off 토글 변화
-    // {platform : "", email: ""}
-    @GetMapping("/snsLinking")
-    public void linking(HttpSession session, @RequestParam("platform") String platform, @RequestParam("email") String email) {
-
-    }
-
-    // 이메일 중복 확인
-    @GetMapping("/isValidEmail/{email}")
-    public @ResponseBody
-    Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
-        System.out.println("== email Double Check : " + email);
+    @PostMapping("/signup/{nickName}")
+    public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request,
+                                               @PathVariable("nickName") String nickName,
+                                               @RequestParam("file") MultipartFile file) {
         try {
-            signup.emailDoubleCheck(email);
-        } catch (IllegalStateException e) {
+            LoginUserDTO loginUserDTO = signupService.signup(request.getSession(), nickName, file);
+            return new ResponseEntity<>(loginUserDTO, HttpStatus.OK);
+        } catch (IllegalAccessException e){
             e.printStackTrace();
-            return Collections.singletonMap("result", false);
-        }
-        return Collections.singletonMap("result", true);
-    }
-
-    // 닉네임 중복 확인
-    @GetMapping("/isValidNickName/{nickName}")
-    public @ResponseBody
-    Map<String, Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
-        System.out.println("== nickName Double Check : " + nickName);
-        try {
-            signup.nickDoubleCheck(nickName);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-            return Collections.singletonMap("result", false);
-        }
-        return Collections.singletonMap("result", true);
-    }
-
-    // 회원가입 실행
-    @PostMapping("/signup.do")
-    public @ResponseBody Map<String, Boolean> signup(HttpServletRequest request, HttpSession tmpSession, @RequestBody User user) {
-        try {
-            // 일반 회원가입
-            signup.signup(user);
-
-            // 시도했던 소셜 로그인 정보 저장
-            String snsTmpPlatform = tmpSession.getAttribute("platform").toString();
-            String snsTmpEmail = tmpSession.getAttribute("snsEmail").toString();
-            System.out.println(tmpSession.getAttribute("platform").toString() + tmpSession.getAttribute("snsEmail").toString());
-
-            // 회원가입 계정과 oAuth 연동
-            signup.linking(user.getId(), snsTmpPlatform, snsTmpEmail);
-
-            //session 삭제
-            tmpSession.invalidate();
-
-            // 새로운 로그인 session 생성 = 로그인
-            HttpSession session = request.getSession();
-
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getEmail());
-            session.setAttribute("userNickName", user.getNickName());
-
-            System.out.println(session.getAttribute("userId").toString() + session.getAttribute("userEmail").toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            return Collections.singletonMap("result", false);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return Collections.singletonMap("result", true);
+    }
+
+    @PostMapping("/signup/no-profile/{nickName}")
+    public ResponseEntity<LoginUserDTO> signupWithoutProfile(HttpServletRequest request,
+                                               @PathVariable("nickName") String nickName) {
+        try {
+            LoginUserDTO loginUserDTO = signupService.signupWithoutProfile(request.getSession(), nickName);
+            return new ResponseEntity<>(loginUserDTO, HttpStatus.OK);
+        } catch (IllegalAccessException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
