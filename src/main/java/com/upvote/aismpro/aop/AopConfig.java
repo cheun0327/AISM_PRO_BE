@@ -19,7 +19,7 @@ public class AopConfig {
     @Autowired
     private UserService userService;
 
-    @Around("execution(* com.upvote.aismpro.controller.UserController.uploadProfileImg(..))")
+    //@Around("execution(* com.upvote.aismpro.controller.UserController.uploadProfileImg(..))")
     public Object uploadImg(ProceedingJoinPoint joinPoint) throws Throwable {
         System.out.println("!!AOP!!");
 

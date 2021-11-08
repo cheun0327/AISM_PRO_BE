@@ -82,14 +82,45 @@ public class UserController {
     public ResponseEntity<UserDTO> uploadProfileImg(
             @PathVariable("userId") String userId,
             @RequestParam("file") MultipartFile file) throws IOException {
-        try{
-            System.out.println("컨트롤러 시작");
-            UserDTO user = userService.getUserDTO(userId);
-            return new ResponseEntity<>(user, HttpStatus.OK);
 
-        } catch (Exception e) {
+        String[] imgNameArr = file.getOriginalFilename().split("\\.");
+        String imgFolder = userId.replaceAll("-","");
+        String imgName = imgFolder + "." +imgNameArr[imgNameArr.length - 1];
+//        String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/public/image/user/" + imgFolder;
+        String dirPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgFolder;
+        File profileDir = new File(dirPath);
+
+
+        try {
+            if (!profileDir.exists()) {
+                profileDir.mkdir();
+            }
+            else {
+                File[] files= profileDir.listFiles(); //파일리스트 얻어오기
+                for (File f : files) f.delete(); //파일 삭제
+            }
+
+            file.transferTo(new File(dirPath + "/" + imgName));
+            UserDTO user = userService.setProfile(userId, imgFolder + "/" + imgName);
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+//    @PostMapping("/user/img/{userId}")
+//    public ResponseEntity<UserDTO> uploadProfileImg(
+//            @PathVariable("userId") String userId,
+//            @RequestParam("file") MultipartFile file) throws IOException {
+//        try{
+//            System.out.println("컨트롤러 시작");
+//            UserDTO user = userService.getUserDTO(userId);
+//            return new ResponseEntity<>(user, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 }
