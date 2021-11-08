@@ -5,4 +5,6 @@ import com.upvote.aismpro.dto.UserDTO;
 public interface UserServiceInter {
 
     public UserDTO setProfile(String userId, String imgName);
+
+    public UserDTO getUserDTO(String userId) throws Exception;
 }

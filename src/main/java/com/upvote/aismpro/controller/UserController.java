@@ -5,18 +5,23 @@ import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.service.MyPageService;
 import com.upvote.aismpro.service.SignupServiceInter;
+import com.upvote.aismpro.service.UserService;
 import com.upvote.aismpro.service.UserServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 
 @RestController
@@ -29,7 +34,7 @@ public class UserController {
     private SignupServiceInter signupService;
 
     @Autowired
-    private UserServiceInter userService;
+    private UserService userService;
 
 
     // 이메일 중복 확인
@@ -104,4 +109,18 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+//    @PostMapping("/user/img/{userId}")
+//    public ResponseEntity<UserDTO> uploadProfileImg(
+//            @PathVariable("userId") String userId,
+//            @RequestParam("file") MultipartFile file) throws IOException {
+//        try{
+//            System.out.println("컨트롤러 시작");
+//            UserDTO user = userService.getUserDTO(userId);
+//            return new ResponseEntity<>(user, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 }
