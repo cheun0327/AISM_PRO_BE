@@ -50,6 +50,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	compileOnly 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
+	compileOnly 'org.springframework.boot:spring-boot-starter-aop'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
