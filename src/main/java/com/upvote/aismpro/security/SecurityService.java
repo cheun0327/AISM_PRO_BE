@@ -28,6 +28,8 @@ public class SecurityService {
         byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRETE_KEY);
         Key signingKey = new SecretKeySpec(secretKeyBytes, signatureAlgorithm.getJcaName());
 
+        System.out.println("============= make key ===================");
+
         Claims claims = Jwts.claims().setSubject(jwtRequestDTO.getUserId());
         claims.put("userEmail", jwtRequestDTO.getUserEmail());
         claims.put("userNickName", jwtRequestDTO.getUserNickName());

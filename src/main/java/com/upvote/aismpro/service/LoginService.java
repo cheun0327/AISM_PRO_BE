@@ -1,5 +1,7 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.UserDTO;
 import com.upvote.aismpro.entity.OAuth;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.OAuthRepository;
@@ -10,8 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LoginService implements LoginServiceInter{
@@ -22,13 +24,15 @@ public class LoginService implements LoginServiceInter{
     @Autowired
     private OAuthRepository oAuthRepository;
 
-    public User checkUser(String platform, String email) throws Exception {
+    @Autowired
+    private CustomModelMapper modelMapper;
 
+    public User checkUser(String platform, String email) throws Exception {
         List<User> users = userRepository.findAllByPlatformAndEmail(platform, email);
+
         if (users.isEmpty()) throw new NoSuchElementException();
         if (users.size() > 1) throw new IllegalAccessException();
 
-        System.out.println(users.get(0));
         return users.get(0);
     }
 
@@ -50,6 +54,4 @@ public class LoginService implements LoginServiceInter{
     private String createRandomId() {
         return UUID.randomUUID().toString();
     }
-
-
 }

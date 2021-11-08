@@ -21,7 +21,7 @@ public class PlaylistController {
     private PlaylistServiceInter playlistService;
 
     @PostMapping("/playlist/like/{userId}/{playlistId}")
-    private ResponseEntity<Object> createPlaylistLike(@PathVariable("userId") String userId,
+    public ResponseEntity<Object> createPlaylistLike(@PathVariable("userId") String userId,
                                               @PathVariable("playlistId") String playlistId) {
         playlistService.createPlaylistLike(userId, playlistId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -39,12 +39,23 @@ public class PlaylistController {
     }
 
     @PostMapping("/playlist/saved/{songId}")
-    private ResponseEntity<List<PlaylistDetailDTO>> getSavedPlaylist(@PathVariable("songId") String songId) {
+    public ResponseEntity<List<PlaylistDetailDTO>> getSavedPlaylist(@PathVariable("songId") String songId) {
         try {
             return new ResponseEntity<>(playlistService.getSavedPlaylistBySongID(songId), HttpStatus.OK);
         } catch(NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("like/playlistCount/{playlistID}")
+    public ResponseEntity<Integer> getPlaylistLikeCnt(@PathVariable("playlistID") String playlistID) {
+        try {
+            return new ResponseEntity<>(playlistService.getPlaylistLikeCnt(playlistID), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
