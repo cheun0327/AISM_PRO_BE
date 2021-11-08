@@ -46,11 +46,8 @@ public class LoginController {
 
         LinkedHashMap<String, Object> profile = (LinkedHashMap<String, Object>) kakaoProfileInfo.get("profile");
 
-        System.out.println("kakao 로그인 : " + kakaoProfileInfo.get("email"));
         try {
-            System.out.println((String) profile.get("nickname") + kakaoProfileInfo.get("email"));
             User user = login.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
-            System.out.println(user.getProfile());
             // token 생성
             String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
 
