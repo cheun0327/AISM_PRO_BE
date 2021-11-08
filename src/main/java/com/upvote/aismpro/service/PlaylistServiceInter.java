@@ -14,4 +14,6 @@ public interface PlaylistServiceInter {
     public List<PlaylistDetailDTO> getSimilarPlaylist(MoodDTO moodDTO) throws Exception;
 
     public  List<PlaylistDetailDTO> getSavedPlaylistBySongID(String songId) throws  Exception;
+
+    public Integer getPlaylistLikeCnt(String playlistID);
 }

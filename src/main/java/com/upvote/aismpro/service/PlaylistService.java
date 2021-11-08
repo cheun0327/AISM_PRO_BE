@@ -67,4 +67,9 @@ public class PlaylistService implements PlaylistServiceInter{
                 .stream().map(playListSong -> modelMapper.playlistMapper().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDetailDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Integer getPlaylistLikeCnt(String playlistID) {
+        return playlistLikeRepository.countPlaylistLikeByID(playlistID);
+    }
 }
