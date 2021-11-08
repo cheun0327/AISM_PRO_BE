@@ -49,17 +49,9 @@ public class PlaylistService implements PlaylistServiceInter{
     public List<PlaylistDetailDTO> getSimilarPlaylist(MoodDTO moodDTO) throws Exception {
         List<PlayList> similar_li = playlistRepository.findSimilarPlaylistQD(moodDTO);
         try {
-            Collections.shuffle(similar_li);
-
-            return similar_li.size() > 5 ?
-                    similar_li
-                            .stream().map(Playlist -> modelMapper.playlistMapper().map(Playlist, PlaylistDetailDTO.class))
-                            .collect(Collectors.toList())
-                            .subList(0, 5)
-                    :
-                    similar_li
-                            .stream().map(Playlist -> modelMapper.playlistMapper().map(Playlist, PlaylistDetailDTO.class))
-                            .collect(Collectors.toList());
+            return similar_li
+                    .stream().map(Playlist -> modelMapper.playlistMapper().map(Playlist, PlaylistDetailDTO.class))
+                    .collect(Collectors.toList());
         } catch(NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();

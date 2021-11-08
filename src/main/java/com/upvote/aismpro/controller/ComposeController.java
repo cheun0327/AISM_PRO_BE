@@ -8,10 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @RestController
 public class ComposeController {
@@ -69,15 +69,25 @@ public class ComposeController {
         return composeService.getSampleSoundByKeywords(genre, firstMood, secondMood);
     }
 
-    @PostMapping("/compose/img")
-    public Map<String, Object> uploadImg(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping("/compose/img/{userId}")
+    public Map<String, Object> uploadImg(
+            @PathVariable("userId") String userId,
+            @RequestParam("file") MultipartFile file) throws IOException {
         Map<String, Object> map = new HashMap<>();
 
         String imgName = file.getOriginalFilename();
-        String path = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgName;
-        File dst = new File(path);
-        
+        String userId_withoutHyphen = userId.replaceAll("-", "");
+
+        String rootPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + userId_withoutHyphen;
+        List<String> dirs = Arrays.asList("compose", "song");
+
+        Path dstDir = Paths.get(rootPath + "/" + String.join("/", dirs));
+        String dstPath = rootPath + "/" + String.join("/", dirs) + "/" + imgName;
+
         try {
+            Files.createDirectories(dstDir);
+
+            File dst = new File(dstPath);
             file.transferTo(dst);
 
             map.put("img", imgName);
