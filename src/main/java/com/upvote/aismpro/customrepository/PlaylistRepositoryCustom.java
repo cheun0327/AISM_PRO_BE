@@ -1,6 +1,11 @@
 package com.upvote.aismpro.customrepository;
 
 
+import com.upvote.aismpro.dto.MoodDTO;
+import com.upvote.aismpro.entity.PlayList;
+
+import java.util.List;
+
 public interface PlaylistRepositoryCustom {
-//    List<PlaylistInfoDTO> findInfoByCategoryAndPlaylistIdQD(@Param("ID") String ID);
+    public List<PlayList> findSimilarPlaylistQD(MoodDTO moodDTO);
 }

@@ -1,9 +1,14 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.dto.CreateDTO;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
+
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.LikeDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +92,7 @@ public class MyMusicService implements MyMusicServiceInter{
         }
     }
 
-    // sell list 가젼오기
+    // sell list 가져오기
     @Override
     public List<SellDTO> getSellList(String userId) throws Exception {
         try{
@@ -119,9 +124,17 @@ public class MyMusicService implements MyMusicServiceInter{
         }
     }
 
-    // playlist detail 가져오가
+    // playlist detail 가져오기
     @Override
-    public PlaylistDetailDTO getPlayListDetail(String playlistId) {
-        return modelMapper.playlistDetailMapper().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+    public PlaylistDetailDTO getPlayListDetail(String playlistId) throws Exception {
+        try {
+            return modelMapper.playlistDetailMapper().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 }

@@ -1,9 +1,10 @@
 package com.upvote.aismpro.customrepository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.upvote.aismpro.dto.MoodDTO;
+import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.QPlayList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,12 +12,17 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
-
     private final JPAQueryFactory queryFactory;
-    private QPlayList playList = QPlayList.playList;
+    private final QPlayList playlist = QPlayList.playList;
 
-
-//    public List<PlaylistInfoDTO> findInfoByCategoryAndPlaylistIdQD(@Param("ID") String ID){
-//
-//    }
+    @Override
+    public List<PlayList> findSimilarPlaylistQD(MoodDTO moodDTO) {
+        return queryFactory.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.playlistId.ne(moodDTO.getSongId())
+                                .and(playlist.firstMood.eq(moodDTO.getFirstMood()))
+                )
+                .fetch();
+    }
 }

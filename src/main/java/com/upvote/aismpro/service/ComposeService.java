@@ -21,7 +21,9 @@ public class ComposeService implements ComposeServiceInter {
     public List<String> getKeywords(String keyword) {
         if (keyword.equals("genre")) {
             List<String> tmpKwd = composeRepository.findKeyword(keyword);
-            return Stream.of(tmpKwd.subList(8, 9), tmpKwd.subList(0, 8), tmpKwd.subList(9, 12))
+            return Stream.of(tmpKwd.subList(13, 14),
+                            tmpKwd.subList(11, 12), tmpKwd.subList(10, 11),tmpKwd.subList(12, 13),tmpKwd.subList(9, 10),tmpKwd.subList(8, 9),
+                            tmpKwd.subList(0, 8), tmpKwd.subList(14, tmpKwd.size()))
                     .flatMap(x -> x.stream())
                     .collect(Collectors.toList());
         }

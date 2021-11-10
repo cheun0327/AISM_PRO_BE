@@ -22,7 +22,6 @@ public class Song {
     private String createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    //@JsonBackReference
     @JoinColumn(name = "creatorId", referencedColumnName="userId")
     private User user;
 

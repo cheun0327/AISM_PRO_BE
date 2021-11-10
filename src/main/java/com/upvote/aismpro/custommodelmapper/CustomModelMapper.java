@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,11 +46,39 @@ public class CustomModelMapper {
     }
 
     @Bean
+    public ModelMapper userMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(User.class, UserDTO.class)
+                .addMapping(User::getId, UserDTO::setUserId)
+                .addMapping(User::getEmail, UserDTO::setEmail)
+                .addMapping(User::getNickName, UserDTO::setNickName)
+                .addMapping(User::getPlatform, UserDTO::setPlatform)
+                .addMapping(User::getProfile, UserDTO::setProfile);
+
+        return modelMapper;
+    }
+
+    Converter<PlayList, List<String>> playlistTagCvt = new Converter<PlayList, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<PlayList, List<String>> context) {
+            return new ArrayList<String>(Arrays.asList(
+                    context.getSource().getFirstMood(),
+                    context.getSource().getSecondMood(),
+                    context.getSource().getThirdMood()
+            ));
+        }
+    };
+
+    @Bean
     public ModelMapper playlistDetailMapper() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper.createTypeMap(PlayList.class, PlaylistDetailDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
                 .addMapping(PlayList::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(PlayList::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(PlayList::getState, PlaylistDetailDTO::setPlaylistState)

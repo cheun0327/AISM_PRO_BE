@@ -14,6 +14,9 @@ public class PlaylistDTO {
     private String name;
     private String state;
     private String img;
+    private String firstMood;
+    private String secondMood;
+    private String thirdMood;
 
     public void print() {
         System.out.println("pl id : " + this.playlistId);
