@@ -2,8 +2,7 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
-import com.upvote.aismpro.entity.PlayList;
-import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.entity.*;
 import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,14 @@ public class LibraryService implements LibraryServiceInter{
 
     @Autowired
     private SongRepository songRepository;
-
+    @Autowired
+    private NewSongRepository newSongRepository;
     @Autowired
     private PlaylistRepository playlistRepository;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private LikeRepository likeRepository;
     @Autowired
     private OneTwoRepository oneTwoRepository;
     @Autowired
@@ -32,7 +35,6 @@ public class LibraryService implements LibraryServiceInter{
     private ThreeFourRepository threeFourRepository;
     @Autowired
     private FourFiveRepository fourFiveRepository;
-
     @Autowired
     private CustomModelMapper modelMapper;
 
@@ -51,6 +53,68 @@ public class LibraryService implements LibraryServiceInter{
         map.put("playtime", new ArrayList<String>(Arrays.asList("30초", "1분", "1분 30초", "2분", "2분 30초", "3분", "3분 30초", "4분", "4분 30초", "5분")));
         map.put("tempo", new ArrayList<String>(Arrays.asList("80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140")));
         return map;
+    }
+
+
+    public Map<String, Object> getNewSearch(NewLibrarySearchDTO librarySearchDTO) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            // song type 있으면 플레이리스트 가져옴.
+            List<PlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
+            map.put("playlist", playlists);
+
+            // song 가져옴
+            List<NewSong> songList = newSongRepository.findSongBySearchParamQD(librarySearchDTO);
+
+            // like 추가 & 형변환
+            // 정렬 구현 안됨.
+            List<NewSongDTO> songDTOList = new ArrayList<>();
+            if (!Objects.equals(librarySearchDTO.getUserId(), "") && librarySearchDTO.getUserId() == null) {
+                songDTOList = mapNewSong2NewSongDTOLike(songList, librarySearchDTO.getUserId());
+            }
+            else {
+                songDTOList = mapNewSong2NewSongDTO(songList);
+            }
+
+            // seach 결과 필터링
+            if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
+                map.put("song", filterNewSearchKeyword(librarySearchDTO.getSearch(), songDTOList));
+            }
+            else {
+                map.put("song", songDTOList);
+            }
+
+            return map;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    private List<NewSongDTO> mapNewSong2NewSongDTOLike(List<NewSong> songList, String userId) {
+        User user = userRepository.getById(userId);
+        List<String> likes = user.getLikes().stream().map(l -> l.getUser().getId()).collect(Collectors.toList());
+
+        List<NewSongDTO> newSongDTOs = new ArrayList<>();
+        for (NewSong s : songList) {
+            NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
+            nsdto.setLike(likes.contains(s.getSongId()));
+            newSongDTOs.add(nsdto);
+        }
+        return newSongDTOs;
+    }
+
+    private List<NewSongDTO> mapNewSong2NewSongDTO(List<NewSong> songList) {
+
+        List<NewSongDTO> newSongDTOs = new ArrayList<>();
+        for (NewSong s : songList) {
+            NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
+            nsdto.setLike(false);
+            newSongDTOs.add(nsdto);
+        }
+        return newSongDTOs;
     }
 
     @Override
@@ -125,6 +189,16 @@ public class LibraryService implements LibraryServiceInter{
         return new ArrayList<>();
     }
 
+    public List<PlaylistDTO> getNewPlaylists(String type) {
+        if (type.equals("모두") || type.equals("음원")){
+            return playlistRepository.findAll()
+                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
+    }
+
     // 검색 키워드 필터링
     List<SongDTO> filterSearchKeyword(String keyword, List<SongDTO> songDTOList) {
         List<SongDTO> filtered = new ArrayList<>();
@@ -137,6 +211,19 @@ public class LibraryService implements LibraryServiceInter{
             }
             if (song.getTag().contains(keyword)) filtered.add(song);
         }
+        return filtered;
+    }
+
+    List<NewSongDTO> filterNewSearchKeyword(String keyword, List<NewSongDTO> songDTOList) {
+        List<NewSongDTO> filtered = new ArrayList<>();
+
+        for (NewSongDTO ns : songDTOList) {
+            String[] arr = {ns.getSongName(), ns.getCreatorName()};
+            if (Arrays.stream(arr).anyMatch(keyword::equals) || ns.getTag().contains(keyword)) {
+                filtered.add(ns);
+            }
+        }
+
         return filtered;
     }
 }
