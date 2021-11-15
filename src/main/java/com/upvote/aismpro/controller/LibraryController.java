@@ -26,5 +26,11 @@ public class LibraryController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/library/render")
+    public ResponseEntity<Map<String, List<String>>> libraryRender() {
+        Map<String, List<String>> map = libraryService.getRenderData();
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 }
 

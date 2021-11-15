@@ -4,15 +4,15 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.repository.PlaylistRepository;
-import com.upvote.aismpro.repository.SongRepository;
-import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -25,10 +25,33 @@ public class LibraryService implements LibraryServiceInter{
     private PlaylistRepository playlistRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private OneTwoRepository oneTwoRepository;
+    @Autowired
+    private TwoThreeRepository twoThreeRepository;
+    @Autowired
+    private ThreeFourRepository threeFourRepository;
+    @Autowired
+    private FourFiveRepository fourFiveRepository;
 
     @Autowired
     private CustomModelMapper modelMapper;
+
+    @Override
+    public Map<String, List<String>> getRenderData() {
+        Map<String, List<String>> map = new HashMap<>();
+
+        // 뉴에이지 - three 컬럼 + 다른 장르 - two 컬럼(뉴에니지 세부 장르 제외)
+        List<String> mood = Stream.concat(oneTwoRepository.findTwo().stream(),
+                        twoThreeRepository.findThreeQD().stream())
+                        .collect(Collectors.toList());
+
+        map.put("genre", oneTwoRepository.findOneQD());
+        map.put("inst", threeFourRepository.findFour());
+        map.put("mood", mood);
+        map.put("playtime", new ArrayList<String>(Arrays.asList("30초", "1분", "1분 30초", "2분", "2분 30초", "3분", "3분 30초", "4분", "4분 30초", "5분")));
+        map.put("tempo", new ArrayList<String>(Arrays.asList("80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140")));
+        return map;
+    }
 
     @Override
     public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) throws Exception {
