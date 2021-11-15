@@ -119,6 +119,37 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
+    Converter<NewSong, List<String>> newSongTagCvt = new Converter<NewSong, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<NewSong, List<String>> context) {
+            return new ArrayList<String>(Arrays.asList(
+                    context.getSource().getOne(),
+                    context.getSource().getTwo(),
+                    context.getSource().getThree(),
+                    context.getSource().getFour(),
+                    context.getSource().getFive()
+            ));
+        }
+    };
+
+    @Bean
+    public ModelMapper newSongMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(NewSong.class, NewSongDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(newSongTagCvt).map(src -> src, NewSongDTO::setTag))
+                .addMapping(src -> src.getUser().getNickName(), NewSongDTO::setCreatorName)
+                .addMapping(NewSong::getSongId, NewSongDTO::setSongId)
+                .addMapping(NewSong::getSongName, NewSongDTO::setSongName)
+                .addMapping(NewSong::getThumbnail, NewSongDTO::setThumbnail)
+                .addMapping(NewSong::getFileName, NewSongDTO::setFileName)
+                .addMapping(NewSong::getCreateDate, NewSongDTO::setCreateDate)
+                .addMapping(NewSong::getPlaytime, NewSongDTO::setPlaytime);
+        return modelMapper;
+    }
+
 
     Converter<Create, List<String>> createTagCvt = new Converter<Create, List<String>>() {
         @Override
