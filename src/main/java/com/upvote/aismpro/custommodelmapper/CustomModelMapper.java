@@ -122,13 +122,23 @@ public class CustomModelMapper {
     Converter<NewSong, List<String>> newSongTagCvt = new Converter<NewSong, List<String>>() {
         @Override
         public List<String> convert(MappingContext<NewSong, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getOne(),
-                    context.getSource().getTwo(),
-                    context.getSource().getThree(),
-                    context.getSource().getFour(),
-                    context.getSource().getFive()
-            ));
+            if (context.getSource().getOne().equals("Newage")) {
+                return new ArrayList<String>(Arrays.asList(
+                        context.getSource().getOne(),
+                        context.getSource().getTwo(),
+                        context.getSource().getThree(),
+                        context.getSource().getFour(),
+                        context.getSource().getFive()
+                ));
+            }
+            else {
+                return new ArrayList<String>(Arrays.asList(
+                        context.getSource().getOne(),
+                        context.getSource().getTwo(),
+                        context.getSource().getThree(),
+                        context.getSource().getFour()
+                ));
+            }
         }
     };
 
