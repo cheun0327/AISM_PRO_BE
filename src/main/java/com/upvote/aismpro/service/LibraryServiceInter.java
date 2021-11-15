@@ -14,4 +14,7 @@ public interface LibraryServiceInter {
 
     // 라이브러리 검색 결과 반환
     public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) throws Exception;
+
+    // 라이브러리 옵션 데이터 반환
+    public Map<String, List<String>> getRenderData();
 }
