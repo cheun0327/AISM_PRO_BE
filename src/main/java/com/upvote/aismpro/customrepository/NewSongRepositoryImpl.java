@@ -38,7 +38,7 @@ public class NewSongRepositoryImpl implements NewSongRepositoryCustom{
                 .where(
                         searchWhere(newLibrarySearchDTO)
                 )
-//                .orderBy(newSong.createDate.asc())
+                .orderBy(newSong.createDate.asc())
                 .fetch();
     }
 
