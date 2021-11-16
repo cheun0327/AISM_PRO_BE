@@ -20,6 +20,7 @@ public interface MyMusicServiceInter{
 
     // play list 가져오기
     public List<PlaylistDTO> getPlayList(String userId) throws Exception;
+    public List<NewPlaylistDTO> getNewPlayList(String userId) throws Exception;
 
     // playlist detail 가져오가
     public PlaylistDetailDTO getPlayListDetail(String playlistId) throws Exception;
