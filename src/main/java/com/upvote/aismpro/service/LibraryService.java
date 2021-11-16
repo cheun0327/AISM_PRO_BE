@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.querydsl.core.Tuple;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
@@ -71,15 +72,10 @@ public class LibraryService implements LibraryServiceInter{
             // 정렬 구현 안됨.
             List<NewSongDTO> songDTOList = new ArrayList<>();
             if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
-                System.out.println("라이크");
                 songDTOList = mapNewSong2NewSongDTOLike(songList, librarySearchDTO.getUserId());
             }
             else {
                 songDTOList = mapNewSong2NewSongDTO(songList);
-            }
-
-            for(NewSongDTO ns : songDTOList) {
-                System.out.println(ns.getCreateDate());
             }
 
             // seach 결과 필터링
@@ -89,6 +85,15 @@ public class LibraryService implements LibraryServiceInter{
             else {
                 map.put("song", songDTOList);
             }
+
+            // artist
+            List<ArtistDTO> artists = new ArrayList<>();
+            for (NewSongDTO ns : songDTOList) {
+                User artist = newSongRepository.getById(ns.getSongId()).getUser();
+                ArtistDTO artistDTO = new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile());
+                if (!artists.contains(artistDTO)) artists.add(new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile()));
+            }
+            map.put("artist", artists);
 
             return map;
 
@@ -106,7 +111,6 @@ public class LibraryService implements LibraryServiceInter{
 
         List<NewSongDTO> newSongDTOs = new ArrayList<>();
         for (NewSong s : songList) {
-            System.out.println(s.getCreateDate());
             NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
             nsdto.setLike(likes.contains(s.getSongId()));
             newSongDTOs.add(nsdto);
