@@ -32,6 +32,7 @@ public class SongController {
         }
     }
 
+
     @PostMapping("/song/similar")
     public ResponseEntity<List<SongDTO>> getSimilarSong(@RequestBody MoodDTO moodDTO) {
         return new ResponseEntity<>(songService.getSimilarSong(moodDTO), HttpStatus.OK);
