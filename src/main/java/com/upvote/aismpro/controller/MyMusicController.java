@@ -64,26 +64,4 @@ public class MyMusicController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/playlist/{userId}")
-    public ResponseEntity<List<PlaylistDTO>> getPlaylist(@PathVariable("userId") String userId) {
-        try{
-            return new ResponseEntity<>(myMusicService.getPlayList(userId), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/playlist/detail/{playlistId}")
-    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") String playlistId) throws Exception {
-        try{
-            return new ResponseEntity<>(myMusicService.getPlayListDetail(playlistId), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

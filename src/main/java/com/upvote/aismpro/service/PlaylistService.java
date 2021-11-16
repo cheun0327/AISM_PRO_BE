@@ -1,9 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.MoodDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.PlayList;
 import com.upvote.aismpro.entity.PlayListSong;
 import com.upvote.aismpro.entity.PlaylistLike;
@@ -62,9 +60,41 @@ public class PlaylistService implements PlaylistServiceInter{
     }
 
     @Override
-    public  List<PlaylistDetailDTO> getSavedPlaylistBySongID(String songId) throws  Exception {
+    public List<NewPlaylistDTO> getNewSimilarPlaylistPlaylist(PlaylistDetailDTO playlistDetailDTO) throws Exception {
+        List<PlayList> similar_li = playlistRepository.findSimilarPlaylistPlaylistQD(playlistDetailDTO);
+        try {
+            return similar_li
+                    .stream().map(Playlist -> modelMapper.newPlaylistMapper().map(Playlist, NewPlaylistDTO.class))
+                    .collect(Collectors.toList());
+        } catch(NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    @Override
+    public List<NewPlaylistDTO> getNewSimilarPlaylist(NewSongDTO songDTO) throws Exception {
+        List<PlayList> similar_li = playlistRepository.findNewSimilarPlaylistQD(songDTO);
+        try {
+            return similar_li
+                    .stream().map(Playlist -> modelMapper.newPlaylistMapper().map(Playlist, NewPlaylistDTO.class))
+                    .collect(Collectors.toList());
+        } catch(NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    @Override
+    public  List<NewPlaylistDTO> getSavedPlaylistBySongID(String songId) throws  Exception {
         return playlistSongRepository.findSavedPlaylistBySongId(songId)
-                .stream().map(playListSong -> modelMapper.playlistMapper().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDetailDTO.class))
+                .stream().map(playListSong -> modelMapper.newPlaylistMapper().map(playlistRepository.getById(playListSong.getPlaylistId()), NewPlaylistDTO.class))
                 .collect(Collectors.toList());
     }
 
