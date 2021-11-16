@@ -61,7 +61,7 @@ public class PlaylistController {
 //    }
 
     // 플레이리스트 디테일 페이지에서 비슷한 플레이 리스트 가져오기
-    @GetMapping("/playlist/similar")
+    @PostMapping("/playlist/similar")
     public ResponseEntity<List<NewPlaylistDTO>> getSimilarPlaylist(@RequestBody PlaylistDetailDTO playlistDetailDTO) throws Exception {
         try {
             return new ResponseEntity<>(playlistService.getNewSimilarPlaylistPlaylist(playlistDetailDTO), HttpStatus.OK);
@@ -73,7 +73,7 @@ public class PlaylistController {
     }
 
     // 곡 디테일에서 비슷한 플레이 리스트 가져오기
-    @GetMapping("/playlist/similar/song")
+    @PostMapping("/playlist/similar/song")
     public ResponseEntity<List<NewPlaylistDTO>> getNewSimilarPlaylist(@RequestBody NewSongDTO songDTO) throws Exception {
         try {
             return new ResponseEntity<>(playlistService.getNewSimilarPlaylist(songDTO), HttpStatus.OK);
