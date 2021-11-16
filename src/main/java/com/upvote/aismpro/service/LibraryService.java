@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.querydsl.core.Tuple;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.*;
@@ -27,6 +28,8 @@ public class LibraryService implements LibraryServiceInter{
     private UserRepository userRepository;
     @Autowired
     private LikeRepository likeRepository;
+    @Autowired
+    private PlaylistLikeRepository playlistLikeRepository;
     @Autowired
     private OneTwoRepository oneTwoRepository;
     @Autowired
@@ -61,7 +64,7 @@ public class LibraryService implements LibraryServiceInter{
 
         try {
             // song type 있으면 플레이리스트 가져옴.
-            List<PlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
+            List<NewPlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
             map.put("playlist", playlists);
 
             // song 가져옴
@@ -70,7 +73,7 @@ public class LibraryService implements LibraryServiceInter{
             // like 추가 & 형변환
             // 정렬 구현 안됨.
             List<NewSongDTO> songDTOList = new ArrayList<>();
-            if (!Objects.equals(librarySearchDTO.getUserId(), "") && librarySearchDTO.getUserId() == null) {
+            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
                 songDTOList = mapNewSong2NewSongDTOLike(songList, librarySearchDTO.getUserId());
             }
             else {
@@ -85,6 +88,15 @@ public class LibraryService implements LibraryServiceInter{
                 map.put("song", songDTOList);
             }
 
+            // artist
+            List<ArtistDTO> artists = new ArrayList<>();
+            for (NewSongDTO ns : songDTOList) {
+                User artist = newSongRepository.getById(ns.getSongId()).getUser();
+                ArtistDTO artistDTO = new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile());
+                if (!artists.contains(artistDTO)) artists.add(new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile()));
+            }
+            map.put("artist", artists);
+
             return map;
 
         } catch (Exception e) {
@@ -95,7 +107,9 @@ public class LibraryService implements LibraryServiceInter{
 
     private List<NewSongDTO> mapNewSong2NewSongDTOLike(List<NewSong> songList, String userId) {
         User user = userRepository.getById(userId);
-        List<String> likes = user.getLikes().stream().map(l -> l.getUser().getId()).collect(Collectors.toList());
+        List<String> likes = user.getLikes().stream().map(l -> l.getSong().getSongId()).collect(Collectors.toList());
+
+        System.out.println(likes);
 
         List<NewSongDTO> newSongDTOs = new ArrayList<>();
         for (NewSong s : songList) {
@@ -189,10 +203,15 @@ public class LibraryService implements LibraryServiceInter{
         return new ArrayList<>();
     }
 
-    public List<PlaylistDTO> getNewPlaylists(String type) {
+    public List<NewPlaylistDTO> getNewPlaylists(String type) {
         if (type.equals("모두") || type.equals("음원")){
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(false);
+            }
             return playlistRepository.findAll()
-                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .stream().map(pl -> modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class))
                     .collect(Collectors.toList());
         }
 
