@@ -29,16 +29,7 @@ public class ComposeController {
     @Autowired
     private FourFiveRepository fourFiveRepository;
 
-    @GetMapping("/compose/test")
-    public ResponseEntity<List<String>> test() {
-        List<String> ones = oneTwoRepository.findTwoQD();
-        List<String> twos = oneTwoRepository.findTwoByOneQD("Newage");
-        List<String> threes = twoThreeRepository.findThreeByTwoQD("명상");
 
-        return new ResponseEntity<>(threes, HttpStatus.OK);
-    }
-
-    // 길이는 프론트에서 처리
     // findOneQD
     @GetMapping("/compose/one")
     public ResponseEntity<List<String>> one() {
