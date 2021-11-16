@@ -70,7 +70,8 @@ public class LibraryService implements LibraryServiceInter{
             // like 추가 & 형변환
             // 정렬 구현 안됨.
             List<NewSongDTO> songDTOList = new ArrayList<>();
-            if (!Objects.equals(librarySearchDTO.getUserId(), "") && librarySearchDTO.getUserId() == null) {
+            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+                System.out.println("라이크");
                 songDTOList = mapNewSong2NewSongDTOLike(songList, librarySearchDTO.getUserId());
             }
             else {
@@ -95,7 +96,9 @@ public class LibraryService implements LibraryServiceInter{
 
     private List<NewSongDTO> mapNewSong2NewSongDTOLike(List<NewSong> songList, String userId) {
         User user = userRepository.getById(userId);
-        List<String> likes = user.getLikes().stream().map(l -> l.getUser().getId()).collect(Collectors.toList());
+        List<String> likes = user.getLikes().stream().map(l -> l.getSong().getSongId()).collect(Collectors.toList());
+
+        System.out.println(likes);
 
         List<NewSongDTO> newSongDTOs = new ArrayList<>();
         for (NewSong s : songList) {
