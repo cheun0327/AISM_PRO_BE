@@ -64,7 +64,13 @@ public class LibraryService implements LibraryServiceInter{
 
         try {
             // song type 있으면 플레이리스트 가져옴.
-            List<NewPlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
+            List<NewPlaylistDTO> playlists = new ArrayList<>();
+            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+                playlists = getNewPlaylistsLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
+            }
+            else {
+                playlists = getNewPlaylists(librarySearchDTO.getType());
+            }
             map.put("playlist", playlists);
 
             // song 가져옴
@@ -209,10 +215,28 @@ public class LibraryService implements LibraryServiceInter{
             for (PlayList pl : playlistRepository.findAll()) {
                 NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
                 dto.setPlaylistLike(false);
+                newPlaylistDTOList.add(dto);
             }
-            return playlistRepository.findAll()
-                    .stream().map(pl -> modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class))
-                    .collect(Collectors.toList());
+            return newPlaylistDTOList;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<NewPlaylistDTO> getNewPlaylistsLike(String type, String userId) {
+        List<String> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
+                .stream().map(src -> src.getPlaylist().getPlaylistId())
+                .collect(Collectors.toList());
+        System.out.println(likes);
+
+        if (type.equals("모두") || type.equals("음원")){
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
+                newPlaylistDTOList.add(dto);
+            }
+            return newPlaylistDTOList;
         }
 
         return new ArrayList<>();

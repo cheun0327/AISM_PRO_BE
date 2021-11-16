@@ -40,6 +40,8 @@ public class MyMusicService implements MyMusicServiceInter{
 
     @Autowired
     private PlaylistRepository playlistRepository;
+    @Autowired
+    private PlaylistLikeRepository playlistLikeRepository;
 
     @Autowired
     private CustomModelMapper modelMapper;
@@ -123,6 +125,31 @@ public class MyMusicService implements MyMusicServiceInter{
             throw new Exception();
         }
     }
+
+    // play list 가져오기
+    @Override
+    public List<NewPlaylistDTO> getNewPlayList(String userId) throws Exception {
+        try{
+            List<String> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
+                    .stream().map(src -> src.getPlaylist().getPlaylistId())
+                    .collect(Collectors.toList());
+
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
+                newPlaylistDTOList.add(dto);
+            }
+            return newPlaylistDTOList;
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
 
     // playlist detail 가져오기
     @Override
