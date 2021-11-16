@@ -1,103 +1,72 @@
 package com.upvote.aismpro.controller;
 
-import com.upvote.aismpro.dto.ComposeInfoDTO;
-import com.upvote.aismpro.service.ComposeService;
+import com.upvote.aismpro.entity.FourFive;
+import com.upvote.aismpro.entity.OneTwo;
+import com.upvote.aismpro.repository.FourFiveRepository;
+import com.upvote.aismpro.repository.OneTwoRepository;
+import com.upvote.aismpro.repository.ThreeFourRepository;
+import com.upvote.aismpro.repository.TwoThreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import com.querydsl.core.Tuple;
+import java.util.List;
 
 @RestController
 public class ComposeController {
 
     @Autowired
-    private ComposeService composeService;
+    private OneTwoRepository oneTwoRepository;
+    @Autowired
+    private TwoThreeRepository twoThreeRepository;
+    @Autowired
+    private ThreeFourRepository threeFourRepository;
+    @Autowired
+    private FourFiveRepository fourFiveRepository;
 
-    @GetMapping("/compose")
-    public Map<String, Object> getEachComposeInfo() {
-        Map<String, Object> composeInfo = new LinkedHashMap<>();
+    @GetMapping("/compose/test")
+    public ResponseEntity<List<String>> test() {
+        List<String> ones = oneTwoRepository.findTwoQD();
+        List<String> twos = oneTwoRepository.findTwoByOneQD("Newage");
+        List<String> threes = twoThreeRepository.findThreeByTwoQD("명상");
 
-        List<String> allGenre = composeService.getKeywords("genre");
-        List<String> allFirstMood = composeService.getKeywords("firstMood");
-        List<String> allSecondMood = composeService.getKeywords("secondMood");
-
-        composeInfo.put("genre", allGenre);
-        composeInfo.put("firstMood", allFirstMood);
-        composeInfo.put("secondMood", allSecondMood);
-
-        return composeInfo;
+        return new ResponseEntity<>(threes, HttpStatus.OK);
     }
 
-    // 작곡하기 키워드 받는 메서드
-    @PostMapping("/compose")
-    public Map<String, Object> compose(@RequestBody ComposeInfoDTO composeInfo) throws InterruptedException {
-        Map<String, Object> song_info = new HashMap<String, Object>();
-
-        Thread.sleep(3000);
-
-        song_info.put("result", "success");
-
-        return song_info;
+    // 길이는 프론트에서 처리
+    // findOneQD
+    @GetMapping("/compose/one")
+    public ResponseEntity<List<String>> one() {
+        List<String> ones = oneTwoRepository.findOneQD();
+        return new ResponseEntity<>(ones, HttpStatus.OK);
     }
-
-    @GetMapping("/compose/genre")
-    public List<String> getAllGenre() {
-        return composeService.getKeywords("genre");
+    // findtwoByOneQD
+    @GetMapping("/compose/two/{one}")
+    public ResponseEntity<List<String>> two(@PathVariable String one) {
+        List<String> twos = oneTwoRepository.findTwoByOneQD(one);
+        return new ResponseEntity<>(twos, HttpStatus.OK);
     }
-
-    @GetMapping("/compose/first-mood")
-    public List<String> getFirstMoodByGenre(@RequestParam("genre") String genre) {
-        return composeService.getFirstMoodByGenre(genre);
+    // findThreeByTwoQD
+    @GetMapping("/compose/three/{two}")
+    public ResponseEntity<List<String>> three(@PathVariable String two) {
+        List<String> threes = twoThreeRepository.findThreeByTwoQD(two);
+        return new ResponseEntity<>(threes, HttpStatus.OK);
     }
-
-    @GetMapping("/compose/second-mood")
-    public List<String> getSecondMoodByGenreAndFirstMood(@RequestParam("genre") String genre, @RequestParam("firstMood") String firstMood) {
-        return composeService.getSecondMoodByFirstMood(genre, firstMood);
+    // findFourByThreeQD
+    @GetMapping("/compose/four/{three}")
+    public ResponseEntity<List<String>> four(@PathVariable String three) {
+        List<String> fours = threeFourRepository.findFourByThreeQD(three);
+        return new ResponseEntity<>(fours, HttpStatus.OK);
     }
-
-    @GetMapping("/compose/sample-sound")
-    public String[] getSampleSoundByKeywords(
-            @RequestParam("genre") String genre,
-            @RequestParam("firstMood") String firstMood,
-            @RequestParam("secondMood") String secondMood) {
-        return composeService.getSampleSoundByKeywords(genre, firstMood, secondMood);
-    }
-
-    @PostMapping("/compose/img/{userId}")
-    public Map<String, Object> uploadImg(
-            @PathVariable("userId") String userId,
-            @RequestParam("file") MultipartFile file) throws IOException {
-        Map<String, Object> map = new HashMap<>();
-
-        String imgName = file.getOriginalFilename();
-        String userId_withoutHyphen = userId.replaceAll("-", "");
-
-        String rootPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + userId_withoutHyphen;
-        List<String> dirs = Arrays.asList("compose", "song");
-
-        Path dstDir = Paths.get(rootPath + "/" + String.join("/", dirs));
-        String dstPath = rootPath + "/" + String.join("/", dirs) + "/" + imgName;
-
-        try {
-            Files.createDirectories(dstDir);
-
-            File dst = new File(dstPath);
-            file.transferTo(dst);
-
-            map.put("img", imgName);
-            map.put("result", true);
-        }catch (Exception e) {
-            e.printStackTrace();
-
-            map.put("result", false);
-        }
-
-        return map;
+    // findFiveByFourQD
+    @GetMapping("/compose/five/{four}")
+    public ResponseEntity<List<String>> five(@PathVariable String four) {
+        List<String> fives = fourFiveRepository.findFiveByFourQD(four);
+        return new ResponseEntity<>(fives, HttpStatus.OK);
     }
 }

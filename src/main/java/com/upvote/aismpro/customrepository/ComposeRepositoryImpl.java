@@ -1,12 +1,8 @@
 package com.upvote.aismpro.customrepository;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.upvote.aismpro.entity.QCompose;
+import com.upvote.aismpro.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,18 +14,6 @@ import java.util.List;
 public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
     private final JPAQueryFactory query;
     private final QCompose compose = QCompose.compose;
-
-    public BooleanExpression genreEq(String genre) {
-        return genre != null ? compose.genre.eq(genre) : null;
-    }
-
-    public BooleanExpression firstMoodEq(String firstMood) {
-        return firstMood != null ? compose.first_mood.eq(firstMood) : null;
-    }
-
-    public BooleanExpression secondMoodEq(String secondMood) {
-        return secondMood != null ? compose.second_mood.eq(secondMood) : null;
-    }
 
     @Override
     public List<String> findKeyword(String keyword) {
@@ -88,5 +72,17 @@ public class ComposeRepositoryImpl implements ComposeRepositoryCustom {
                         genreEq(genre).and(firstMoodEq(firstMood)).and(secondMoodEq(secondMood))
                 )
                 .fetchOne();
+    }
+
+    public BooleanExpression genreEq(String genre) {
+        return genre != null ? compose.genre.eq(genre) : null;
+    }
+
+    public BooleanExpression firstMoodEq(String firstMood) {
+        return firstMood != null ? compose.first_mood.eq(firstMood) : null;
+    }
+
+    public BooleanExpression secondMoodEq(String secondMood) {
+        return secondMood != null ? compose.second_mood.eq(secondMood) : null;
     }
 }

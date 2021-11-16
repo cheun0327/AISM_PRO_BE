@@ -15,5 +15,7 @@ public interface LikeRepository extends JpaRepository<Like, String> {
     public Integer countBySong_SongId(String songId);
     // like 삭제
     public void deleteById(String likeId);
+    // songId랑 userId로 like 가져오기
+    public List<Like> findAllByUser(String userId);
 
 }
