@@ -29,6 +29,8 @@ public class LibraryService implements LibraryServiceInter{
     @Autowired
     private LikeRepository likeRepository;
     @Autowired
+    private PlaylistLikeRepository playlistLikeRepository;
+    @Autowired
     private OneTwoRepository oneTwoRepository;
     @Autowired
     private TwoThreeRepository twoThreeRepository;
@@ -62,7 +64,7 @@ public class LibraryService implements LibraryServiceInter{
 
         try {
             // song type 있으면 플레이리스트 가져옴.
-            List<PlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
+            List<NewPlaylistDTO> playlists = getNewPlaylists(librarySearchDTO.getType());
             map.put("playlist", playlists);
 
             // song 가져옴
@@ -201,10 +203,15 @@ public class LibraryService implements LibraryServiceInter{
         return new ArrayList<>();
     }
 
-    public List<PlaylistDTO> getNewPlaylists(String type) {
+    public List<NewPlaylistDTO> getNewPlaylists(String type) {
         if (type.equals("모두") || type.equals("음원")){
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(false);
+            }
             return playlistRepository.findAll()
-                    .stream().map(pl -> modelMapper.playlistMapper().map(pl, PlaylistDTO.class))
+                    .stream().map(pl -> modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class))
                     .collect(Collectors.toList());
         }
 
