@@ -78,6 +78,10 @@ public class LibraryService implements LibraryServiceInter{
                 songDTOList = mapNewSong2NewSongDTO(songList);
             }
 
+            for(NewSongDTO ns : songDTOList) {
+                System.out.println(ns.getCreateDate());
+            }
+
             // seach 결과 필터링
             if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
                 map.put("song", filterNewSearchKeyword(librarySearchDTO.getSearch(), songDTOList));
@@ -102,6 +106,7 @@ public class LibraryService implements LibraryServiceInter{
 
         List<NewSongDTO> newSongDTOs = new ArrayList<>();
         for (NewSong s : songList) {
+            System.out.println(s.getCreateDate());
             NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
             nsdto.setLike(likes.contains(s.getSongId()));
             newSongDTOs.add(nsdto);
