@@ -1,18 +1,18 @@
 package com.upvote.aismpro.service;
 
+import com.querydsl.core.Tuple;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
-import com.upvote.aismpro.entity.PlayList;
-import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.repository.PlaylistRepository;
-import com.upvote.aismpro.repository.SongRepository;
-import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.entity.*;
+import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -20,15 +20,122 @@ public class LibraryService implements LibraryServiceInter{
 
     @Autowired
     private SongRepository songRepository;
-
+    @Autowired
+    private NewSongRepository newSongRepository;
     @Autowired
     private PlaylistRepository playlistRepository;
-
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private LikeRepository likeRepository;
+    @Autowired
+    private PlaylistLikeRepository playlistLikeRepository;
+    @Autowired
+    private OneTwoRepository oneTwoRepository;
+    @Autowired
+    private TwoThreeRepository twoThreeRepository;
+    @Autowired
+    private ThreeFourRepository threeFourRepository;
+    @Autowired
+    private FourFiveRepository fourFiveRepository;
     @Autowired
     private CustomModelMapper modelMapper;
+
+    @Override
+    public Map<String, List<String>> getRenderData() {
+        Map<String, List<String>> map = new HashMap<>();
+
+        // 뉴에이지 - three 컬럼 + 다른 장르 - two 컬럼(뉴에니지 세부 장르 제외)
+        List<String> mood = Stream.concat(oneTwoRepository.findTwo().stream(),
+                        twoThreeRepository.findThreeQD().stream())
+                        .collect(Collectors.toList());
+
+        map.put("genre", oneTwoRepository.findOneQD());
+        map.put("inst", threeFourRepository.findFour());
+        map.put("mood", mood);
+        map.put("playtime", new ArrayList<String>(Arrays.asList("30초", "1분", "1분 30초", "2분", "2분 30초", "3분", "3분 30초", "4분", "4분 30초", "5분")));
+        map.put("tempo", new ArrayList<String>(Arrays.asList("80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140")));
+        return map;
+    }
+
+
+    public Map<String, Object> getNewSearch(NewLibrarySearchDTO librarySearchDTO) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            // song type 있으면 플레이리스트 가져옴.
+            List<NewPlaylistDTO> playlists = new ArrayList<>();
+            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+                playlists = getNewPlaylistsLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
+            }
+            else {
+                playlists = getNewPlaylists(librarySearchDTO.getType());
+            }
+            map.put("playlist", playlists);
+
+            // song 가져옴
+            List<NewSong> songList = newSongRepository.findSongBySearchParamQD(librarySearchDTO);
+
+            // like 추가 & 형변환
+            // 정렬 구현 안됨.
+            List<NewSongDTO> songDTOList = new ArrayList<>();
+            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+                songDTOList = mapNewSong2NewSongDTOLike(songList, librarySearchDTO.getUserId());
+            }
+            else {
+                songDTOList = mapNewSong2NewSongDTO(songList);
+            }
+
+            // seach 결과 필터링
+            if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
+                map.put("song", filterNewSearchKeyword(librarySearchDTO.getSearch(), songDTOList));
+            }
+            else {
+                map.put("song", songDTOList);
+            }
+
+            // artist
+            List<ArtistDTO> artists = new ArrayList<>();
+            for (NewSongDTO ns : songDTOList) {
+                User artist = newSongRepository.getById(ns.getSongId()).getUser();
+                ArtistDTO artistDTO = new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile());
+                if (!artists.contains(artistDTO)) artists.add(new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile()));
+            }
+            map.put("artist", artists);
+
+            return map;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    private List<NewSongDTO> mapNewSong2NewSongDTOLike(List<NewSong> songList, String userId) {
+        User user = userRepository.getById(userId);
+        List<String> likes = user.getLikes().stream().map(l -> l.getSong().getSongId()).collect(Collectors.toList());
+
+        System.out.println(likes);
+
+        List<NewSongDTO> newSongDTOs = new ArrayList<>();
+        for (NewSong s : songList) {
+            NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
+            nsdto.setLike(likes.contains(s.getSongId()));
+            newSongDTOs.add(nsdto);
+        }
+        return newSongDTOs;
+    }
+
+    private List<NewSongDTO> mapNewSong2NewSongDTO(List<NewSong> songList) {
+
+        List<NewSongDTO> newSongDTOs = new ArrayList<>();
+        for (NewSong s : songList) {
+            NewSongDTO nsdto = modelMapper.newSongMapper().map(s, NewSongDTO.class);
+            nsdto.setLike(false);
+            newSongDTOs.add(nsdto);
+        }
+        return newSongDTOs;
+    }
 
     @Override
     public Map<String, Object> getSearch(LibrarySearchDTO librarySearchDto) throws Exception {
@@ -102,6 +209,39 @@ public class LibraryService implements LibraryServiceInter{
         return new ArrayList<>();
     }
 
+    public List<NewPlaylistDTO> getNewPlaylists(String type) {
+        if (type.equals("모두") || type.equals("음원")){
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(false);
+                newPlaylistDTOList.add(dto);
+            }
+            return newPlaylistDTOList;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<NewPlaylistDTO> getNewPlaylistsLike(String type, String userId) {
+        List<String> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
+                .stream().map(src -> src.getPlaylist().getPlaylistId())
+                .collect(Collectors.toList());
+        System.out.println(likes);
+
+        if (type.equals("모두") || type.equals("음원")){
+            List<NewPlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+            for (PlayList pl : playlistRepository.findAll()) {
+                NewPlaylistDTO dto = modelMapper.newPlaylistMapper().map(pl, NewPlaylistDTO.class);
+                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
+                newPlaylistDTOList.add(dto);
+            }
+            return newPlaylistDTOList;
+        }
+
+        return new ArrayList<>();
+    }
+
     // 검색 키워드 필터링
     List<SongDTO> filterSearchKeyword(String keyword, List<SongDTO> songDTOList) {
         List<SongDTO> filtered = new ArrayList<>();
@@ -114,6 +254,19 @@ public class LibraryService implements LibraryServiceInter{
             }
             if (song.getTag().contains(keyword)) filtered.add(song);
         }
+        return filtered;
+    }
+
+    List<NewSongDTO> filterNewSearchKeyword(String keyword, List<NewSongDTO> songDTOList) {
+        List<NewSongDTO> filtered = new ArrayList<>();
+
+        for (NewSongDTO ns : songDTOList) {
+            String[] arr = {ns.getSongName(), ns.getCreatorName()};
+            if (Arrays.stream(arr).anyMatch(keyword::equals) || ns.getTag().contains(keyword)) {
+                filtered.add(ns);
+            }
+        }
+
         return filtered;
     }
 }

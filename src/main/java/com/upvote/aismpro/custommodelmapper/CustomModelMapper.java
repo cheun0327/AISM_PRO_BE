@@ -6,11 +6,15 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.persistence.Convert;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +46,47 @@ public class CustomModelMapper {
         modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
                 .addMapping(src -> src.getUser().getId(), PlaylistDTO::setCreatorId);
 
+        return modelMapper;
+    }
+
+    Converter<PlayList, Integer> newPlaylistSongCntCvt = new Converter<PlayList, Integer>() {
+        @Override
+        public Integer convert(MappingContext<PlayList, Integer> context) {
+            return context.getSource().getSongs().size();
+        }
+    };
+
+    Converter<PlayList, Integer> newPlaylistPlaytimeCvt = new Converter<PlayList, Integer>() {
+        @Override
+        public Integer convert(MappingContext<PlayList, Integer> context) {
+            AudioFileFormat aff = null;
+            try {
+                aff = AudioSystem.getAudioFileFormat(new File("./song/sos.wav"));
+            } catch (UnsupportedAudioFileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AudioFormat af = aff.getFormat();
+            double playTime = (double) aff.getFrameLength() / af.getFrameRate() * 3.7;
+            return (int) Math.ceil((context.getSource().getSongs().size() * (int) Math.ceil(playTime)) / 60);
+        }
+    };
+
+
+    @Bean
+    public ModelMapper newPlaylistMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(PlayList.class, NewPlaylistDTO.class)
+                .addMapping(src -> src.getUser().getNickName(), NewPlaylistDTO::setPlaylistCreatorName)
+                .addMappings(modelMapper -> modelMapper.using(newPlaylistSongCntCvt).map(src -> src, NewPlaylistDTO::setPlaylistSongCount))
+                .addMappings(modelMapper -> modelMapper.using(newPlaylistPlaytimeCvt).map(src -> src, NewPlaylistDTO::setPlaylistPlaytime))
+                .addMapping(PlayList::getName, NewPlaylistDTO::setPlaylistName)
+                .addMapping(PlayList::getState, NewPlaylistDTO::setPlaylistState)
+                .addMapping(PlayList::getImg, NewPlaylistDTO::setPlaylistImg);
         return modelMapper;
     }
 
@@ -116,6 +161,47 @@ public class CustomModelMapper {
                 .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
                 .addMapping(Song::getGenre, SongDTO::setGenre)
                 .addMapping(Song::getLength, SongDTO::setLength);
+        return modelMapper;
+    }
+
+    Converter<NewSong, List<String>> newSongTagCvt = new Converter<NewSong, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<NewSong, List<String>> context) {
+            if (context.getSource().getOne().equals("Newage")) {
+                return new ArrayList<String>(Arrays.asList(
+                        context.getSource().getOne(),
+                        context.getSource().getTwo(),
+                        context.getSource().getThree(),
+                        context.getSource().getFour(),
+                        context.getSource().getFive()
+                ));
+            }
+            else {
+                return new ArrayList<String>(Arrays.asList(
+                        context.getSource().getOne(),
+                        context.getSource().getTwo(),
+                        context.getSource().getThree(),
+                        context.getSource().getFour()
+                ));
+            }
+        }
+    };
+
+    @Bean
+    public ModelMapper newSongMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(NewSong.class, NewSongDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(newSongTagCvt).map(src -> src, NewSongDTO::setTag))
+                .addMapping(src -> src.getUser().getNickName(), NewSongDTO::setCreatorName)
+                .addMapping(NewSong::getSongId, NewSongDTO::setSongId)
+                .addMapping(NewSong::getSongName, NewSongDTO::setSongName)
+                .addMapping(NewSong::getThumbnail, NewSongDTO::setThumbnail)
+                .addMapping(NewSong::getFileName, NewSongDTO::setFileName)
+                .addMapping(NewSong::getCreateDate, NewSongDTO::setCreateDate)
+                .addMapping(NewSong::getPlaytime, NewSongDTO::setPlaytime);
         return modelMapper;
     }
 

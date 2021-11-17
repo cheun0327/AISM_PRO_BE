@@ -15,6 +15,7 @@ public class PlaylistDetailDTO {
     private String playlistName;
     private String playlistState;
     private String playlistImg;
+    private Boolean playlistLike;
     private List<SongDTO> songs;
     private List<String> keywords;
 }
