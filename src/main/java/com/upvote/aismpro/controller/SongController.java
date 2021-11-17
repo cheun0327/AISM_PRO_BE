@@ -53,4 +53,13 @@ public class SongController {
         songService.deleteLike(likeId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/song")
+    public void saveSong(@RequestBody Map<String, Object> param) {
+        try {
+            songService.createSong(param);
+        } catch (Exception e) {
+            System.out.println("에러");
+        }
+    }
 }

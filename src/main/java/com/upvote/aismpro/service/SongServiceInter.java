@@ -5,6 +5,7 @@ import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Song;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SongServiceInter {
 
@@ -18,4 +19,6 @@ public interface SongServiceInter {
     public void deleteLike(String likeId);
     // 비슷한 곡 가져오기
     public List<SongDTO> getSimilarSong(MoodDTO moodDTO);
+    // 곡 저장
+    public void createSong(Map<String, Object> param) throws Exception;
 }

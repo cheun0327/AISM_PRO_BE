@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class Song {
     private String songId;
 
     @Column(nullable = false)
-    private String createDate;
+    private Timestamp createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creatorId", referencedColumnName="userId")
@@ -51,6 +53,22 @@ public class Song {
 
     @Column
     private String thumbnail;
+
+    public Song(String songId, String songName, String fileName,
+                 String genre, String firstMood, String secondMood, String thirdMood,
+                 String type, String length, User user, Timestamp createDate){
+        this.songId = songId;
+        this.songName = songName;
+        this.fileName = fileName;
+        this.genre = genre;
+        this.firstMood = firstMood;
+        this.secondMood = secondMood;
+        this.thirdMood = thirdMood;
+        this.type = type;
+        this.length = length;
+        this.user = user;
+        this.createDate = createDate;
+    }
 
     public void print() {
         System.out.println("songId : " + this.songId);
