@@ -55,11 +55,13 @@ public class SongController {
     }
 
     @PostMapping("/song")
-    public void saveSong(@RequestBody Map<String, Object> param) {
+    public ResponseEntity<String> saveSong(@RequestBody Map<String, Object> param) {
         try {
-            songService.createSong(param);
+            String songId = songService.createSong(param);
+            return new ResponseEntity<>(songId, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println("에러");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
