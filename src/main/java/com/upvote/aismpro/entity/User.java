@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -43,13 +45,13 @@ public class User {
 //    @JsonBackReference
 //    private List<Sell> sells = new ArrayList<Sell>();
 //
-//    @OneToMany(mappedBy = "user")
-//    @JsonBackReference
-//    private List<Like> likes = new ArrayList<Like>();
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<Like> likes = new ArrayList<Like>();
 //
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JsonBackReference
-//    private List<PERSISTlayList> playlists = new ArrayList<PlayList>();
+//    private List<PlayList> playlists = new ArrayList<PlayList>();
 
     @Builder
     public User(String nickname, String email) {

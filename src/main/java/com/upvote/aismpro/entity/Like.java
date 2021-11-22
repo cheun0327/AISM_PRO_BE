@@ -22,7 +22,7 @@ public class Like {
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="creatorId", referencedColumnName="userId")
+    @JoinColumn(name="creatorId")
     @JsonManagedReference
     private User user;
 }
