@@ -10,6 +10,7 @@ import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.json.GsonTester;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -52,9 +53,11 @@ public class LibraryService {
         Map<String, Object> map = new HashMap<>();
 
         try {
+            System.out.println("하하하");
+            System.out.println(!librarySearchDTO.getUserId().equals(-1L));
             // song type 있으면 플레이리스트 가져옴.
             List<PlaylistDTO> playlists = new ArrayList<>();
-            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+            if (!librarySearchDTO.getUserId().equals(-1L)) {
                 playlists = getNewPlaylistsLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
             }
             else {
@@ -68,7 +71,7 @@ public class LibraryService {
             // like 추가 & 형변환
             // 정렬 구현 안됨.
             List<SongDTO> songDTOList = new ArrayList<>();
-            if (!librarySearchDTO.getUserId().equals("") && librarySearchDTO.getUserId() != null) {
+            if (!librarySearchDTO.getUserId().equals(-1L)) {
                 songDTOList = mapToSongDTOWithLike(songList, librarySearchDTO.getUserId());
             }
             else {

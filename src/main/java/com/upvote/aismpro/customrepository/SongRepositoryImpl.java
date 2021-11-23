@@ -72,14 +72,14 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
         else {
             switch(librarySearchDTO.getType()) {
                 case "모두" : return song.one.in(librarySearchDTO.getGenre())
-                        .and(instIn(librarySearchDTO.getInst()))
-                        .and(moodIn(librarySearchDTO.getMood()))
-                        .and(playtimeIn(librarySearchDTO.getPlaytime()));
+                        .or(instIn(librarySearchDTO.getInst()))
+                        .or(moodIn(librarySearchDTO.getMood()))
+                        .or(playtimeIn(librarySearchDTO.getPlaytime()));
                 default : return song.type.in(librarySearchDTO.getType())
-                        .and(genreIn(librarySearchDTO.getGenre()))
-                        .and(instIn(librarySearchDTO.getInst()))
-                        .and(moodIn(librarySearchDTO.getMood()))
-                        .and(playtimeIn(librarySearchDTO.getPlaytime()));
+                        .or(genreIn(librarySearchDTO.getGenre()))
+                        .or(instIn(librarySearchDTO.getInst()))
+                        .or(moodIn(librarySearchDTO.getMood()))
+                        .or(playtimeIn(librarySearchDTO.getPlaytime()));
             }
         }
     }
