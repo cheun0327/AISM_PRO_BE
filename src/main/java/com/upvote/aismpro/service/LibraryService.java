@@ -53,8 +53,6 @@ public class LibraryService {
         Map<String, Object> map = new HashMap<>();
 
         try {
-            System.out.println("하하하");
-            System.out.println(!librarySearchDTO.getUserId().equals(-1L));
             // song type 있으면 플레이리스트 가져옴.
             List<PlaylistDTO> playlists = new ArrayList<>();
             if (!librarySearchDTO.getUserId().equals(-1L)) {

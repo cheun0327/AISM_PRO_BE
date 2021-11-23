@@ -72,4 +72,9 @@ public class User {
         this.profile = profile;
     }
 
+    public User setProfile(String profile) {
+        this.profile = profile;
+        return this;
+    }
+
 }
