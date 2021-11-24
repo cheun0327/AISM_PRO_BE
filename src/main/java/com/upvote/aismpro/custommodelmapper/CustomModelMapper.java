@@ -1,12 +1,10 @@
 package com.upvote.aismpro.custommodelmapper;
 
-import com.upvote.aismpro.dto.GenreInfoDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.ShortSongDTO;
-import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.SongRepository;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -33,6 +31,22 @@ public class CustomModelMapper {
 
     @Autowired
     private SongRepository songRepository;
+
+    @Bean
+    public ModelMapper toUserDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(User.class, UserDTO.class)
+                .addMapping(User::getUserId, UserDTO::setUserId)
+                .addMapping(User::getEmail, UserDTO::setEmail)
+                .addMapping(User::getNickname, UserDTO::setNickname)
+                .addMapping(User::getPlatform, UserDTO::setPlatform)
+                .addMapping(User::getProfile, UserDTO::setProfile);
+
+        return modelMapper;
+    }
 
     Converter<GenreInfo, Integer> genreInfoCntCvt = new Converter<GenreInfo, Integer>() {
         @Override
@@ -156,7 +170,7 @@ public class CustomModelMapper {
     };
 
     @Bean
-    public ModelMapper toPlaylistDTOMapper() {
+    public ModelMapper toPlaylistDTO() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
@@ -168,6 +182,34 @@ public class CustomModelMapper {
                 .addMapping(Playlist::getName, PlaylistDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState)
                 .addMapping(Playlist::getImg, PlaylistDTO::setPlaylistImg);
+        return modelMapper;
+    }
+
+    Converter<Playlist, List<String>> playlistTagCvt = new Converter<Playlist, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<Playlist, List<String>> context) {
+            return new ArrayList<String>(Arrays.asList(
+                    context.getSource().getOne(),
+                    context.getSource().getTwo(),
+                    context.getSource().getThree()
+            ));
+        }
+    };
+
+    @Bean
+    public ModelMapper toPlaylistDetailDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.createTypeMap(Playlist.class, PlaylistDetailDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
+                .addMapping(Playlist::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
+                .addMapping(Playlist::getName, PlaylistDetailDTO::setPlaylistName)
+                .addMapping(Playlist::getState, PlaylistDetailDTO::setPlaylistState)
+                .addMapping(Playlist::getImg, PlaylistDetailDTO::setPlaylistImg)
+                .addMapping(src -> src.getUser().getUserId(), PlaylistDetailDTO::setPlaylistCreatorId)
+                .addMapping(src -> src.getUser().getNickname(), PlaylistDetailDTO::setPlaylistCreatorName);
+
         return modelMapper;
     }
 
