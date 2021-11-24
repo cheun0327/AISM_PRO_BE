@@ -5,6 +5,7 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SimilarSrcDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ public class SongService implements SongServiceInter{
 
     @Autowired
     private SongRepository songRepository;
+    @Autowired
+    private LikeRepository likeRepository;
     @Autowired
     private CustomModelMapper modelMapper;
 
@@ -41,6 +44,11 @@ public class SongService implements SongServiceInter{
         Collections.shuffle(similar);
         if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
         return similar;
+    }
+
+    public Integer getLikeCnt(Long songId){
+        Integer cnt = likeRepository.countBySong_SongId(songId);
+        return cnt;
     }
 
 }
