@@ -60,6 +60,13 @@ public class PlaylistController {
 //        }
 //    }
 
+    /**
+     *
+     * @param playlistDetailDTO
+     * @return
+     * @throws Exception
+     */
+
     // 플레이리스트 디테일 페이지에서 비슷한 플레이 리스트 가져오기
     @PostMapping("/playlist/similar")
     public ResponseEntity<List<NewPlaylistDTO>> getSimilarPlaylist(@RequestBody PlaylistDetailDTO playlistDetailDTO) throws Exception {

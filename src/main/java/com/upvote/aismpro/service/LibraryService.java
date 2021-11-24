@@ -101,6 +101,7 @@ public class LibraryService implements LibraryServiceInter{
                 ArtistDTO artistDTO = new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile());
                 if (!artists.contains(artistDTO)) artists.add(new ArtistDTO(artist.getId(), artist.getNickName(), artist.getProfile()));
             }
+
             map.put("artist", artists);
 
             return map;
