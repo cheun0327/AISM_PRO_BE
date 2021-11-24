@@ -144,7 +144,7 @@ public class LibraryService {
         if (type.equals("모두") || type.equals("음원")){
             List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
-                PlaylistDTO dto = modelMapper.toPlaylistDTOMapper().map(pl, PlaylistDTO.class);
+                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
                 dto.setPlaylistLike(false);
                 newPlaylistDTOList.add(dto);
             }
@@ -162,7 +162,7 @@ public class LibraryService {
         if (type.equals("모두") || type.equals("음원")){
             List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
-                PlaylistDTO dto = modelMapper.toPlaylistDTOMapper().map(pl, PlaylistDTO.class);
+                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
                 dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
                 newPlaylistDTOList.add(dto);
             }
