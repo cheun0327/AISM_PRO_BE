@@ -1,11 +1,18 @@
 package com.upvote.aismpro.custommodelmapper;
 
-import com.upvote.aismpro.dto.*;
-import com.upvote.aismpro.entity.*;
+import com.upvote.aismpro.dto.GenreInfoDTO;
+import com.upvote.aismpro.dto.PlaylistDTO;
+import com.upvote.aismpro.dto.ShortSongDTO;
+import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.entity.GenreInfo;
+import com.upvote.aismpro.entity.Playlist;
+import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.repository.SongRepository;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,41 +31,116 @@ public class CustomModelMapper {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    @Bean
-    public ModelMapper standardMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD);
-        return modelMapper;
-    }
+    @Autowired
+    private SongRepository songRepository;
 
-    @Bean
-    public ModelMapper looseMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
-        return modelMapper;
-    }
-
-    @Bean
-    public ModelMapper playlistMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-
-        modelMapper.createTypeMap(PlayList.class, PlaylistDTO.class)
-                .addMapping(src -> src.getUser().getId(), PlaylistDTO::setCreatorId);
-
-        return modelMapper;
-    }
-
-    Converter<PlayList, Integer> newPlaylistSongCntCvt = new Converter<PlayList, Integer>() {
+    Converter<GenreInfo, Integer> genreInfoCntCvt = new Converter<GenreInfo, Integer>() {
         @Override
-        public Integer convert(MappingContext<PlayList, Integer> context) {
+        public Integer convert(MappingContext<GenreInfo, Integer> context) {
+            String categories[] = {context.getSource().getOne(), context.getSource().getTwo(),
+                context.getSource().getThree(), context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()};
+            Integer cnt = 0;
+            for (String cate : categories) if (cate != null) cnt++;
+            return cnt;
+        }
+    };
+
+    @Bean
+    public ModelMapper toGenreInfoDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(GenreInfo.class, GenreInfoDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(genreInfoCntCvt).map(src -> src, GenreInfoDTO::setCategoryCnt));
+        return modelMapper;
+    }
+
+    Converter<Song, List<String>> songTagCvt = new Converter<Song, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<Song, List<String>> context) {
+            String categories[] = {
+                    context.getSource().getOne(), context.getSource().getTwo(), context.getSource().getThree(),
+                    context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()
+            };
+            List<String> tags = new ArrayList<>();
+            Arrays.stream(categories).forEach(s -> {if (s != null)  tags.add(s);});
+            return tags;
+        }
+    };
+
+    Converter<Song, String> songImgPathCvt = new Converter<Song, String>() {
+        @Override
+        public String convert(MappingContext<Song, String> context) {
+            // 이미지 경로 : song/img/songId
+            return "song/img/" + context.getSource().getSongId();
+        }
+    };
+
+    Converter<Song, String> songFilePathCvt = new Converter<Song, String>() {
+        @Override
+        public String convert(MappingContext<Song, String> context) {
+            // 음원 파일 경로 : song/wav/songId
+            return "song/wav/" + context.getSource().getSongId();
+        }
+    };
+
+    Converter<Song, Boolean> songLikeCvt = new Converter<Song, Boolean>() {
+        @Override
+        public Boolean convert(MappingContext<Song, Boolean> context) {
+            // like default setting -> false로!
+            return false;
+        }
+    };
+
+    @Bean
+    public ModelMapper toSongDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(Song.class, SongDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
+                .addMappings(modelMapper -> modelMapper.using(songImgPathCvt).map(src -> src, SongDTO::setImgPath))
+                .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setFilePath))
+                .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, SongDTO::setLike))
+                .addMapping(src -> src.getUser().getNickname(), SongDTO::setCreatorName)
+                .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
+                .addMapping(Song::getSongId, SongDTO::setSongId)
+                .addMapping(Song::getSongName, SongDTO::setSongName)
+                .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
+                .addMapping(Song::getPlaytime, SongDTO::setPlaytime);
+        return modelMapper;
+    }
+
+    @Bean
+    public ModelMapper toShortSongDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(Song.class, ShortSongDTO.class)
+                .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, ShortSongDTO::setTags))
+                .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, ShortSongDTO::setLike))
+                .addMapping(src -> src.getUser().getNickname(), ShortSongDTO::setCreatorName)
+                .addMapping(src -> src.getUser().getUserId(), ShortSongDTO::setCreatorId)
+                .addMapping(Song::getSongId, ShortSongDTO::setSongId)
+                .addMapping(Song::getSongName, ShortSongDTO::setSongName)
+                .addMapping(Song::getCreateDate, ShortSongDTO::setCreateDate);
+        return modelMapper;
+    }
+
+
+    Converter<Playlist, Integer> playlistSongCntCvt = new Converter<Playlist, Integer>() {
+        @Override
+        public Integer convert(MappingContext<Playlist, Integer> context) {
             return context.getSource().getSongs().size();
         }
     };
 
-    Converter<PlayList, Integer> newPlaylistPlaytimeCvt = new Converter<PlayList, Integer>() {
+    Converter<Playlist, Integer> playlistPlaytimeCvt = new Converter<Playlist, Integer>() {
         @Override
-        public Integer convert(MappingContext<PlayList, Integer> context) {
+        public Integer convert(MappingContext<Playlist, Integer> context) {
             AudioFileFormat aff = null;
             try {
                 aff = AudioSystem.getAudioFileFormat(new File("./song/sos.wav"));
@@ -73,258 +155,19 @@ public class CustomModelMapper {
         }
     };
 
-
     @Bean
-    public ModelMapper newPlaylistMapper() {
+    public ModelMapper toPlaylistDTOMapper() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
 
-        modelMapper.createTypeMap(PlayList.class, NewPlaylistDTO.class)
-                .addMapping(src -> src.getUser().getNickName(), NewPlaylistDTO::setPlaylistCreatorName)
-                .addMappings(modelMapper -> modelMapper.using(newPlaylistSongCntCvt).map(src -> src, NewPlaylistDTO::setPlaylistSongCount))
-                .addMappings(modelMapper -> modelMapper.using(newPlaylistPlaytimeCvt).map(src -> src, NewPlaylistDTO::setPlaylistPlaytime))
-                .addMapping(PlayList::getName, NewPlaylistDTO::setPlaylistName)
-                .addMapping(PlayList::getState, NewPlaylistDTO::setPlaylistState)
-                .addMapping(PlayList::getImg, NewPlaylistDTO::setPlaylistImg);
-        return modelMapper;
-    }
-
-    @Bean
-    public ModelMapper userMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-
-        modelMapper.createTypeMap(User.class, UserDTO.class)
-                .addMapping(User::getId, UserDTO::setUserId)
-                .addMapping(User::getEmail, UserDTO::setEmail)
-                .addMapping(User::getNickName, UserDTO::setNickName)
-                .addMapping(User::getPlatform, UserDTO::setPlatform)
-                .addMapping(User::getProfile, UserDTO::setProfile);
-
-        return modelMapper;
-    }
-
-    Converter<PlayList, List<String>> playlistTagCvt = new Converter<PlayList, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<PlayList, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getFirstMood(),
-                    context.getSource().getSecondMood(),
-                    context.getSource().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper playlistDetailMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-
-        modelMapper.createTypeMap(PlayList.class, PlaylistDetailDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
-                .addMapping(PlayList::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
-                .addMapping(PlayList::getName, PlaylistDetailDTO::setPlaylistName)
-                .addMapping(PlayList::getState, PlaylistDetailDTO::setPlaylistState)
-                .addMapping(PlayList::getImg, PlaylistDetailDTO::setPlaylistImg)
-                .addMapping(src -> src.getUser().getId(), PlaylistDetailDTO::setPlaylistCreatorId)
-                .addMapping(src -> src.getUser().getNickName(), PlaylistDetailDTO::setPlaylistCreatorName);
-
-        return modelMapper;
-    }
-
-    Converter<Song, List<String>> songTagCvt = new Converter<Song, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Song, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getFirstMood(),
-                    context.getSource().getSecondMood(),
-                    context.getSource().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper songMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-
-        modelMapper.createTypeMap(Song.class, SongDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTag))
-                .addMapping(Song::getSongId, SongDTO::setSongId)
-                .addMapping(Song::getSongName, SongDTO::setSongName)
-                .addMapping(src -> src.getUser().getNickName(), SongDTO::setCreatorName)
-                .addMapping(Song::getThumbnail, SongDTO::setThumbnail)
-                .addMapping(Song::getFileName, SongDTO::setFileName)
-                .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
-                .addMapping(Song::getGenre, SongDTO::setGenre)
-                .addMapping(Song::getLength, SongDTO::setLength);
-        return modelMapper;
-    }
-
-    Converter<NewSong, List<String>> newSongTagCvt = new Converter<NewSong, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<NewSong, List<String>> context) {
-            if (context.getSource().getOne().equals("Newage")) {
-                return new ArrayList<String>(Arrays.asList(
-                        context.getSource().getOne(),
-                        context.getSource().getTwo(),
-                        context.getSource().getThree(),
-                        context.getSource().getFour(),
-                        context.getSource().getFive()
-                ));
-            }
-            else {
-                return new ArrayList<String>(Arrays.asList(
-                        context.getSource().getOne(),
-                        context.getSource().getTwo(),
-                        context.getSource().getThree(),
-                        context.getSource().getFour()
-                ));
-            }
-        }
-    };
-
-    @Bean
-    public ModelMapper newSongMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-
-        modelMapper.createTypeMap(NewSong.class, NewSongDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(newSongTagCvt).map(src -> src, NewSongDTO::setTag))
-                .addMapping(src -> src.getUser().getNickName(), NewSongDTO::setCreatorName)
-                .addMapping(NewSong::getSongId, NewSongDTO::setSongId)
-                .addMapping(NewSong::getSongName, NewSongDTO::setSongName)
-                .addMapping(NewSong::getThumbnail, NewSongDTO::setThumbnail)
-                .addMapping(NewSong::getFileName, NewSongDTO::setFileName)
-                .addMapping(NewSong::getCreateDate, NewSongDTO::setCreateDate)
-                .addMapping(NewSong::getPlaytime, NewSongDTO::setPlaytime);
-        return modelMapper;
-    }
-
-
-    Converter<Create, List<String>> createTagCvt = new Converter<Create, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Create, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getSong().getFirstMood(),
-                    context.getSource().getSong().getSecondMood(),
-                    context.getSource().getSong().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper createMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-
-        modelMapper.createTypeMap(Create.class, CreateDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(createTagCvt).map(src -> src, CreateDTO::setTag))
-                .addMapping(src -> src.getSong().getSongId(), CreateDTO::setSongId)
-                .addMapping(src -> src.getSong().getSongName(), CreateDTO::setSongName)
-                .addMapping(src -> src.getUser().getNickName(), CreateDTO::setCreatorName)
-                .addMapping(src -> src.getSong().getThumbnail(), CreateDTO::setThumbnail)
-                .addMapping(src -> src.getSong().getFileName(), CreateDTO::setFileName)
-                .addMapping(src -> src.getSong().getCreateDate(), CreateDTO::setCreateDate)
-                .addMapping(src -> src.getSong().getGenre(), CreateDTO::setGenre)
-                .addMapping(src -> src.getSong().getLength(), CreateDTO::setLength);
-        return modelMapper;
-    }
-
-    Converter<Buy, List<String>> buyTagCvt = new Converter<Buy, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Buy, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getSong().getFirstMood(),
-                    context.getSource().getSong().getSecondMood(),
-                    context.getSource().getSong().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper buyMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-
-        modelMapper.createTypeMap(Buy.class, BuyDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(buyTagCvt).map(src -> src, BuyDTO::setTag))
-                .addMapping(src -> src.getSong().getSongId(), BuyDTO::setSongId)
-                .addMapping(src -> src.getSong().getSongName(), BuyDTO::setSongName)
-                .addMapping(src -> src.getUser().getNickName(), BuyDTO::setCreatorName)
-                .addMapping(src -> src.getUser().getId(), BuyDTO::setOwnerId)
-                .addMapping(src -> src.getUser().getNickName(), BuyDTO::setOwnerName)
-                .addMapping(src -> src.getSong().getThumbnail(), BuyDTO::setThumbnail)
-                .addMapping(src -> src.getSong().getFileName(), BuyDTO::setFileName)
-                .addMapping(src -> src.getSong().getCreateDate(), BuyDTO::setCreateDate)
-                .addMapping(src -> src.getSong().getGenre(), BuyDTO::setGenre)
-                .addMapping(src -> src.getSong().getLength(), BuyDTO::setLength);
-        return modelMapper;
-    }
-
-    Converter<Sell, List<String>> sellTagCvt = new Converter<Sell, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Sell, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getSong().getFirstMood(),
-                    context.getSource().getSong().getSecondMood(),
-                    context.getSource().getSong().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper sellMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-
-        modelMapper.createTypeMap(Sell.class, SellDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(sellTagCvt).map(src -> src, SellDTO::setTag))
-                .addMapping(src -> src.getSong().getSongId(), SellDTO::setSongId)
-                .addMapping(src -> src.getSong().getSongName(), SellDTO::setSongName)
-                .addMapping(src -> src.getUser().getNickName(), SellDTO::setCreatorName)
-                .addMapping(src -> src.getSong().getThumbnail(), SellDTO::setThumbnail)
-                .addMapping(src -> src.getSong().getFileName(), SellDTO::setFileName)
-                .addMapping(src -> src.getSong().getCreateDate(), SellDTO::setCreateDate)
-                .addMapping(src -> src.getSong().getGenre(), SellDTO::setGenre)
-                .addMapping(src -> src.getSong().getLength(), SellDTO::setLength);
-        return modelMapper;
-    }
-
-    Converter<Like, List<String>> likeTagCvt = new Converter<Like, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Like, List<String>> context) {
-            return new ArrayList<String>(Arrays.asList(
-                    context.getSource().getSong().getFirstMood(),
-                    context.getSource().getSong().getSecondMood(),
-                    context.getSource().getSong().getThirdMood()
-            ));
-        }
-    };
-
-    @Bean
-    public ModelMapper likeMapper() {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-
-        modelMapper.createTypeMap(Like.class, LikeDTO.class)
-                .addMappings(modelMapper -> modelMapper.using(likeTagCvt).map(src -> src, LikeDTO::setTag))
-                .addMapping(src -> src.getSong().getSongId(), LikeDTO::setSongId)
-                .addMapping(src -> src.getSong().getSongName(), LikeDTO::setSongName)
-                .addMapping(src -> src.getUser().getNickName(), LikeDTO::setCreatorName)
-                .addMapping(src -> src.getUser().getId(), LikeDTO::setOwnerId)
-                .addMapping(src -> src.getUser().getNickName(), LikeDTO::setOwnerName)
-                .addMapping(src -> src.getSong().getThumbnail(), LikeDTO::setThumbnail)
-                .addMapping(src -> src.getSong().getFileName(), LikeDTO::setFileName)
-                .addMapping(src -> src.getSong().getCreateDate(), LikeDTO::setCreateDate)
-                .addMapping(src -> src.getSong().getGenre(), LikeDTO::setGenre)
-                .addMapping(src -> src.getSong().getLength(), LikeDTO::setLength);
+        modelMapper.createTypeMap(Playlist.class, PlaylistDTO.class)
+                .addMapping(src -> src.getUser().getNickname(), PlaylistDTO::setPlaylistCreatorName)
+                .addMappings(modelMapper -> modelMapper.using(playlistSongCntCvt).map(src -> src, PlaylistDTO::setPlaylistSongCount))
+                .addMappings(modelMapper -> modelMapper.using(playlistPlaytimeCvt).map(src -> src, PlaylistDTO::setPlaylistPlaytime))
+                .addMapping(Playlist::getName, PlaylistDTO::setPlaylistName)
+                .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState)
+                .addMapping(Playlist::getImg, PlaylistDTO::setPlaylistImg);
         return modelMapper;
     }
 

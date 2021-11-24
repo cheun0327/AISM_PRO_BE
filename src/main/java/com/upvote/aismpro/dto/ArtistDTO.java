@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ArtistDTO {
-    private String artistId;
+    private Long artistId;
     private String artistName;
     private String artistProfile;
 
-    public ArtistDTO(String artistId, String artistName, String artistProfile) {
+    public ArtistDTO(Long artistId, String artistName, String artistProfile) {
         this.artistId = artistId;
         this.artistName = artistName;
         this.artistProfile = artistProfile;

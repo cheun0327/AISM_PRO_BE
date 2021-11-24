@@ -1,15 +1,17 @@
 package com.upvote.aismpro.security;
 
+
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -20,19 +22,17 @@ public class SecurityService {
     @Autowired
     private UserRepository userRepository;
 
-    public String createToken(JwtRequestDTO jwtRequestDTO) {
-        long expTime = 8*1000*60*60;// 10*1000*60*60; // 10 hour
+    public String createToken(JWTRequestDTO jwtRequestDTO) {
+        long expTime = 8*1000*60*60;
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRETE_KEY);
         Key signingKey = new SecretKeySpec(secretKeyBytes, signatureAlgorithm.getJcaName());
 
-        System.out.println("============= make key ===================");
-
-        Claims claims = Jwts.claims().setSubject(jwtRequestDTO.getUserId());
-        claims.put("userEmail", jwtRequestDTO.getUserEmail());
-        claims.put("userNickName", jwtRequestDTO.getUserNickName());
+        Claims claims = Jwts.claims().setSubject(jwtRequestDTO.getUserId().toString());
+        claims.put("useremail", jwtRequestDTO.getUserEmail());
+        claims.put("userNickname", jwtRequestDTO.getUserNickname());
         return Jwts.builder()
                 .setClaims(claims)
                 .signWith(signingKey, signatureAlgorithm)
@@ -40,8 +40,8 @@ public class SecurityService {
                 .compact();
     }
 
-    public JwtRequestDTO transformUserToJwtRequestDto(User user) {
-        JwtRequestDTO jwtRequestDTO = new JwtRequestDTO(user.getId(), user.getEmail(), user.getNickName());
+    public JWTRequestDTO transformUserToJwtRequestDto(User user) {
+        JWTRequestDTO jwtRequestDTO = new JWTRequestDTO(user.getUserId(), user.getEmail(), user.getNickname());
         return jwtRequestDTO;
     }
     public Boolean validateToken(String token) {
@@ -61,7 +61,7 @@ public class SecurityService {
 
     public User getUser(String token) {
         String userId = getSubject(token);
-        User user = userRepository.getById(userId);
+        User user = userRepository.getById(Long.parseLong(userId));
         return user;
     }
 
@@ -99,4 +99,5 @@ public class SecurityService {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
+
 }

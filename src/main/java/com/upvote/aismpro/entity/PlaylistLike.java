@@ -1,11 +1,9 @@
 package com.upvote.aismpro.entity;
 
-import com.upvote.aismpro.repository.PlaylistLikeRepository;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -15,7 +13,7 @@ public class PlaylistLike {
 
     @Id
     @Column(name = "playlistLikeId")
-    private String Id;
+    private Long Id;
 
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -23,10 +21,9 @@ public class PlaylistLike {
 
     @ManyToOne
     @JoinColumn(name = "playlistId")
-    private PlayList playlist;
+    private Playlist playlist;
 
-    public PlaylistLike(User user, PlayList playlist) {
-        this.Id = UUID.randomUUID().toString();
+    public PlaylistLike(User user, Playlist playlist) {
         this.user = user;
         this.playlist = playlist;
     }

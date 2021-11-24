@@ -1,7 +1,5 @@
 package com.upvote.aismpro.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,13 +7,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "creates")
 @Data
+@Table(name = "creates")
+@NoArgsConstructor
 public class Create {
+
     @Id
-    @Column(name="createId", nullable = false)
-    private String id;
+    @Column(name = "createId", nullable = false)
+    private Long createId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
@@ -23,7 +22,8 @@ public class Create {
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name="creatorId", referencedColumnName="userId")
     @JsonManagedReference
     private User user;
+
 }
