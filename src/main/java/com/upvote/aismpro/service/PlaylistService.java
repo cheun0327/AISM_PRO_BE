@@ -6,10 +6,7 @@ import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistLike;
-import com.upvote.aismpro.repository.PlaylistLikeRepository;
-import com.upvote.aismpro.repository.PlaylistRepository;
-import com.upvote.aismpro.repository.PlaylistSongRepository;
-import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +26,8 @@ public class PlaylistService {
     private PlaylistLikeRepository playlistLikeRepository;
     @Autowired
     private PlaylistSongRepository playlistSongRepository;
+    @Autowired
+    private SongRepository songRepository;
     @Autowired
     private CustomModelMapper modelMapper;
 
@@ -68,8 +67,11 @@ public class PlaylistService {
         }
     }
 
-    public List<PlaylistDTO> getSimilarPlaylist(PlaylistDetailDTO playlistDetailDTO) throws Exception {
-        List<Playlist> similar_li = playlistRepository.findSimilarPlaylistQD(playlistDetailDTO);
+    // 플레이리스트와 비슷한 플레이리스트 가져오기
+    public List<PlaylistDTO> getSimilarPlaylist(Long playlistId) throws Exception {
+        PlaylistDetailDTO pl = modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+
+        List<Playlist> similar_li = playlistRepository.findSimilarPlaylistQD(pl);
         try {
             return similar_li
                     .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
@@ -83,7 +85,10 @@ public class PlaylistService {
         }
     }
 
-    public List<PlaylistDTO> getSimilarPlaylistBySong(SongDTO songDTO) throws Exception {
+    // 음원과 비슷한 플레이리스트 가져오기
+    public List<PlaylistDTO> getSimilarPlaylistBySong(Long songId) throws Exception {
+        SongDTO songDTO = modelMapper.toSongDTO().map(songRepository.getById(songId), SongDTO.class);
+
         List<Playlist> similar_li = playlistRepository.findNewSimilarPlaylistQD(songDTO);
         try {
             return similar_li
@@ -98,6 +103,7 @@ public class PlaylistService {
         }
     }
 
+    // 해당 음원이 저장된 플레이리스트 찾기
     public  List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws  Exception {
         return playlistSongRepository.findPlaylistBySongIdQD(songId)
                 .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))

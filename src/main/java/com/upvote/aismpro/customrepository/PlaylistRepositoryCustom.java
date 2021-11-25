@@ -1,5 +1,6 @@
 package com.upvote.aismpro.customrepository;
 
+import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Playlist;

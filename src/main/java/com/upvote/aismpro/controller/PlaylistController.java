@@ -43,10 +43,11 @@ public class PlaylistController {
     }
 
     // 플레이리스트 디테일 페이지에서 비슷한 플레이 리스트 가져오기
-    @PostMapping("/playlist/similar")
-    public ResponseEntity<List<PlaylistDTO>> getSimilarPlaylist(@RequestBody PlaylistDetailDTO playlistDetailDTO) throws Exception {
+    // like 어떻게 표시해 줄지 생각해보기
+    @GetMapping("/playlist/similar/{playlistId}")
+    public ResponseEntity<List<PlaylistDTO>> getSimilarPlaylist(@PathVariable("playlistId") Long playlistId) throws Exception {
         try {
-            return new ResponseEntity<>(playlistService.getSimilarPlaylist(playlistDetailDTO), HttpStatus.OK);
+            return new ResponseEntity<>(playlistService.getSimilarPlaylist(playlistId), HttpStatus.OK);
         } catch(NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch(Exception e) {
@@ -55,10 +56,10 @@ public class PlaylistController {
     }
 
     // 곡 디테일에서 비슷한 플레이 리스트 가져오기
-    @PostMapping("/playlist/similar/song")
-    public ResponseEntity<List<PlaylistDTO>> getNewSimilarPlaylist(@RequestBody SongDTO songDTO) throws Exception {
+    @GetMapping("/playlist/similar/song/{songId}")
+    public ResponseEntity<List<PlaylistDTO>> getNewSimilarPlaylist(@PathVariable("songId") Long songId) throws Exception {
         try {
-            return new ResponseEntity<>(playlistService.getSimilarPlaylistBySong(songDTO), HttpStatus.OK);
+            return new ResponseEntity<>(playlistService.getSimilarPlaylistBySong(songId), HttpStatus.OK);
         } catch(NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch(Exception e) {
@@ -66,8 +67,8 @@ public class PlaylistController {
         }
     }
 
-    // ver2
-    @PostMapping("/playlist/saved/{songId}")
+    // 해당 음원이 저장된 플레이리스트 찾기
+    @GetMapping("/playlist/saved/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
         try {
             return new ResponseEntity<>(playlistService.getSavedPlaylistBySongId(songId), HttpStatus.OK);
