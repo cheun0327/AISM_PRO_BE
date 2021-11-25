@@ -18,6 +18,7 @@ public class PlaylistController {
     @Autowired
     private PlaylistService playlistService;
 
+    // 유저의 플레이리스트 리스트 가져오기
     @GetMapping("/playlist/{userId}")
     public ResponseEntity<List<PlaylistDTO>> getMyPlaylist(@PathVariable("userId") Long userId) {
         try{
@@ -29,6 +30,7 @@ public class PlaylistController {
         }
     }
 
+    // 특정 플레이리스트 디테일 정보 가져오기
     @GetMapping("/playlist/detail/{playlistId}")
     public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") Long playlistId) throws Exception {
         try{
@@ -77,7 +79,7 @@ public class PlaylistController {
     }
 
     // 플레이리스트 좋아요 개수 가져오기
-    @GetMapping("playlist/like/count/{playlistId}")
+    @GetMapping("/playlist/like/count/{playlistId}")
     public ResponseEntity<Integer> getPlaylistLikeCnt(@PathVariable("playlistId") Long playlistId) {
         try {
             return new ResponseEntity<>(playlistService.getPlaylistLikeCnt(playlistId), HttpStatus.OK);

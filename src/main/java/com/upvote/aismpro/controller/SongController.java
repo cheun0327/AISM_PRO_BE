@@ -36,4 +36,9 @@ public class SongController {
     public ResponseEntity<List<SongDTO>> getSimilarSong(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getSimilarSong(songId), HttpStatus.OK);
     }
+
+    @GetMapping("/song/like/count/{songId}")
+    public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") Long songId) {
+        return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);
+    }
 }
