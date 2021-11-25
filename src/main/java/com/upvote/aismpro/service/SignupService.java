@@ -92,20 +92,4 @@ public class SignupService {
         }
     }
 
-
-    public void emailDoubleCheck(String email) {
-        List<User> findUsers = userRepository.findByEmail(email);
-        if (!findUsers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
-        }
-    }
-
-
-    public void nickDoubleCheck(String nickName) throws Exception {
-        List<User> findUsers = userRepository.findByNickname(nickName);
-        if (!findUsers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
-        }
-    }
-
 }
