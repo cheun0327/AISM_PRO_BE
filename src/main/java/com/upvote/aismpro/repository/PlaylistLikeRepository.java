@@ -17,4 +17,6 @@ public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long
 
     @Query("SELECT COUNT(pl) from PlaylistLike pl where pl.playlist.playlistId = :playlistId")
     Integer countPlaylistLikeByID(@Param("playlistId") Long playlistId);
+
+    public List<PlaylistLike> findAllByUser_UserIdAndPlaylist_PlaylistId(Long userId, Long playlistId);
 }

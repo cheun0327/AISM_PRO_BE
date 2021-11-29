@@ -19,8 +19,6 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // request header token decrypt 해서 권한 확인해주기
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (token != null) token = token.split(" ")[1];
 
         if (StringUtils.equals(request.getMethod(), "OPTIONS")) {
             System.out.println("if request options method is options, return true");
@@ -31,7 +29,13 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (token == null || token.isEmpty() || !securityService.validateToken(token)) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token != null) {
+            token = token.split(" ")[1];
+            System.out.println(token);
+        }
+
+        if (token == null || !securityService.validateToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             System.out.println("사용자 인증 실패" + token);
             return false;
