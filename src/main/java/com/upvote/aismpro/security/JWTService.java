@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
-public class SecurityService {
-    private static final String SECRETE_KEY = "qohjkbdlxfklbskcnwpdkvnzkwjerlqkspfksnxnbcfghjghd";
+public class JWTService {
+    private final String SECRETE_KEY = "qohjkbdlxfklbskcnwpdkvnzkwjerlqkspfksnxnbcfghjghd";
 
     @Autowired
     private UserRepository userRepository;
@@ -44,8 +44,9 @@ public class SecurityService {
         JWTRequestDTO jwtRequestDTO = new JWTRequestDTO(user.getUserId(), user.getEmail(), user.getNickname());
         return jwtRequestDTO;
     }
+    // 새로고침 로그인 유지 토큰 유효성 검사
     public Boolean validateToken(String token) {
-        //final String userId = getUserIdFromToken(token);
+
         try{
             return !isTokenExpired(token);
         }catch (Exception e) {
