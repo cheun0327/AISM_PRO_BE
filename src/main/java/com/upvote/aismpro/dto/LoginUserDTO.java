@@ -8,26 +8,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginUserDTO {
     private String token;
-    private String userId;
+    private Long userId;
     private String email;
-    private String nickName;
+    private String nickname;
     private String platform;
     private String profile;
 
     public LoginUserDTO(String token, User user) {
         this.token = token;
-        this.userId = user.getId();
+        this.userId = user.getUserId();
         this.email = user.getEmail();
-        this.nickName = user.getNickName();
+        this.nickname = user.getNickname();
         this.platform = user.getPlatform();
         this.profile = user.getProfile();
     }
 
     public LoginUserDTO(String token, User user, String platform) {
         this.token = token;
-        this.userId = user.getId();
+        this.userId = user.getUserId();
         this.email = user.getEmail();
-        this.nickName = user.getNickName();
+        this.nickname = user.getNickname();
         this.platform = platform;
         this.profile = user.getProfile();
     }

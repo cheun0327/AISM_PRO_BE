@@ -1,61 +1,56 @@
 package com.upvote.aismpro.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.upvote.aismpro.entitypk.KeywordPK;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "song")
 @Data
+@Table(name = "song")
+@NoArgsConstructor
 public class Song {
-    @Id
-    @Column(name="songId", nullable = false)
-    private String songId;
 
-    @Column(nullable = false)
-    private String createDate;
+    @Id
+    @Column(name = "songId", nullable = false)
+    private Long songId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creatorId", referencedColumnName="userId")
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "createDate")
+    private Timestamp createDate;
+
+    @Column(name = "songName")
     private String songName;
 
-    @Column(nullable = false)
-    private String fileName;
-
-    @Column
-    private String genre;
-
-    @Column
-    private String firstMood;
-
-    @Column
-    private String secondMood;
-
-    @Column
-    private String thirdMood;
-
-    @Column
+    @Column(name = "type")
     private String type;
 
-    @Column
-    private String length;
+    @Column(name = "playtime")
+    private String playtime;
 
-    @Column
-    private String thumbnail;
+    // fileName 이랑 thumbnail 경로 둘다 필요 없음 - userId랑 songId 조합해서 만들면 됨.
 
-    public void print() {
-        System.out.println("songId : " + this.songId);
-        System.out.println("createDate : " + this.createDate);
-        System.out.println("songName : " + this.songName);
-        System.out.println("fileName : " + this.fileName);
-    }
+    @Column(name = "one")
+    private String one;
+
+    @Column(name="two")
+    private String two;
+
+    @Column(name="three")
+    private String three;
+
+    @Column(name="four")
+    private String four;
+
+    @Column(name="five")
+    private String five;
+
+    @Column(name="six")
+    private String six;
 }

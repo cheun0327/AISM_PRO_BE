@@ -1,31 +1,33 @@
 package com.upvote.aismpro.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
-@Data
-public class SongDTO {
-    private String songId;
-    private String songName;
-    private String creatorName;
-    private List<String> tag;
-    private String fileName;
-    private String thumbnail;
-    private Date createDate;
-    private String genre;
-    private String length;
 
-    public void print() {
-        System.out.println(this.songId);
-        System.out.println(this.songName);
-        System.out.println(this.creatorName);
-        System.out.println(this.tag);
-        System.out.println(this.thumbnail);
-        System.out.println(this.fileName);
-        System.out.println(this.createDate);
-        System.out.println(this.genre);
-        System.out.println(this.length);
-    }
+@Data
+@NoArgsConstructor
+public class SongDTO {
+    private Long songId;
+
+    private String songName;
+
+    private Long creatorId;
+
+    private String creatorName;
+
+    private Timestamp createDate;
+
+    private List<String> tags;
+
+    private String playtime;
+
+    private String filePath;
+
+    private String imgPath;
+
+    private Boolean like;
 }
+
