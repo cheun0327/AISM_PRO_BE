@@ -38,6 +38,7 @@ public class PlaylistService {
                     .stream().map(src -> src.getPlaylist().getPlaylistId())
                     .collect(Collectors.toList());
 
+            // playlist like
             List<PlaylistDTO> playlistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
                 PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
@@ -58,6 +59,25 @@ public class PlaylistService {
     public PlaylistDetailDTO getPlayListDetail(Long playlistId) throws Exception {
         try {
             return modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    // playlist detail 가져오기
+    public PlaylistDetailDTO getPlayListDetailWithLike(Long playlistId, Long userId) throws Exception {
+        try {
+            PlaylistDetailDTO playlistDetailDTO = modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+
+            List<PlaylistLike> playlistLikes = playlistLikeRepository.findAllByUser_UserIdAndPlaylist_PlaylistId(userId, playlistId);
+
+            if(playlistLikes.size() == 1) playlistDetailDTO.setPlaylistLike(true);
+
+            return playlistDetailDTO;
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();

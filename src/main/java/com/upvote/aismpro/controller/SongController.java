@@ -32,11 +32,34 @@ public class SongController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // song detail with like
+    @GetMapping("/song/{songId}/{userId}")
+    public ResponseEntity<SongDTO> getSongDetailWithLike(@PathVariable("songId") Long songId,
+                                                         @PathVariable("userId") Long userId) {
+        try{
+            SongDTO songDTO = songService.getSongDetailWithLike(songId, userId);
+            return new ResponseEntity<>(songDTO, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // get similar songs
     @GetMapping("/song/similar/{songId}")
     public ResponseEntity<List<SongDTO>> getSimilarSong(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getSimilarSong(songId), HttpStatus.OK);
     }
 
+    // get similar songs
+    @GetMapping("/song/similar/{songId}/{userId}")
+    public ResponseEntity<List<SongDTO>> getSimilarSong(@PathVariable("songId") Long songId,
+                                                        @PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(songService.getSimilarSongWithLike(songId, userId), HttpStatus.OK);
+    }
+
+    // song의 like 개수 cnt
     @GetMapping("/song/like/count/{songId}")
     public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);

@@ -31,6 +31,7 @@ public class PlaylistController {
     }
 
     // 특정 플레이리스트 디테일 정보 가져오기
+    // x
     @GetMapping("/playlist/detail/{playlistId}")
     public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") Long playlistId) throws Exception {
         try{
@@ -42,8 +43,24 @@ public class PlaylistController {
         }
     }
 
+    // 특정 플레이리스트 디테일 정보 가져오기
+    // like 포함
+    @GetMapping("/playlist/detail/{playlistId}/{userId}")
+    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetailWithLike(
+            @PathVariable("playlistId") Long playlistId,
+            @PathVariable("userId") Long userId) throws Exception {
+        try{
+            return new ResponseEntity<>(playlistService.getPlayListDetailWithLike(playlistId, userId), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // 플레이리스트 디테일 페이지에서 비슷한 플레이 리스트 가져오기
     // like 어떻게 표시해 줄지 생각해보기
+    // x
     @GetMapping("/playlist/similar/{playlistId}")
     public ResponseEntity<List<PlaylistDTO>> getSimilarPlaylist(@PathVariable("playlistId") Long playlistId) throws Exception {
         try {
@@ -56,6 +73,7 @@ public class PlaylistController {
     }
 
     // 곡 디테일에서 비슷한 플레이 리스트 가져오기
+    // x
     @GetMapping("/playlist/similar/song/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getNewSimilarPlaylist(@PathVariable("songId") Long songId) throws Exception {
         try {
@@ -68,6 +86,7 @@ public class PlaylistController {
     }
 
     // 해당 음원이 저장된 플레이리스트 찾기
+    // x
     @GetMapping("/playlist/saved/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
         try {
