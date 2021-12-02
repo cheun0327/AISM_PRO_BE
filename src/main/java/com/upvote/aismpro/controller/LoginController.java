@@ -2,32 +2,42 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.security.SecurityService;
+import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.security.JWTService;
+import com.upvote.aismpro.security.TokenDTO;
+import com.upvote.aismpro.security.TokenProvider;
 import com.upvote.aismpro.service.LoginService;
 import com.upvote.aismpro.sns.GoogleTokenVerifier;
 import com.upvote.aismpro.sns.NaverTokenVerifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @RestController
+@RequiredArgsConstructor
 public class LoginController {
-    @Autowired
-    private SecurityService securityService;
 
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
+
+    @Autowired
+    private JWTService jwtService;
     @Autowired
     GoogleTokenVerifier googleVerifier;
-
     @Autowired
     NaverTokenVerifier naverTokenVerifier;
-
     @Autowired
     private LoginService loginService;
 
@@ -43,10 +53,27 @@ public class LoginController {
 
         try {
             User user = loginService.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
-            // token 생성
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+            System.out.println("카카오 인증 통과");
+            /*
+            Spring Security 설정
+            */
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
+            System.out.println("authToken 생성 통과");
+            System.out.println(authToken.getName() + " / " + authToken.getPrincipal() + " / "
+                    + authToken.getCredentials() + " / " + authToken.getDetails() + " / " + authToken.getAuthorities());
 
-            return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
+            // TODO : 여기 통과할 수 있게 에러 해결하기
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+            System.out.println("authentication 생성 통과");
+
+            TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
+            System.out.println("tokenDTO 생성 통과");
+            // refresh token 저장 생략
+
+            // token 생성
+//            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
+
+            return new ResponseEntity<>(new LoginUserDTO(tokenDTO.getAccessToken(), user), HttpStatus.OK);
 
         } catch (NoSuchElementException e){
             e.printStackTrace();
@@ -73,6 +100,7 @@ public class LoginController {
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
+            System.out.println("예외 여기로!!!!");
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -89,7 +117,7 @@ public class LoginController {
             User user = loginService.checkUser("구글", googleProfile.get("email"));
 
             // token 생성
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
 
             return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
 

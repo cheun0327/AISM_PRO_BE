@@ -2,18 +2,12 @@ package com.upvote.aismpro.service;
 
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import com.upvote.aismpro.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.util.List;
 import java.util.NoSuchElementException;
 

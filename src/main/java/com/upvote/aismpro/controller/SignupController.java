@@ -21,7 +21,7 @@ public class SignupController {
     @PostMapping("/signup/{nickname}")
     public ResponseEntity<LoginUserDTO> signup(HttpServletRequest request,
                                                @PathVariable("nickname") String nickname,
-                                               @PathVariable("file")MultipartFile file) {
+                                               @PathVariable("file") MultipartFile file) {
         try {
             LoginUserDTO loginUserDTO = accountService.signup(request.getSession(), nickname, file);
             return new ResponseEntity<>(loginUserDTO, HttpStatus.OK);

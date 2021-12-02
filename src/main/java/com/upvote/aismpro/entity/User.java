@@ -1,6 +1,7 @@
 package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.upvote.aismpro.security.Authority;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -32,6 +32,10 @@ public class User {
     // song처럼 그냥 그때그때 조합해서 쓸지 고민해봥
     @Column(name = "profile", nullable = false)
     private String profile;
+
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
+
 
 //    @OneToMany(mappedBy = "user")
 //    @JsonBackReference

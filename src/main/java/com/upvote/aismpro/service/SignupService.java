@@ -3,15 +3,13 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import com.upvote.aismpro.security.SecurityService;
+import com.upvote.aismpro.security.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -21,7 +19,7 @@ public class SignupService {
     private UserRepository userRepository;
 
     @Autowired
-    private SecurityService securityService;
+    private JWTService jwtService;
 
     public LoginUserDTO signup(HttpSession session, String nickname, MultipartFile file) throws Exception {
         try {
@@ -51,7 +49,7 @@ public class SignupService {
             savedUser = userRepository.save(savedUser.setProfile(imgFolder + "/" + imgName));
 
             //user token 생성
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(savedUser));
+            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(savedUser));
 
             LoginUserDTO loginUser = new LoginUserDTO(token, savedUser);
 
@@ -77,7 +75,7 @@ public class SignupService {
 
             User user = new User(nickname, email, platform);
 
-            String token = securityService.createToken(securityService.transformUserToJwtRequestDto(user));
+            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
 
             LoginUserDTO loginUserDTO = new LoginUserDTO(token, user);
 

@@ -1,6 +1,6 @@
 package com.upvote.aismpro.interceptor;
 
-import com.upvote.aismpro.security.SecurityService;
+import com.upvote.aismpro.security.JWTService;
 import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class HttpRequestInterceptor implements HandlerInterceptor {
     @Autowired
-    private SecurityService securityService;
+    private JWTService jwtService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -35,7 +35,7 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
             System.out.println(token);
         }
 
-        if (token == null || !securityService.validateToken(token)) {
+        if (token == null || !jwtService.validateToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             System.out.println("사용자 인증 실패" + token);
             return false;

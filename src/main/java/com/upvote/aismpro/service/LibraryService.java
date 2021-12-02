@@ -56,10 +56,10 @@ public class LibraryService {
             // song type 있으면 플레이리스트 가져옴.
             List<PlaylistDTO> playlists = new ArrayList<>();
             if (!librarySearchDTO.getUserId().equals(-1L)) {
-                playlists = getNewPlaylistsLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
+                playlists = getPlaylistsWithLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
             }
             else {
-                playlists = getNewPlaylists(librarySearchDTO.getType());
+                playlists = getPlaylistsWithoutLike(librarySearchDTO.getType());
             }
             map.put("playlist", playlists);
 
@@ -141,7 +141,7 @@ public class LibraryService {
                 .collect(Collectors.toList());
     }
 
-    public List<PlaylistDTO> getNewPlaylists(String type) {
+    public List<PlaylistDTO> getPlaylistsWithoutLike(String type) {
         if (type.equals("모두") || type.equals("음원")){
             List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
@@ -155,7 +155,7 @@ public class LibraryService {
         return new ArrayList<>();
     }
 
-    public List<PlaylistDTO> getNewPlaylistsLike(String type, Long userId) {
+    public List<PlaylistDTO> getPlaylistsWithLike(String type, Long userId) {
         List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
                 .stream().map(src -> src.getPlaylist().getPlaylistId())
                 .collect(Collectors.toList());
