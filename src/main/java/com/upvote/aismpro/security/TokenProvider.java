@@ -94,12 +94,13 @@ public class TokenProvider {
     }
 
     // 검증
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws IllegalAccessException {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             System.out.println("잘못된 JWT 서명");
+            throw new IllegalAccessException("잘못된 JWT 서명");
         } catch (ExpiredJwtException e) {
             System.out.println("만료된 JWT 토큰");
         } catch (UnsupportedJwtException e) {

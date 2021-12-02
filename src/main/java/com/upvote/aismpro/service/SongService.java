@@ -34,19 +34,6 @@ public class SongService implements SongServiceInter{
         return modelMapper.toSongDTO().map(song, SongDTO.class);
     }
 
-    public SongDTO getSongDetailWithLike(Long songId, Long userId) {
-        Optional<Song> songOpt = songRepository.findBySongId(songId);
-        Song song =  songOpt.orElseThrow(() -> new NoSuchElementException());
-
-        SongDTO songDTO = modelMapper.toSongDTO().map(song, SongDTO.class);
-
-        List<Like> likes= likeRepository.findAllByUser_UserIdAndSong_SongId(userId, songId);
-
-        if(likes.size() == 1) songDTO.setLike(true);
-
-        return songDTO;
-    }
-
     // 비슷한 곡 가져오기
     public List<SongDTO> getSimilarSong(Long songId) {
         Song song = songRepository.getById(songId);
@@ -59,31 +46,39 @@ public class SongService implements SongServiceInter{
         return similar;
     }
 
-    // 비슷한 곡 가져오기 like 포함
-    public List<SongDTO> getSimilarSongWithLike(Long songId, Long userId) {
-        Song song = songRepository.getById(songId);
-        List<SongDTO> similar = songRepository.findSimilarSongQD(song)
-                .stream()
-                .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
-                .collect(Collectors.toList());
-        Collections.shuffle(similar);
-        if (similar.size() > 6) similar = Lists.newArrayList(similar.subList(0,6));
-
-        List<Long> likes = likeRepository.findAllByUser_UserId(userId)
-                .stream()
-                .map(s -> s.getSong().getSongId())
-                .collect(Collectors.toList());
-
-        for (SongDTO s : similar) {
-            s.setLike(likes.contains(s.getSongId()));
-        }
-
-        return similar;
-    }
 
     public Integer getLikeCnt(Long songId){
         Integer cnt = likeRepository.countBySong_SongId(songId);
         return cnt;
+    }
+
+    public SongDTO setLike2SongDTO(SongDTO songDTO, Long userId) throws Exception {
+        try {
+            List<Like> likes= likeRepository.findAllByUser_UserIdAndSong_SongId(userId, songDTO.getSongId());
+
+            if(likes.size() == 1) songDTO.setLike(true);
+
+            return songDTO;
+        } catch (Exception e) {
+            throw new Exception();
+        }
+    }
+
+    public List<SongDTO> setLike2SongDTOList(List<SongDTO> songDTOList, Long userId) throws Exception {
+        try {
+            List<Long> likes = likeRepository.findAllByUser_UserId(userId)
+                    .stream()
+                    .map(s -> s.getSong().getSongId())
+                    .collect(Collectors.toList());
+
+            for (SongDTO s : songDTOList) {
+                s.setLike(likes.contains(s.getSongId()));
+            }
+
+            return songDTOList;
+        } catch (Exception e) {
+            throw new Exception();
+        }
     }
 
 }

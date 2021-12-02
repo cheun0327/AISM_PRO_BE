@@ -8,6 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -47,14 +51,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 회원가입, 로그인 api는 토큰 없어도 허용
                 .and()
                 .authorizeRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/token/**").permitAll()
+                .antMatchers("/library/**").permitAll()
+                .antMatchers("/compose/**").permitAll()
+                .antMatchers("/playlist/**").permitAll()
+                .antMatchers("/song/**").permitAll()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
                 // JWTFilter을 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .and()
                 .apply(new JWTSecurityConfig(tokenProvider));
 
+    }
+
+    // CORS 허용 적용
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://141.164.62.192:3000");
+        configuration.addAllowedOrigin("http://141.164.62.192:80");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

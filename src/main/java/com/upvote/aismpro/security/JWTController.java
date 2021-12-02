@@ -68,6 +68,18 @@ public class JWTController {
         return new ResponseEntity<>(modelMapper.toUserDTO().map(user, UserDTO.class), HttpStatus.OK);
     }
 
+    // 프론트에서 토큰 인식 요청
+    @GetMapping("/token/validate")
+    public ResponseEntity<Boolean> validToken() {
+//        User user = userRepository.getById(SecurityUtil.getCurrentUserId());
+        try {
+            System.out.println(SecurityUtil.getCurrentUserId());
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     @GetMapping("/token/subject/{token}")
     // header에서 token 읽어오게 변경
     public Map<String, Object> getSubject(@PathVariable("token") String token) {
