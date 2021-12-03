@@ -1,19 +1,16 @@
 package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.SimilarSrcDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
-import com.upvote.aismpro.service.SongServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +75,7 @@ public class SongController {
     }
 
     // 작곡하기 step2 비슷한 음원, 플레이리스트 가져오기
-    @GetMapping("/song/similar/tags")
+    @PostMapping("/song/similar/tags")
     public ResponseEntity<Map<String, Object>> getSimilarSongByTags(@RequestBody SongTagDTO songTagDTO) {
         try {
             Map<String, Object> map = new HashMap<>();
