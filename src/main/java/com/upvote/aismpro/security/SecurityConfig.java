@@ -37,7 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // csrf 비활성
         http.csrf().disable()
 
+                .cors().configurationSource(corsConfigurationSource())
+
                 // exception handling에 custom handler 추가
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
