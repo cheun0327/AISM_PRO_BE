@@ -3,7 +3,6 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import com.upvote.aismpro.security.JWTService;
 import com.upvote.aismpro.security.TokenDTO;
 import com.upvote.aismpro.security.TokenProvider;
 import com.upvote.aismpro.service.LoginService;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -33,8 +31,6 @@ public class LoginController {
     private final TokenProvider tokenProvider;
 
     @Autowired
-    private JWTService jwtService;
-    @Autowired
     GoogleTokenVerifier googleVerifier;
     @Autowired
     NaverTokenVerifier naverTokenVerifier;
@@ -53,25 +49,14 @@ public class LoginController {
 
         try {
             User user = loginService.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
-            System.out.println("카카오 인증 통과");
-            /*
-            Spring Security 설정
-            */
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
-            System.out.println("authToken 생성 통과");
-            System.out.println(authToken.getName() + " / " + authToken.getPrincipal() + " / "
-                    + authToken.getCredentials() + " / " + authToken.getDetails() + " / " + authToken.getAuthorities());
 
-            // TODO : 여기 통과할 수 있게 에러 해결하기
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
+
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
-            System.out.println("authentication 생성 통과");
 
             TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
-            System.out.println("tokenDTO 생성 통과");
-            // refresh token 저장 생략
 
-            // token 생성
-//            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
+            // TODO refresh token 저장
 
             return new ResponseEntity<>(new LoginUserDTO(tokenDTO.getAccessToken(), user), HttpStatus.OK);
 
@@ -117,7 +102,8 @@ public class LoginController {
             User user = loginService.checkUser("구글", googleProfile.get("email"));
 
             // token 생성
-            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
+            // TODO token 생성
+            String token = "token";
 
             return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
 

@@ -3,8 +3,13 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
-import com.upvote.aismpro.security.JWTService;
+import com.upvote.aismpro.security.TokenDTO;
+import com.upvote.aismpro.security.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,13 +18,14 @@ import java.io.File;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SignupService {
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenProvider tokenProvider;
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private JWTService jwtService;
 
     public LoginUserDTO signup(HttpSession session, String nickname, MultipartFile file) throws Exception {
         try {
@@ -49,11 +55,15 @@ public class SignupService {
             savedUser = userRepository.save(savedUser.setProfile(imgFolder + "/" + imgName));
 
             //user token 생성
-            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(savedUser));
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(savedUser.getUserId(), savedUser.getEmail());
 
-            LoginUserDTO loginUser = new LoginUserDTO(token, savedUser);
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
 
-            return loginUser;
+            TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
+
+            LoginUserDTO loginUserDTO = new LoginUserDTO(tokenDTO.getAccessToken(), savedUser);
+
+            return loginUserDTO;
 
         } catch (IllegalAccessException e){
             e.printStackTrace();
@@ -75,9 +85,15 @@ public class SignupService {
 
             User user = new User(nickname, email, platform);
 
-            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
+//            String token = jwtService.createToken(jwtService.transformUserToJwtRequestDto(user));
 
-            LoginUserDTO loginUserDTO = new LoginUserDTO(token, user);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
+
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+
+            TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
+
+            LoginUserDTO loginUserDTO = new LoginUserDTO(tokenDTO.getAccessToken(), user);
 
             return loginUserDTO;
 

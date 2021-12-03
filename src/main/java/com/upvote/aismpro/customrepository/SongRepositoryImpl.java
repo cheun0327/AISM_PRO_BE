@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.SimilarSrcDTO;
+import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,21 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                                         .or(fourEq(src.getFour()))
                                         .or(fiveEq(src.getFive()))
                                         .or(sixEq(src.getSix())))
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findSimilarSongByTagsQD(SongTagDTO songTagDTO) {
+        return query.select(song)
+                .from(song)
+                .where(
+                        oneEq(songTagDTO.getOne())
+                                .and(twoEq(songTagDTO.getTwo()))
+                                .or(threeEq(songTagDTO.getThree()))
+                                .or(fourEq(songTagDTO.getFour()))
+                                .or(fiveEq(songTagDTO.getFive()))
+                                .or(fiveEq(songTagDTO.getSix()))
                 )
                 .fetch();
     }
