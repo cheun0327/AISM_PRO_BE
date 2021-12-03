@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -37,18 +38,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // csrf 비활성
         http.csrf().disable()
 
-                .cors().configurationSource(corsConfigurationSource())
-
                 // exception handling에 custom handler 추가
-                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
                 // security는 session 사용이 default -> session 비활성
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 // 회원가입, 로그인 api는 토큰 없어도 허용
                 .and()
@@ -62,6 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
                 .antMatchers("/song/**").permitAll()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
+
+                .and()
+                .cors().configurationSource(corsConfigurationSource())
 
                 // JWTFilter을 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .and()
