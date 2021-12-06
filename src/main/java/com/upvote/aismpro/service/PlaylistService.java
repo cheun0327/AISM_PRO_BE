@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -124,12 +126,15 @@ public class PlaylistService {
     // 음원과 비슷한 플레이리스트 가져오기
     public List<PlaylistDTO> getSimilarPlaylistBySong(Long songId) throws Exception {
         SongDTO songDTO = modelMapper.toSongDTO().map(songRepository.getById(songId), SongDTO.class);
-
-        List<Playlist> similar_li = playlistRepository.findNewSimilarPlaylistQD(songDTO);
         try {
-            return similar_li
+            List<PlaylistDTO> similar = playlistRepository.findNewSimilarPlaylistQD(songDTO)
                     .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
                     .collect(Collectors.toList());
+
+            Collections.shuffle(similar);
+            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0,8));
+            return similar;
+
         } catch(NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();
@@ -142,10 +147,15 @@ public class PlaylistService {
     // 작곡하기 step2 비슷한 플레이리스트 가져오기
     public List<PlaylistDTO> getSimilarPlaylistByTags(SongTagDTO songTagDTO) throws Exception {
         try {
-            List<Playlist> similar = playlistRepository.findNewSimilarPlaylistByTagsQD(songTagDTO);
-            return similar
-                    .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
+            List<PlaylistDTO> similar = playlistRepository.findNewSimilarPlaylistByTagsQD(songTagDTO)
+                    .stream()
+                    .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
                     .collect(Collectors.toList());
+
+            Collections.shuffle(similar);
+            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0,8));
+            return similar;
+
         }catch (Exception e) {
             e.printStackTrace();
             throw new Exception();

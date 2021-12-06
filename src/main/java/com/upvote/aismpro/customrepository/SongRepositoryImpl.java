@@ -37,7 +37,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
 
     @Override
     public List<Song> findSimilarSongByTagsQD(SongTagDTO songTagDTO) {
-        return query.select(song)
+        List<Song> songs = query.select(song)
                 .from(song)
                 .where(
                         oneEq(songTagDTO.getOne())
@@ -48,6 +48,15 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                                 .or(fiveEq(songTagDTO.getSix()))
                 )
                 .fetch();
+
+        if (songs.isEmpty()) {
+            System.out.println("비슷한 곡 없음");
+            return query.select(song)
+                    .from(song)
+                    .fetch();
+        }
+
+        return songs;
     }
 
     // 라이브러리 검색 결과 반환
