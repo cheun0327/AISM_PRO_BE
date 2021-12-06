@@ -2,6 +2,7 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
@@ -27,7 +28,9 @@ public class SongController {
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
     @PostMapping("/song")
-    public ResponseEntity<String> createSong(){
+    public ResponseEntity<String> createSong(@RequestBody SongSaveDTO songSaveDTO){
+        System.out.println(songSaveDTO);
+
         return new ResponseEntity<>("post mapping song api", HttpStatus.OK);
     }
 
@@ -78,6 +81,7 @@ public class SongController {
     @PostMapping("/song/similar/tags")
     public ResponseEntity<Map<String, Object>> getSimilarSongByTags(@RequestBody SongTagDTO songTagDTO) {
         try {
+            System.out.println(songTagDTO);
             Map<String, Object> map = new HashMap<>();
             Long userId = SecurityUtil.getCurrentUserId();
 
