@@ -64,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
                 .and()
-                .cors().configurationSource(corsConfigurationSource())
+                .cors()
+//                .cors().configurationSource(corsConfigurationSource())
 
                 // JWTFilter을 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .and()
@@ -73,17 +74,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // CORS 허용 적용
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("*");
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://141.164.62.192:3000", "http://141.164.62.192:80"));
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+////        configuration.addAllowedOrigin("*");
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://141.164.62.192:3000", "http://141.164.62.192:80"));
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }
