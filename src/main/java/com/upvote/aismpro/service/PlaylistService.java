@@ -4,6 +4,7 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistLike;
 import com.upvote.aismpro.repository.*;
@@ -133,6 +134,19 @@ public class PlaylistService {
             e.printStackTrace();
             throw new NoSuchElementException();
         } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    // 작곡하기 step2 비슷한 플레이리스트 가져오기
+    public List<PlaylistDTO> getSimilarPlaylistByTags(SongTagDTO songTagDTO) throws Exception {
+        try {
+            List<Playlist> similar = playlistRepository.findNewSimilarPlaylistByTagsQD(songTagDTO);
+            return similar
+                    .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+        }catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }

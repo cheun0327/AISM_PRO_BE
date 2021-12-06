@@ -5,6 +5,7 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SimilarSrcDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
@@ -46,6 +47,16 @@ public class SongService implements SongServiceInter{
         return similar;
     }
 
+    // 작곡하기 step2 비슷한 곡 가져오기
+    public List<SongDTO> getSimilarSongByTags(SongTagDTO songTagDTO) {
+        List<SongDTO> similar = songRepository.findSimilarSongByTagsQD(songTagDTO)
+                .stream()
+                .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                .collect(Collectors.toList());
+        Collections.shuffle(similar);
+        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
+        return similar;
+    }
 
     public Integer getLikeCnt(Long songId){
         Integer cnt = likeRepository.countBySong_SongId(songId);
