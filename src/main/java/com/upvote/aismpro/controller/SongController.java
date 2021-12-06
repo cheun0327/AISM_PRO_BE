@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,10 @@ public class SongController {
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
     @PostMapping("/song")
-    public ResponseEntity<String> createSong(@RequestBody SongSaveDTO songSaveDTO){
-        System.out.println(songSaveDTO);
+    public ResponseEntity<String> createSong(@ModelAttribute SongSaveDTO song){
+
+        System.out.println(song);
+
 
         return new ResponseEntity<>("post mapping song api", HttpStatus.OK);
     }
