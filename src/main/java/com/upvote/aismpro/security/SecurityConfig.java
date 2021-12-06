@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/library/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/user/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
-                .antMatchers("/song/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/song/**").permitAll()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
                 .and()
