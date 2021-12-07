@@ -20,6 +20,7 @@ public class SellService {
     @Autowired
     private CustomModelMapper modelMapper;
 
+    // 사용자가 판매하는 음원 가져오기
     public List<SongDTO> getSells(Long userId) throws Exception {
         try {
             List<SongDTO> sells = sellRepository.findAllByUser_UserId(userId)
@@ -29,6 +30,16 @@ public class SellService {
             return sells;
         } catch (Exception e) {
             throw new Exception("좋아요 없음.");
+        }
+    }
+
+    // MyLibrary에서 판매한 음원 삭제
+    public void deleteSells(List<Long> deleteIds) throws Exception {
+        try {
+            sellRepository.deleteAllById(deleteIds);
+        }
+        catch (Exception e) {
+            throw new Exception();
         }
     }
 }

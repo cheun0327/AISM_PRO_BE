@@ -50,6 +50,7 @@ public class SongService implements SongServiceInter{
 
             // song 정보 저장
             Song savedSong = songRepository.save(song);
+            if (savedSong.getSongName().equals("음원 제목")) savedSong.setSongName("Song" + savedSong.getSongId());
 
             // song img 저장
             if (file != null) {
@@ -59,8 +60,8 @@ public class SongService implements SongServiceInter{
                 String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedSong.setImgFile(imgName);
-                songRepository.save(savedSong);
             };
+            songRepository.save(savedSong);
 
             // songDTO
             SongDTO songDTO = modelMapper.toSongDTO().map(savedSong, SongDTO.class);

@@ -46,7 +46,6 @@ public class SongController {
             song = songService.saveSong(songDTO, songVO.getImg());
 
             // song wav file tmp에서 이동
-            // TODO 서버 테스트
             songService.moveSongWavFile(song.getSongId());
 
             return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);

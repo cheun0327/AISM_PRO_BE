@@ -23,6 +23,7 @@ public class LikeService {
     @Autowired
     private CustomModelMapper modelMapper;
 
+    // 사용자가 좋아요 누른 음원 가져오기
     public List<SongDTO> getLikes(Long userId) throws Exception {
         try{
             List<SongDTO> likes = likeRepository.findAllByUser_UserId(userId)
@@ -32,6 +33,16 @@ public class LikeService {
             return likes;
         } catch (Exception e) {
             throw new Exception("좋아요 없음.");
+        }
+    }
+
+    // MyLibrary에서 좋아요 삭제
+    public void deleteLikes(List<Long> deleteIds) throws Exception {
+        try {
+            likeRepository.deleteAllById(deleteIds);
+        }
+        catch (Exception e) {
+            throw new Exception();
         }
     }
 }

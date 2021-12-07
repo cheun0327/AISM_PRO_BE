@@ -20,6 +20,7 @@ public class CreateService {
     @Autowired
     private CustomModelMapper modelMapper;
 
+    // 사용자가 생성한 음원 가져오기
     public List<SongDTO> getCreates(Long userId) throws Exception {
         try{
             List<SongDTO> creates = createRepository.findAllByUser_UserId(userId)
@@ -29,6 +30,16 @@ public class CreateService {
             return creates;
         } catch (Exception e) {
             throw new Exception("좋아요 없음.");
+        }
+    }
+
+    // MyLibrary에서 생상한 음원 삭제
+    public void deleteCreates(List<Long> deleteIds) throws Exception {
+        try {
+            createRepository.deleteAllById(deleteIds);
+        }
+        catch (Exception e) {
+            throw new Exception();
         }
     }
 }
