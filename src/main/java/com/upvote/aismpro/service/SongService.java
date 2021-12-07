@@ -1,19 +1,25 @@
 package com.upvote.aismpro.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.SimilarSrcDTO;
-import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Like;
-import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.security.SecurityUtil;
+import com.upvote.aismpro.vo.SongSaveVO;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,7 +31,78 @@ public class SongService implements SongServiceInter{
     @Autowired
     private LikeRepository likeRepository;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private CustomModelMapper modelMapper;
+
+
+    // 생성 sond 저장
+    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            Song song = modelMapper.songSaveDTO2song().map(songSave, Song.class);
+            song.setUser(userRepository.getById(userId));
+
+            // song 정보 저장
+            Song savedSong = songRepository.save(song);
+
+            // song img 저장
+            String dirPath = "/var/lib/jenkins/workspace/img/song";
+            String[] imgNameArr = file.getOriginalFilename().split("\\.");
+            String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
+            file.transferTo(new File(dirPath + "/" + imgName));
+
+            savedSong.setImgFile(imgName);
+            songRepository.save(savedSong);
+
+            // song 이미지 경로 설정
+            SongDTO songDTO = modelMapper.toSongDTO().map(savedSong, SongDTO.class);
+            System.out.println(songDTO);
+
+            return songDTO;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public void saveSongImg(SongDTO song, MultipartFile file) throws IOException {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String dirPath = "/var/lib/jenkins/workspace/img/song";
+
+        String[] imgNameArr = file.getOriginalFilename().split("\\.");
+        String imgName = song.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
+
+        file.transferTo(new File(dirPath + "/" + imgName));
+
+        // song 이미지 경로 설정
+        song.setImgFile(imgName);
+
+    }
+
+    // song 삭제
+    public void deleteSong(Long songId) {
+        songRepository.deleteById(songId);
+    }
+
+    public void moveSongWavFile(Long songId) throws IOException {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String dirPath = "/var/lib/jenkins/workspace/song";
+
+        // 생성 곡 저장 위치 디렉토리 확인
+        String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".wav";
+        File songDir  = new File(songDirPath);
+        if (!new File(songDirPath).exists()) songDir.mkdir();
+
+        // 저장된 곡 위치 이동
+        File source = new File(dirPath + userId + "/tmp/" + userId + ".wav");
+        File target = new File(dirPath + userId + ".wav");
+        FileUtils.moveFile(source, target);
+    }
 
     // song detail 페이지에 뿌릴 상세 정보 리턴
     // like 어떻게 뿌려줄지 생각
