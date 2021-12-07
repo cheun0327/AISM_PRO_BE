@@ -53,8 +53,8 @@ public class SongService implements SongServiceInter{
 
             // song img 저장
             if (file != null) {
-                //String dirPath = "/var/lib/jenkins/workspace/img/song";
-                String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
+                  String dirPath = "/var/lib/jenkins/workspace/img/song";
+//                String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
                 String[] imgNameArr = file.getOriginalFilename().split("\\.");
                 String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
                 file.transferTo(new File(dirPath + "/" + imgName));
@@ -81,8 +81,8 @@ public class SongService implements SongServiceInter{
 
     public void moveSongWavFile(Long songId) throws IOException {
         Long userId = SecurityUtil.getCurrentUserId();
-//        String dirPath = "/var/lib/jenkins/workspace/song";
-        String dirPath = "/Users/upvote3/Desktop/springTest/song";
+        String dirPath = "/var/lib/jenkins/workspace/song";
+//        String dirPath = "/Users/upvote3/Desktop/springTest/song";
 
         // 생성 곡 저장 위치 디렉토리 확인
         String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".wav";
