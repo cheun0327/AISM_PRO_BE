@@ -31,10 +31,9 @@ public class SongController {
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
     @PostMapping("/song")
-    public ResponseEntity<String> createSong(@ModelAttribute SongSaveVO songVO){
+    public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO){
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        System.out.println(songVO);
 
         SongDTO song = new SongDTO();
         try {
@@ -47,9 +46,10 @@ public class SongController {
             song = songService.saveSong(songDTO, songVO.getImg());
 
             // song wav file tmp에서 이동
+            // TODO 서버 테스트
             songService.moveSongWavFile(song.getSongId());
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();

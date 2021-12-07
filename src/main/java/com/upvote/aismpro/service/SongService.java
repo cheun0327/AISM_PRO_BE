@@ -16,6 +16,7 @@ import com.upvote.aismpro.vo.SongSaveVO;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class SongService implements SongServiceInter{
 
 
     // 생성 sond 저장
+    @Transactional
     public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -50,15 +52,17 @@ public class SongService implements SongServiceInter{
             Song savedSong = songRepository.save(song);
 
             // song img 저장
-            String dirPath = "/var/lib/jenkins/workspace/img/song";
-            String[] imgNameArr = file.getOriginalFilename().split("\\.");
-            String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
-            file.transferTo(new File(dirPath + "/" + imgName));
+            if (file != null) {
+                //String dirPath = "/var/lib/jenkins/workspace/img/song";
+                String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
+                String[] imgNameArr = file.getOriginalFilename().split("\\.");
+                String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
+                file.transferTo(new File(dirPath + "/" + imgName));
+                savedSong.setImgFile(imgName);
+                songRepository.save(savedSong);
+            };
 
-            savedSong.setImgFile(imgName);
-            songRepository.save(savedSong);
-
-            // song 이미지 경로 설정
+            // songDTO
             SongDTO songDTO = modelMapper.toSongDTO().map(savedSong, SongDTO.class);
             System.out.println(songDTO);
 
@@ -70,20 +74,6 @@ public class SongService implements SongServiceInter{
         }
     }
 
-    public void saveSongImg(SongDTO song, MultipartFile file) throws IOException {
-        Long userId = SecurityUtil.getCurrentUserId();
-        String dirPath = "/var/lib/jenkins/workspace/img/song";
-
-        String[] imgNameArr = file.getOriginalFilename().split("\\.");
-        String imgName = song.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
-
-        file.transferTo(new File(dirPath + "/" + imgName));
-
-        // song 이미지 경로 설정
-        song.setImgFile(imgName);
-
-    }
-
     // song 삭제
     public void deleteSong(Long songId) {
         songRepository.deleteById(songId);
@@ -91,16 +81,17 @@ public class SongService implements SongServiceInter{
 
     public void moveSongWavFile(Long songId) throws IOException {
         Long userId = SecurityUtil.getCurrentUserId();
-        String dirPath = "/var/lib/jenkins/workspace/song";
+//        String dirPath = "/var/lib/jenkins/workspace/song";
+        String dirPath = "/Users/upvote3/Desktop/springTest/song";
 
         // 생성 곡 저장 위치 디렉토리 확인
         String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".wav";
-        File songDir  = new File(songDirPath);
-        if (!new File(songDirPath).exists()) songDir.mkdir();
+//        File songDir  = new File(songDirPath);
+//        if (!new File(songDirPath).exists()) songDir.mkdir();
 
         // 저장된 곡 위치 이동
-        File source = new File(dirPath + userId + "/tmp/" + userId + ".wav");
-        File target = new File(dirPath + userId + ".wav");
+        File source = new File(songDirPath);
+        File target = new File(dirPath + "/" + userId + ".wav");
         FileUtils.moveFile(source, target);
     }
 
