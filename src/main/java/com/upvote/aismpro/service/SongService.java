@@ -91,7 +91,7 @@ public class SongService implements SongServiceInter{
 
         // 저장된 곡 위치 이동
         File source = new File(songDirPath);
-        File target = new File(dirPath + "/" + userId + ".wav");
+        File target = new File(dirPath + "/" + songId + ".wav");
         FileUtils.moveFile(source, target);
     }
 
