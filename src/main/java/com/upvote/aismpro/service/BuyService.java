@@ -7,6 +7,8 @@ import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ public class BuyService {
     private CustomModelMapper modelMapper;
 
     // 사용자가 구매한 음원 가져오기
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getBuys(Long userId) throws Exception {
         try{
             List<SongDTO> buys = buyRepository.findAllByUser_UserId(userId)
@@ -35,6 +38,7 @@ public class BuyService {
     }
 
     // MyLibrary에서 구매 음원 삭제
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteBuys(List<Long> deleteIds) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
         try {

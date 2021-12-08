@@ -13,6 +13,7 @@ public class PlaylistLike {
 
     @Id
     @Column(name = "playlistLikeId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long Id;
 
     @ManyToOne
