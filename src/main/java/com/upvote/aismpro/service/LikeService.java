@@ -9,6 +9,7 @@ import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,11 +38,14 @@ public class LikeService {
     }
 
     // MyLibrary에서 좋아요 삭제
+    @Transactional
     public void deleteLikes(List<Long> deleteIds) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
         try {
-            likeRepository.deleteAllById(deleteIds);
+            deleteIds.stream().forEach(songId -> likeRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new Exception();
         }
     }

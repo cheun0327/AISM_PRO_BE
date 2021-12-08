@@ -116,7 +116,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     private BooleanExpression genreIn(List<String> genre) {
-        return genre.isEmpty() ?null : song.one.in(genre);
+        return genre.isEmpty() ? null : song.one.in(genre);
     }
     private BooleanExpression instIn(List<String> inst) {
         return inst.isEmpty() ? null : song.four.in(inst);

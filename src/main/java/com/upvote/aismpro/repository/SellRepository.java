@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SellRepository extends JpaRepository<Sell, Long> {
     public List<Sell> findAllByUser_UserId(Long userId);
+    public void deleteByUser_UserIdAndSong_SongId(Long userId, Long songId);
 }
