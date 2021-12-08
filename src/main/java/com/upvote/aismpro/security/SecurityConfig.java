@@ -60,11 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/library/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/user/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
-                .antMatchers("/song/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/song/**").permitAll()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
                 .and()
-                .cors().configurationSource(corsConfigurationSource())
+                .cors()
+//                .cors().configurationSource(corsConfigurationSource())
 
                 // JWTFilter을 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .and()
@@ -76,11 +77,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://141.164.62.192:3000", "http://141.164.62.192:80"));
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://141.164.62.192");
+        configuration.addAllowedOrigin("http://141.164.62.192:80");
+        configuration.setAllowCredentials(true);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-//        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
