@@ -1,10 +1,15 @@
 package com.upvote.aismpro.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
+import com.upvote.aismpro.dto.PlaylistSaveDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
+import com.upvote.aismpro.vo.PlaylistSaveVO;
+import com.upvote.aismpro.vo.SongSaveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +32,23 @@ public class PlaylistController {
         Long userId = SecurityUtil.getCurrentUserId();
         playlistService.createPlaylistLike(userId, playlistId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 플리이리스트 껍데기 만들기
+    @PostMapping("/playlist")
+    public ResponseEntity<Object> createPlaylist(@ModelAttribute PlaylistSaveVO playlistVO) {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            PlaylistSaveDTO playlistSaveDTO = mapper.readValue(playlistVO.getVal(), PlaylistSaveDTO.class);
+            System.out.println(playlistSaveDTO);
+            playlistService.createPlaylist(playlistSaveDTO, playlistVO.getImg());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 

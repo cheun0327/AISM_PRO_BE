@@ -9,7 +9,11 @@ import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +35,34 @@ public class PlaylistService {
     private SongRepository songRepository;
     @Autowired
     private CustomModelMapper modelMapper;
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
+            playlist.setUser(userRepository.getById(userId));
+
+            // playlist 정보 저장
+            Playlist savedPlaylist = playlistRepository.save(playlist);
+            // TODO 디폴트 플레이리스트 제목 여부
+
+            // playlist img 저장
+            if (file != null) {
+                String dirPath = "/var/lib/jenkins/workspace/img/playlist";
+                String[] imgNameArr = file.getOriginalFilename().split("\\.");
+                String imgName = savedPlaylist.getPlaylistId() + "." + imgNameArr[imgNameArr.length - 1];
+                file.transferTo(new File(dirPath + "/" + imgName));
+                savedPlaylist.setImgFile(imgName);
+                playlistRepository.save(savedPlaylist);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
 
     // user 별 play list 가져오기
     public List<PlaylistDTO> getPlayList(Long userId) throws Exception {
