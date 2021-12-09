@@ -4,13 +4,16 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CreateService {
 
     @Autowired
@@ -35,10 +38,13 @@ public class CreateService {
 
     // MyLibrary에서 생상한 음원 삭제
     public void deleteCreates(List<Long> deleteIds) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+        System.out.println("userId : "+ userId);
         try {
-            createRepository.deleteAllById(deleteIds);
+            deleteIds.stream().forEach(songId -> createRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new Exception();
         }
     }

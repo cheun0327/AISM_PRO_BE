@@ -40,29 +40,30 @@ public class MyLibraryController {
 //        }
 //    }
 
-//    @DeleteMapping("/my-library")
-//    public ResponseEntity<Boolean> deleteMyLibraryData(@RequestBody MyLibraryDeleteDTO myLibraryDeleteDTO) {
-//        try {
-//            switch (myLibraryDeleteDTO.getCategory()) {
-//                case "create" : {
-//                    createService.deleteCreates(myLibraryDeleteDTO.getDeleteList());
-//                }
-//                case "sell" : {
-//                    sellService.deleteSells(myLibraryDeleteDTO.getDeleteList());
-//                }
-//                case "buy" : {
-//                    buyService.deleteBuys(myLibraryDeleteDTO.getDeleteList());
-//                }
-//                case "like" : {
-//                    likeService.deleteLikes(myLibraryDeleteDTO.getDeleteList());
-//                }
-//            }
-//
-//            return new ResponseEntity<>(true, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @DeleteMapping("/my-library")
+    public ResponseEntity<Boolean> deleteMyLibraryData(@RequestBody MyLibraryDeleteDTO myLibraryDeleteDTO) {
+        System.out.println(myLibraryDeleteDTO.getDeleteList());
+        try {
+            switch (myLibraryDeleteDTO.getCategory()) {
+                case "create" : {
+                    createService.deleteCreates(myLibraryDeleteDTO.getDeleteList());
+                }
+                case "sell" : {
+                    sellService.deleteSells(myLibraryDeleteDTO.getDeleteList());
+                }
+                case "buy" : {
+                    buyService.deleteBuys(myLibraryDeleteDTO.getDeleteList());
+                }
+                case "like" : {
+                    likeService.deleteLikes(myLibraryDeleteDTO.getDeleteList());
+                }
+            }
+
+            return new ResponseEntity<>(true, HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.repository.BuyRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +36,9 @@ public class BuyService {
 
     // MyLibrary에서 구매 음원 삭제
     public void deleteBuys(List<Long> deleteIds) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
         try {
-            buyRepository.deleteAllById(deleteIds);
+            deleteIds.stream().forEach(songId -> buyRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
         }
         catch (Exception e) {
             throw new Exception();
