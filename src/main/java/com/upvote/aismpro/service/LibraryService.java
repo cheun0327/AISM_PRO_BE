@@ -78,7 +78,7 @@ public class LibraryService {
                 songDTOList = mapToSongDTOWithoutLike(songList);
             }
 
-            Collections.shuffle(songDTOList);
+//            Collections.shuffle(songDTOList);
 
             // seach 결과 필터링
             if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
