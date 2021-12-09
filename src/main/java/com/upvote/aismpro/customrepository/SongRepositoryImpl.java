@@ -63,7 +63,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     public List<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
         if (librarySearchDTO.getSort().equals("업로드 날짜")) return searchOrderByDate(librarySearchDTO);
             // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
-            return search(librarySearchDTO);
+        return search(librarySearchDTO);
 
     }
 
