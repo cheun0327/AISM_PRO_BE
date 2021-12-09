@@ -40,15 +40,21 @@ public class MyLibraryController {
                     return new ResponseEntity<>(playlistService.getMyLibrarySearchResult(myLibrarySearchDTO), HttpStatus.OK);
                 }
                 case "create" : {
-                    // TODO song
-                    return new ResponseEntity<>(createService);
+                    return new ResponseEntity<>(createService.getMyLibrarySearchResult(myLibrarySearchDTO), HttpStatus.OK);
+                }
+                case "sell" : {
+                    return new ResponseEntity<>(sellService.getMyLibrarySearchResult(myLibrarySearchDTO), HttpStatus.OK);
+                }
+                case "buy" : {
+                    return new ResponseEntity<>(buyService.getMyLibrarySearchResult(myLibrarySearchDTO), HttpStatus.OK);
+                }
+                case "like" : {
+                    return new ResponseEntity<>(likeService.getMyLibrarySearchResult(myLibrarySearchDTO), HttpStatus.OK);
                 }
                 default : {
-                    // TODO song + playlist
+                    throw new Exception("잘못된 카테고리");
                 }
             }
-
-            return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

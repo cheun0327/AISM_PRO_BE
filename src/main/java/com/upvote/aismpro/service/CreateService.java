@@ -52,11 +52,18 @@ public class CreateService {
     }
 
     @Transactional
-    public List<Create> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) {
+    public List<SongDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
 
         try {
-            List<Long> result =
+            List<SongDTO> result = createRepository.findMyLibraryCreateSearchQD(userId, myLibrarySearchDTO)
+                    .stream()
+                    .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                    .collect(Collectors.toList());
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception();
         }
     }
 }

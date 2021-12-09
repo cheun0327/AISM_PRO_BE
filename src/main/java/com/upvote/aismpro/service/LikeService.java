@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Like;
@@ -80,6 +81,22 @@ public class LikeService {
             likeRepository.save(like);
         } catch(Exception e) {
             e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    @Transactional
+    public List<SongDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            List<SongDTO> result = likeRepository.findMyLibraryLikeSearchQD(userId, myLibrarySearchDTO)
+                    .stream()
+                    .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                    .collect(Collectors.toList());
+
+            return result;
+        } catch (Exception e) {
             throw new Exception();
         }
     }

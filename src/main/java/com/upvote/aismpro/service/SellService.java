@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.repository.SellRepository;
 import com.upvote.aismpro.repository.SongRepository;
@@ -47,6 +48,22 @@ public class SellService {
                     .forEach(songId -> sellRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
         }
         catch (Exception e) {
+            throw new Exception();
+        }
+    }
+
+    @Transactional
+    public List<SongDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            List<SongDTO> result = sellRepository.findMyLibrarySellSearchQD(userId, myLibrarySearchDTO)
+                    .stream()
+                    .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                    .collect(Collectors.toList());
+
+            return result;
+        } catch (Exception e) {
             throw new Exception();
         }
     }
