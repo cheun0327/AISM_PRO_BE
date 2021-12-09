@@ -61,6 +61,8 @@ public class LibraryService {
             else {
                 playlists = getPlaylistsWithoutLike(librarySearchDTO.getType());
             }
+
+            Collections.shuffle(playlists);
             map.put("playlist", playlists);
 
             // 검색 결과에 해당하는 song 리스트 가져옴
@@ -75,6 +77,8 @@ public class LibraryService {
             else {
                 songDTOList = mapToSongDTOWithoutLike(songList);
             }
+
+            Collections.shuffle(songDTOList);
 
             // seach 결과 필터링
             if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {

@@ -15,6 +15,7 @@ import java.util.List;
 public class Playlist {
     @Id
     @Column(name = "playlistId", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long playlistId;
 
     @Column(nullable = false)

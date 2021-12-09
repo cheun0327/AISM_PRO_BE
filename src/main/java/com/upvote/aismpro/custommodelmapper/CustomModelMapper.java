@@ -87,7 +87,7 @@ public class CustomModelMapper {
         @Override
         public String convert(MappingContext<Song, String> context) {
             // 이미지 경로 : song/img/songId
-            return "song/img/" + context.getSource().getSongId();
+            return context.getSource().getSongId() + ".png";
         }
     };
 
@@ -95,7 +95,7 @@ public class CustomModelMapper {
         @Override
         public String convert(MappingContext<Song, String> context) {
             // 음원 파일 경로 : song/wav/songId
-            return "song/wav/" + context.getSource().getSongId();
+            return context.getSource().getSongId() + ".wav";
         }
     };
 
@@ -115,15 +115,15 @@ public class CustomModelMapper {
 
         modelMapper.createTypeMap(Song.class, SongDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
-                .addMappings(modelMapper -> modelMapper.using(songImgPathCvt).map(src -> src, SongDTO::setImgPath))
-                .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setFilePath))
+                .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setWavFile))
                 .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, SongDTO::setLike))
                 .addMapping(src -> src.getUser().getNickname(), SongDTO::setCreatorName)
                 .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
                 .addMapping(Song::getSongId, SongDTO::setSongId)
                 .addMapping(Song::getSongName, SongDTO::setSongName)
                 .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
-                .addMapping(Song::getPlaytime, SongDTO::setPlaytime);
+                .addMapping(Song::getPlaytime, SongDTO::setPlaytime)
+                .addMapping(Song::getImgFile, SongDTO::setImgFile);
         return modelMapper;
     }
 
@@ -141,6 +141,17 @@ public class CustomModelMapper {
                 .addMapping(Song::getSongId, ShortSongDTO::setSongId)
                 .addMapping(Song::getSongName, ShortSongDTO::setSongName)
                 .addMapping(Song::getCreateDate, ShortSongDTO::setCreateDate);
+        return modelMapper;
+    }
+
+    @Bean
+    public ModelMapper songSaveDTO2song(){
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+
+        modelMapper.createTypeMap(SongSaveDTO.class, Song.class);
+
         return modelMapper;
     }
 

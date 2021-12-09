@@ -1,8 +1,11 @@
 package com.upvote.aismpro.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
+import com.upvote.aismpro.vo.SongSaveVO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
@@ -28,10 +31,30 @@ public class SongController {
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
     @PostMapping("/song")
-    public ResponseEntity<String> createSong(@RequestBody SongSaveDTO songSaveDTO){
-        System.out.println(songSaveDTO);
+    public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO){
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        return new ResponseEntity<>("post mapping song api", HttpStatus.OK);
+        SongDTO song = new SongDTO();
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            if (userId < 0) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+            SongSaveDTO songDTO = mapper.readValue(songVO.getVal(), SongSaveDTO.class);
+
+            // song 기본 정보 저장
+            song = songService.saveSong(songDTO, songVO.getImg());
+
+            // song wav file tmp에서 이동
+            songService.moveSongWavFile(song.getSongId());
+
+            return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (song != null) songService.deleteSong(song.getSongId());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // song 저장 => 저장 권한 확인 후 저장

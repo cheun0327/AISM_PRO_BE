@@ -24,9 +24,9 @@ public class SongDTO {
 
     private String playtime;
 
-    private String filePath;
+    private String wavFile;
 
-    private String imgPath;
+    private String imgFile;
 
     private Boolean like;
 }

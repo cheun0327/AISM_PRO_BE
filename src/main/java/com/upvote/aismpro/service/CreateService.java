@@ -4,8 +4,11 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +23,8 @@ public class CreateService {
     @Autowired
     private CustomModelMapper modelMapper;
 
+    // 사용자가 생성한 음원 가져오기
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getCreates(Long userId) throws Exception {
         try{
             List<SongDTO> creates = createRepository.findAllByUser_UserId(userId)
@@ -29,6 +34,18 @@ public class CreateService {
             return creates;
         } catch (Exception e) {
             throw new Exception("좋아요 없음.");
+        }
+    }
+
+    // MyLibrary에서 생상한 음원 삭제
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void deleteCreates(List<Long> deleteIds) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+        try {
+            deleteIds.stream().forEach(songId -> createRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
+        }
+        catch (Exception e) {
+            throw new Exception();
         }
     }
 }
