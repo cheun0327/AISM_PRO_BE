@@ -61,11 +61,10 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
 
     // 라이브러리 검색 결과 반환
     public List<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
-        switch (librarySearchDTO.getSort()) {
-            case "업로드 날짜" : return searchOrderByDate(librarySearchDTO);
+        if (librarySearchDTO.getSort().equals("업로드 날짜")) return searchOrderByDate(librarySearchDTO);
             // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
-            default : return search(librarySearchDTO);
-        }
+            return search(librarySearchDTO);
+
     }
 
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
@@ -75,7 +74,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .orderBy(song.createDate.asc())
+                .orderBy(song.createDate.desc())
                 .fetch();
     }
 
