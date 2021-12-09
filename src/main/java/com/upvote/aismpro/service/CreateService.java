@@ -1,7 +1,9 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.entity.Create;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.security.SecurityUtil;
@@ -46,6 +48,15 @@ public class CreateService {
         }
         catch (Exception e) {
             throw new Exception();
+        }
+    }
+
+    @Transactional
+    public List<Create> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            List<Long> result =
         }
     }
 }

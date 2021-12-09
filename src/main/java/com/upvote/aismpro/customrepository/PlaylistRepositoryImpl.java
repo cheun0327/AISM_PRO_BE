@@ -2,10 +2,7 @@ package com.upvote.aismpro.customrepository;
 
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
-import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.QPlaylist;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +69,20 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
         // TODO 개수 제한
         if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
 
+        return pl;
+    }
+
+    @Override
+    public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
+        List<Playlist> pl = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.name.contains(myLibrarySearchDTO.getSearch())
+                                .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
+                                .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
+                                .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
+                )
+                .fetch();
         return pl;
     }
 }
