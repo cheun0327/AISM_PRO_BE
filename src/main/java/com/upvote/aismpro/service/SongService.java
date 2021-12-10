@@ -16,6 +16,7 @@ import com.upvote.aismpro.vo.SongSaveVO;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +39,7 @@ public class SongService implements SongServiceInter{
 
 
     // 생성 sond 저장
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -76,6 +77,7 @@ public class SongService implements SongServiceInter{
     }
 
     // song 삭제
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteSong(Long songId) {
         songRepository.deleteById(songId);
     }
@@ -98,6 +100,7 @@ public class SongService implements SongServiceInter{
 
     // song detail 페이지에 뿌릴 상세 정보 리턴
     // like 어떻게 뿌려줄지 생각
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public SongDTO getSongDetail(Long songId) {
         Optional<Song> songOpt = songRepository.findBySongId(songId);
         Song song =  songOpt.orElseThrow(() -> new NoSuchElementException());
@@ -105,6 +108,7 @@ public class SongService implements SongServiceInter{
     }
 
     // 비슷한 곡 가져오기
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getSimilarSong(Long songId) {
         Song song = songRepository.getById(songId);
         List<SongDTO> similar = songRepository.findSimilarSongQD(song)
@@ -117,6 +121,7 @@ public class SongService implements SongServiceInter{
     }
 
     // 작곡하기 step2 비슷한 곡 가져오기
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getSimilarSongByTags(SongTagDTO songTagDTO) {
         List<SongDTO> similar = songRepository.findSimilarSongByTagsQD(songTagDTO)
                 .stream()
@@ -127,11 +132,13 @@ public class SongService implements SongServiceInter{
         return similar;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Integer getLikeCnt(Long songId){
         Integer cnt = likeRepository.countBySong_SongId(songId);
         return cnt;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public SongDTO setLike2SongDTO(SongDTO songDTO, Long userId) throws Exception {
         try {
             List<Like> likes= likeRepository.findAllByUser_UserIdAndSong_SongId(userId, songDTO.getSongId());
@@ -144,6 +151,7 @@ public class SongService implements SongServiceInter{
         }
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> setLike2SongDTOList(List<SongDTO> songDTOList, Long userId) throws Exception {
         try {
             List<Long> likes = likeRepository.findAllByUser_UserId(userId)

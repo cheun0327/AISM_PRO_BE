@@ -2,13 +2,11 @@ package com.upvote.aismpro.service;
 
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
-import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistLike;
 import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +69,6 @@ public class PlaylistService {
         }
     }
 
-
     // playlistDetailDTO에 like 추가
     public PlaylistDetailDTO setLike2PlaylistDetailDTO(PlaylistDetailDTO pl, Long userId) throws Exception {
         try{
@@ -93,7 +90,8 @@ public class PlaylistService {
                     .stream()
                     .map(s -> s.getPlaylist().getPlaylistId())
                     .collect(Collectors.toList());
-
+            System.out.println("플레이리스트 라이크 세팅");
+            System.out.println(likes);
             for(PlaylistDTO pl : playlistDTOList) {
                 pl.setPlaylistLike(likes.contains(pl.getPlaylistId()));
             }
@@ -167,6 +165,32 @@ public class PlaylistService {
         return playlistSongRepository.findPlaylistBySongIdQD(songId)
                 .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    // MyLibrary 검색 결과 가져오기
+    public List<PlaylistDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+        try {
+            // TODO 검색어 포함된 플레이리스트 찾기 - 플레이리스트명, 키워드 123,
+            List<PlaylistDTO> result =  playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
+                    .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+
+            Collections.shuffle(result);
+            if (result.size() > 8) {
+                result = Lists.newArrayList(result.subList(0,8));
+            }
+
+            // like 추가
+            result = setLike2PlaylistDTOList(result, userId);
+            System.out.println(result);
+
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     public Integer getPlaylistLikeCnt(Long playlistId) {
