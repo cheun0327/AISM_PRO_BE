@@ -43,6 +43,9 @@ public class PlaylistService {
         try {
             Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
             playlist.setUser(userRepository.getById(userId));
+            System.out.println(playlistSaveDTO);
+            System.out.println(playlist.getName());
+            System.out.println(playlist.getPlaylistId());
 
             // playlist 정보 저장
             Playlist savedPlaylist = playlistRepository.save(playlist);

@@ -229,7 +229,9 @@ public class CustomModelMapper {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
-        modelMapper.createTypeMap(PlaylistSaveDTO.class, Playlist.class);
+        modelMapper.createTypeMap(PlaylistSaveDTO.class, Playlist.class)
+                .addMapping(PlaylistSaveDTO::getPlaylistName, Playlist::setName)
+                .addMapping(PlaylistSaveDTO::getState, Playlist::setState);
         return modelMapper;
     }
 
