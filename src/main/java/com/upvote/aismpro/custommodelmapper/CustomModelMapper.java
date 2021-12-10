@@ -95,7 +95,7 @@ public class CustomModelMapper {
         @Override
         public String convert(MappingContext<Song, String> context) {
             // 음원 파일 경로 : song/wav/songId
-            return context.getSource().getSongId() + ".wav";
+            return context.getSource().getSongId() + ".mp3";
         }
     };
 

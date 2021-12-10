@@ -88,13 +88,13 @@ public class SongService implements SongServiceInter{
 //        String dirPath = "/Users/upvote3/Desktop/springTest/song";
 
         // 생성 곡 저장 위치 디렉토리 확인
-        String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".wav";
+        String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".mp3";
 //        File songDir  = new File(songDirPath);
 //        if (!new File(songDirPath).exists()) songDir.mkdir();
 
         // 저장된 곡 위치 이동
         File source = new File(songDirPath);
-        File target = new File(dirPath + "/" + songId + ".wav");
+        File target = new File(dirPath + "/" + songId + ".mp3");
         FileUtils.moveFile(source, target);
     }
 
