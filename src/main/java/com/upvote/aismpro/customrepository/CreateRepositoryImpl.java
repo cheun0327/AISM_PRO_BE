@@ -37,13 +37,16 @@ public class CreateRepositoryImpl implements  CreateRepositoryCustom{
         List<Song> songs = query.select(create.song)
                 .from(create)
                 .where(
-                        create.song.songName.contains(search)
-                                .or(create.song.one.contains(search))
-                                .or(create.song.two.contains(search))
-                                .or(create.song.three.contains(search))
-                                .or(create.song.four.contains(search))
-                                .or(create.song.five.contains(search))
-                                .or(create.song.six.contains(search))
+                        create.user.userId.eq(userId)
+                                        .and(
+                                                create.song.songName.contains(search)
+                                                        .or(create.song.one.contains(search))
+                                                        .or(create.song.two.contains(search))
+                                                        .or(create.song.three.contains(search))
+                                                        .or(create.song.four.contains(search))
+                                                        .or(create.song.five.contains(search))
+                                                        .or(create.song.six.contains(search))
+                                        )
                 )
                 .orderBy(create.song.createDate.desc())
                 .fetch();
@@ -56,13 +59,16 @@ public class CreateRepositoryImpl implements  CreateRepositoryCustom{
         List<Song> songs = query.select(create.song)
                 .from(create)
                 .where(
-                        create.song.songName.contains(search)
-                                .or(create.song.one.contains(search))
-                                .or(create.song.two.contains(search))
-                                .or(create.song.three.contains(search))
-                                .or(create.song.four.contains(search))
-                                .or(create.song.five.contains(search))
-                                .or(create.song.six.contains(search))
+                        create.user.userId.eq(userId)
+                                .and(
+                                        create.song.songName.contains(search)
+                                                .or(create.song.one.contains(search))
+                                                .or(create.song.two.contains(search))
+                                                .or(create.song.three.contains(search))
+                                                .or(create.song.four.contains(search))
+                                                .or(create.song.five.contains(search))
+                                                .or(create.song.six.contains(search))
+                                )
                 )
                 .fetch();
         return songs;
