@@ -95,6 +95,7 @@ public class LibraryService {
                 ArtistDTO artistDTO = new ArtistDTO(artist.getUserId(), artist.getNickname(), artist.getProfile());
                 if (!artists.contains(artistDTO)) artists.add(new ArtistDTO(artist.getUserId(), artist.getNickname(), artist.getProfile()));
             }
+
             map.put("artist", artists);
 
             return map;
