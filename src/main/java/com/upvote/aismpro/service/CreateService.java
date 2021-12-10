@@ -3,7 +3,6 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.entity.Create;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.security.SecurityUtil;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CreateService {
 
     @Autowired
@@ -43,10 +43,12 @@ public class CreateService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteCreates(List<Long> deleteIds) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
+        System.out.println("userId : "+ userId);
         try {
             deleteIds.stream().forEach(songId -> createRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new Exception();
         }
     }

@@ -7,10 +7,7 @@ import com.upvote.aismpro.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +30,10 @@ public class MyLibraryController {
     private SongService songService;
 
     @GetMapping("/my-library/search")
-    public ResponseEntity<Object> getMyLibrarySearch(@RequestBody MyLibrarySearchDTO myLibrarySearchDTO) {
+    public ResponseEntity<Object> getMyLibrarySearch(@RequestParam("category") String category, @RequestParam("sort") String sort, @RequestParam("search") String search) {
+        MyLibrarySearchDTO myLibrarySearchDTO = new MyLibrarySearchDTO(search, sort, category);
+        System.out.println(myLibrarySearchDTO);
+        System.out.println(category + sort + search);
         try {
             switch (myLibrarySearchDTO.getCategory()) {
                 case "playlist" : {

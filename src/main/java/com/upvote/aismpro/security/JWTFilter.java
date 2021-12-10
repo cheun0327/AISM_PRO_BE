@@ -48,7 +48,6 @@ public class JWTFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         // header에 토큰 정보 있으면 가공해서 보내고, 아니면 null 처리
-
         if (StringUtils.hasText(bearerToken)) System.out.println("토큰 길이 : " + !bearerToken.substring(7).equals("null"));
 
         if (StringUtils.hasText(bearerToken) && !bearerToken.substring(7).equals("null") && bearerToken.startsWith(BEARER_PREFIX)) {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,6 +100,7 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            System.out.println(e.getMessage());
             System.out.println("잘못된 JWT 서명");
             throw new IllegalAccessException("잘못된 JWT 서명");
         } catch (ExpiredJwtException e) {
