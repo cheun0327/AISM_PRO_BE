@@ -81,11 +81,7 @@ public class LibraryService {
             }
             // TODO List를 Page로 변경해줘야하나
 
-<<<<<<< HEAD
-//            Collections.shuffle(songDTOList);
-=======
             // Collections.shuffle(songDTOList);
->>>>>>> df15d07030ee54a9d2c1888ee90842d0e51964c7
 
             // seach 결과 필터링
             if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
