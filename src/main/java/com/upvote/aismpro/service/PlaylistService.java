@@ -2,16 +2,18 @@ package com.upvote.aismpro.service;
 
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
-import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistLike;
 import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,34 @@ public class PlaylistService {
     private SongRepository songRepository;
     @Autowired
     private CustomModelMapper modelMapper;
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        try {
+            Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
+            playlist.setUser(userRepository.getById(userId));
+
+            // playlist 정보 저장
+            Playlist savedPlaylist = playlistRepository.save(playlist);
+            // TODO 디폴트 플레이리스트 제목 여부
+
+            // playlist img 저장
+            if (file != null) {
+                String dirPath = "/var/lib/jenkins/workspace/img/playlist";
+                String[] imgNameArr = file.getOriginalFilename().split("\\.");
+                String imgName = savedPlaylist.getPlaylistId() + "." + imgNameArr[imgNameArr.length - 1];
+                file.transferTo(new File(dirPath + "/" + imgName));
+                savedPlaylist.setImgFile(imgName);
+                playlistRepository.save(savedPlaylist);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
 
     // user 별 play list 가져오기
     public List<PlaylistDTO> getPlayList(Long userId) throws Exception {
@@ -71,7 +101,6 @@ public class PlaylistService {
         }
     }
 
-
     // playlistDetailDTO에 like 추가
     public PlaylistDetailDTO setLike2PlaylistDetailDTO(PlaylistDetailDTO pl, Long userId) throws Exception {
         try{
@@ -93,7 +122,8 @@ public class PlaylistService {
                     .stream()
                     .map(s -> s.getPlaylist().getPlaylistId())
                     .collect(Collectors.toList());
-
+            System.out.println("플레이리스트 라이크 세팅");
+            System.out.println(likes);
             for(PlaylistDTO pl : playlistDTOList) {
                 pl.setPlaylistLike(likes.contains(pl.getPlaylistId()));
             }
@@ -167,6 +197,32 @@ public class PlaylistService {
         return playlistSongRepository.findPlaylistBySongIdQD(songId)
                 .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    // MyLibrary 검색 결과 가져오기
+    public List<PlaylistDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
+        Long userId = SecurityUtil.getCurrentUserId();
+        try {
+            // TODO 검색어 포함된 플레이리스트 찾기 - 플레이리스트명, 키워드 123,
+            List<PlaylistDTO> result =  playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
+                    .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+
+            Collections.shuffle(result);
+            if (result.size() > 8) {
+                result = Lists.newArrayList(result.subList(0,8));
+            }
+
+            // like 추가
+            result = setLike2PlaylistDTOList(result, userId);
+            System.out.println(result);
+
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     public Integer getPlaylistLikeCnt(Long playlistId) {

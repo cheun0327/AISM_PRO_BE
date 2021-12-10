@@ -38,11 +38,9 @@ public class SongService implements SongServiceInter{
     private CustomModelMapper modelMapper;
 
 
-    // 생성 sond 저장
+    // 생성 song 저장
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
-        ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Long userId = SecurityUtil.getCurrentUserId();
 
         try {

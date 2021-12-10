@@ -143,5 +143,4 @@ public class SongController {
     public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);
     }
-
 }

@@ -192,7 +192,7 @@ public class CustomModelMapper {
                 .addMappings(modelMapper -> modelMapper.using(playlistPlaytimeCvt).map(src -> src, PlaylistDTO::setPlaylistPlaytime))
                 .addMapping(Playlist::getName, PlaylistDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState)
-                .addMapping(Playlist::getImg, PlaylistDTO::setPlaylistImg);
+                .addMapping(Playlist::getImgFile, PlaylistDTO::setPlaylistImg);
         return modelMapper;
     }
 
@@ -217,10 +217,19 @@ public class CustomModelMapper {
                 .addMapping(Playlist::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(Playlist::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDetailDTO::setPlaylistState)
-                .addMapping(Playlist::getImg, PlaylistDetailDTO::setPlaylistImg)
+                .addMapping(Playlist::getImgFile, PlaylistDetailDTO::setPlaylistImg)
                 .addMapping(src -> src.getUser().getUserId(), PlaylistDetailDTO::setPlaylistCreatorId)
                 .addMapping(src -> src.getUser().getNickname(), PlaylistDetailDTO::setPlaylistCreatorName);
 
+        return modelMapper;
+    }
+
+    @Bean
+    public ModelMapper playlistSaveDTO2playlist() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.createTypeMap(PlaylistSaveDTO.class, Playlist.class);
         return modelMapper;
     }
 
