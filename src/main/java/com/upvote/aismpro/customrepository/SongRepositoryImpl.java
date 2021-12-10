@@ -1,5 +1,6 @@
 package com.upvote.aismpro.customrepository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
@@ -8,6 +9,9 @@ import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -60,32 +64,42 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     // 라이브러리 검색 결과 반환
-    public List<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
-        if (librarySearchDTO.getSort().equals("업로드 날짜")) return searchOrderByDate(librarySearchDTO);
-            // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
-            return search(librarySearchDTO);
+    public Page<Song> findSongBySearchParamQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
+        switch (librarySearchDTO.getSort()) {
+            case "업로드 날짜": return searchOrderByDate(pageable, librarySearchDTO);
+            // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
+            default: return search(pageable, librarySearchDTO);
+        }
     }
 
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
-    private List<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
-        return query.select(song)
+    private Page<Song> searchOrderByDate(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results = query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
                 .orderBy(song.createDate.desc())
-                .fetch();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     // 라이브러리 검색 결과 그냥 반환
-    private List<Song> search(LibrarySearchDTO librarySearchDTO) {
-        return query.select(song)
+    private Page<Song> search(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results =  query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .fetch();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     // 라이브러리 검색 공통 where문

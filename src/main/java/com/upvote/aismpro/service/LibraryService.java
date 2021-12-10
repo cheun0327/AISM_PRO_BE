@@ -11,6 +11,8 @@ import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.GsonTester;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -37,8 +39,8 @@ public class LibraryService {
     private CustomModelMapper modelMapper;
 
     // 라이브러리 검색 옵션
-    public Map<String, List<String>> getSearchOptionDate() {
-        Map<String, List<String>> map = new HashMap<>();
+    public Map<String, Object> getSearchOptionDate() {
+        Map<String, Object> map = new HashMap<>();
 
         map.put("genre", genreInfoRepository.findGenreQD());
         map.put("inst", getInstList());
@@ -49,7 +51,7 @@ public class LibraryService {
         return map;
     }
 
-    public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDTO) throws Exception {
+    public Map<String, Object> getSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) throws Exception {
         Map<String, Object> map = new HashMap<>();
 
         try {
@@ -66,7 +68,7 @@ public class LibraryService {
             map.put("playlist", playlists);
 
             // 검색 결과에 해당하는 song 리스트 가져옴
-            List<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDTO);
+            Page<Song> songList = songRepository.findSongBySearchParamQD(pageable, librarySearchDTO);
 
             // like 추가 & 형변환
             // 정렬 구현 안됨.
@@ -77,8 +79,9 @@ public class LibraryService {
             else {
                 songDTOList = mapToSongDTOWithoutLike(songList);
             }
+            // TODO List를 Page로 변경해줘야하나
 
-            Collections.shuffle(songDTOList);
+            // Collections.shuffle(songDTOList);
 
             // seach 결과 필터링
             if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
@@ -105,7 +108,7 @@ public class LibraryService {
         }
     }
 
-    private List<SongDTO> mapToSongDTOWithLike(List<Song> songList, Long userId) {
+    private List<SongDTO> mapToSongDTOWithLike(Page<Song> songList, Long userId) {
         User user = userRepository.getById(userId);
         List<Long> likes = user.getLikes().stream().map(l -> l.getSong().getSongId()).collect(Collectors.toList());
 
@@ -118,7 +121,7 @@ public class LibraryService {
         return newSongDTOs;
     }
 
-    private List<SongDTO> mapToSongDTOWithoutLike(List<Song> songList) {
+    private List<SongDTO> mapToSongDTOWithoutLike(Page<Song> songList) {
 
         List<SongDTO> newSongDTOs = new ArrayList<>();
         for (Song s : songList) {

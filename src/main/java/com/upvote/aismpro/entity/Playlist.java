@@ -26,7 +26,7 @@ public class Playlist {
     private Timestamp createDate;
 
     @Column
-    private String state;
+    private Boolean state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="creatorId", referencedColumnName="userId")
