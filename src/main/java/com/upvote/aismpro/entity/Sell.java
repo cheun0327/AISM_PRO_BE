@@ -1,28 +1,30 @@
 package com.upvote.aismpro.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "sell")
 @Data
+@Table(name = "sells")
+@NoArgsConstructor
 public class Sell {
+
     @Id
-    @Column(name="sellId", nullable = false)
+    @Column(name="sellId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
+    @JsonManagedReference
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name="creatorId", referencedColumnName="userId")
+    @JsonManagedReference
     private User user;
 
-    @Column(name="price")
-    private Integer price;
 }

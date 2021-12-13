@@ -2,17 +2,15 @@ package com.upvote.aismpro.repository;
 
 import com.upvote.aismpro.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-    List<User> findByEmail(String email);
-    List<User> findByNickName(String nickName);
-    List<User> findAllByPlatformAndEmail(@Param("platform") String platform, @Param("email") String email);
+public interface UserRepository extends JpaRepository<User, Long> {
+    public List<User> findAllByPlatformAndEmail(String platform, String email);
+    public List<User> findByEmail(String email);
+    public List<User> findByNickname(String nickname);
+    public Optional<User> findAllByUserId(Long id);
 }

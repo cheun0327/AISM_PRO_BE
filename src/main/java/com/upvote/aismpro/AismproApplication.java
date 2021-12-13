@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@EnableAspectJAutoProxy // Enable AOP
+//@EnableAspectJAutoProxy // Enable AOP
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class AismproApplication {
 

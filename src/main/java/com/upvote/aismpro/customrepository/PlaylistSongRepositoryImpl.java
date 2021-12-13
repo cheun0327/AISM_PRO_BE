@@ -1,22 +1,25 @@
 package com.upvote.aismpro.customrepository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.upvote.aismpro.entity.PlayList;
-import com.upvote.aismpro.entity.PlayListSong;
-import com.upvote.aismpro.entity.QPlayListSong;
+import com.upvote.aismpro.entity.PlaylistSong;
+import com.upvote.aismpro.entity.QPlaylistSong;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
+@RequiredArgsConstructor
 public class PlaylistSongRepositoryImpl implements PlaylistSongRepositoryCustom {
-    private JPAQueryFactory query;
-    private final QPlayListSong playListSong = QPlayListSong.playListSong;
+    private final JPAQueryFactory query;
+    private final QPlaylistSong playlistSong = QPlaylistSong.playlistSong;
 
     @Override
-    public List<PlayListSong> findSavedPlaylistBySongId(String songId) {
-        return query.select(playListSong)
-                .from(playListSong)
+    public List<PlaylistSong> findPlaylistBySongIdQD(Long songId) {
+        return query.select(playlistSong)
+                .from(playlistSong)
                 .where(
-                    playListSong.songId.eq(songId)
+                        playlistSong.songId.eq(songId)
                 )
                 .fetch();
     }

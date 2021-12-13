@@ -1,28 +1,17 @@
 package com.upvote.aismpro.dto;
 
-import com.upvote.aismpro.entity.Song;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class PlaylistDTO {
-    private String playlistId;
-    private String creatorId;
-    private String name;
-    private String state;
-    private String img;
-    private String firstMood;
-    private String secondMood;
-    private String thirdMood;
-
-    public void print() {
-        System.out.println("pl id : " + this.playlistId);
-        System.out.println("creator id : " + this.creatorId);
-        System.out.println("name " + this.name);
-        System.out.println("state : " + this.state);
-        System.out.println("img : " + this.img);
-    }
+    private Long playlistId;
+    private String playlistName;
+    private String playlistCreatorName;
+    private String playlistState;
+    private String playlistImg;
+    private Boolean playlistLike;
+    private Integer playlistSongCount;
+    private Integer playlistPlaytime;
 }

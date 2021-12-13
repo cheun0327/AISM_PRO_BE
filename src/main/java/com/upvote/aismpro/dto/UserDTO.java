@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserDTO {
-    private String userId;
+    private Long userId;
     private String email;
-    private String nickName;
+    private String nickname;
     private String platform;
     private String profile;
 }
