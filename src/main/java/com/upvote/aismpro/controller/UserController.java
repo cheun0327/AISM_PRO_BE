@@ -1,69 +1,60 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
-import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.UserRepository;
-import com.upvote.aismpro.service.MyPageService;
-import com.upvote.aismpro.service.SignupServiceInter;
 import com.upvote.aismpro.service.UserService;
-import com.upvote.aismpro.service.UserServiceInter;
+import net.bytebuddy.pool.TypePool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-
 
 @RestController
 public class UserController {
 
     @Autowired
-    private MyPageService mypageService;
-
-    @Autowired
-    private SignupServiceInter signupService;
-
-    @Autowired
     private UserService userService;
 
+    // 아티스트 디테일 정보 가져오기
+    @GetMapping("/user/detail/{userID}")
+    public ResponseEntity<ArtistDetailDTO> getArtistDetailInfo(@PathVariable("userID") Long userID) {
+        try {
+            return ResponseEntity.ok(userService.getArtistDetailInfo(userID));
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     // 이메일 중복 확인
     @GetMapping("/user/email/validate/{email}")
-    public @ResponseBody
-    Map<String, Boolean> emailDoubleCheck(@PathVariable("email") String email) {
-        System.out.println("== email Double Check : " + email);
+    public ResponseEntity<Boolean> emailDoubleCheck(@PathVariable("email") String email) {
         try {
-            signupService.emailDoubleCheck(email);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-            return Collections.singletonMap("result", false);
-        }
-        return Collections.singletonMap("result", true);
-    }
-
-    // 닉네임 중복 확인
-    @GetMapping("/user/nickname/validate/{nickName}")
-    public ResponseEntity<Boolean> nickDoubleCheck(@PathVariable("nickName") String nickName) {
-        System.out.println("== nickName Double Check : " + nickName);
-        try {
-            signupService.nickDoubleCheck(nickName);
+            userService.emailDoubleCheck(email);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (IllegalStateException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(false, HttpStatus.OK);
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // 닉네임 중복 확인
+    @GetMapping("/user/nickname/validate/{nickname}")
+    public ResponseEntity<Boolean> nicknameDoubleCheck(@PathVariable("nickname") String nickname) {
+        try {
+            userService.nicknameDoubleCheck(nickname);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -71,56 +62,25 @@ public class UserController {
     @PatchMapping("/user")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO user) {
         try {
-            UserDTO updateUser = mypageService.updateUser(user.getUserId(), user);
+            UserDTO updateUser = userService.updateUser(user.getUserId(), user);
             return new ResponseEntity<>(updateUser, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/user/img/{userId}")
-    public ResponseEntity<UserDTO> uploadProfileImg(
-            @PathVariable("userId") String userId,
-            @RequestParam("file") MultipartFile file) throws IOException {
-
-        String[] imgNameArr = file.getOriginalFilename().split("\\.");
-        String imgFolder = userId.replaceAll("-","");
-        String imgName = imgFolder + "." +imgNameArr[imgNameArr.length - 1];
-//        String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/public/image/user/" + imgFolder;
-        String dirPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgFolder;
-        File profileDir = new File(dirPath);
-
-
-        try {
-            if (!profileDir.exists()) {
-                profileDir.mkdir();
-            }
-            else {
-                File[] files= profileDir.listFiles(); //파일리스트 얻어오기
-                for (File f : files) f.delete(); //파일 삭제
-            }
-
-            file.transferTo(new File(dirPath + "/" + imgName));
-            UserDTO user = userService.setProfile(userId, imgFolder + "/" + imgName);
-
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-//    @PostMapping("/user/img/{userId}")
-//    public ResponseEntity<UserDTO> uploadProfileImg(
-//            @PathVariable("userId") String userId,
-//            @RequestParam("file") MultipartFile file) throws IOException {
-//        try{
-//            System.out.println("컨트롤러 시작");
-//            UserDTO user = userService.getUserDTO(userId);
-//            return new ResponseEntity<>(user, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+
+    // user 프로필 이미지 업로드
+    @PostMapping("/user/profile/{userId}")
+    public ResponseEntity<UserDTO> uploadProfileImg(@PathVariable("userId") Long userId,
+                                                    @RequestParam("file") MultipartFile file) {
+        try{
+            UserDTO updateUser = userService.uploadUserProfile(userId, file);
+            return new ResponseEntity<>(updateUser, HttpStatus.OK);
+        } catch(IOException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 }

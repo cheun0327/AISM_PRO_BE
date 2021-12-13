@@ -1,9 +1,7 @@
 package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.upvote.aismpro.security.Authority;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,118 +9,77 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "user")
 @Data
+@Table(name = "user")
+@NoArgsConstructor
 public class User {
 
     @Id
     @Column(name = "userId", nullable = false)
-    private String id;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long userId;
 
-    @Column(nullable = false)
-    private String nickName;
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column
+    @Column(name = "platform", nullable = false)
     private String platform;
 
-    @Column
+    // song처럼 그냥 그때그때 조합해서 쓸지 고민해봥
+    @Column(name = "profile", nullable = false)
     private String profile;
 
-    @OneToMany(mappedBy = "user")
-    @JsonBackReference
-    private List<Create> creates = new ArrayList<Create>();
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
-    @OneToMany(mappedBy = "user")
-    @JsonBackReference
-    private List<Buy> buys = new ArrayList<Buy>();
 
-    @OneToMany(mappedBy = "user")
-    @JsonBackReference
-    private List<Sell> sells = new ArrayList<Sell>();
-
+//    @OneToMany(mappedBy = "user")
+//    @JsonBackReference
+//    private List<Create> creates = new ArrayList<Create>();
+//
+//    @OneToMany(mappedBy = "user")
+//    @JsonBackReference
+//    private List<Buy> buys = new ArrayList<Buy>();
+//
+//    @OneToMany(mappedBy = "user")
+//    @JsonBackReference
+//    private List<Sell> sells = new ArrayList<Sell>();
+//
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<Like> likes = new ArrayList<Like>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonBackReference
-    private List<PlayList> playlists = new ArrayList<PlayList>();
+//
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+//    @JsonBackReference
+//    private List<PlayList> playlists = new ArrayList<PlayList>();
 
     @Builder
-    public User(String nickName, String email) {
-        this.nickName = nickName;
+    public User(String nickname, String email) {
+        this.nickname = nickname;
         this.email = email;
     }
 
-    public User(String nickName, String email, String platform) {
-        this.id = UUID.randomUUID().toString();
-        this.nickName = nickName;
-        this.email = email;
-        this.platform = platform;
-    }
-
-    public User(String id, String nickName, String email, String platform) {
-        this.id = id;
-        this.nickName = nickName;
+    public User(String nickname, String email, String platform) {
+        this.nickname = nickname;
         this.email = email;
         this.platform = platform;
     }
 
-    public User(String id, String nickName, String email, String platform, String profile) {
-        this.id = id;
-        this.nickName = nickName;
+    public User(String nickname, String email, String platform, String profile) {
+        this.nickname = nickname;
         this.email = email;
         this.platform = platform;
         this.profile = profile;
     }
 
-    // playlist 추가
-    public void addPlaylist(PlayList playlist) {
-        this.playlists.add(playlist);
-        if (playlist.getUser() != this) playlist.setUser(this);
+    public User setProfile(String profile) {
+        this.profile = profile;
+        return this;
     }
 
-    // create 추가
-    public void addCreate(Create create) {
-        this.creates.add(create);
-        if (create.getUser() != this) create.setUser(this);
-    }
-
-    // buy 추가
-    public void addBuy(Buy buy) {
-        this.buys.add(buy);
-        if (buy.getUser() != this) buy.setUser(this);
-    }
-
-    // sell 추가
-    public void addSell(Sell sell) {
-        this.sells.add(sell);
-        if (sell.getUser() != this) sell.setUser(this);
-    }
-
-    // like 추가
-    public void addLike(Like like) {
-        this.likes.add(like);
-        if (like.getUser() != this) like.setUser(this);
-    }
-
-    public void setPlaylistList(List<PlayList> playlists) {
-        this.playlists = playlists;
-        if (this.playlists != null && this.playlists.size() > 0) {
-            for (PlayList pl : playlists)   pl.setUser(this);
-        }
-    }
-
-    public void print() {
-        System.out.println("id : " + this.id);
-        System.out.println("email : " + this.email);
-        System.out.println("nickname : " + this.nickName);
-    }
 }
