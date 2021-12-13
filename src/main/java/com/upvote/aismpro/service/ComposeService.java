@@ -1,49 +1,70 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.repository.ComposeRepository;
+import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.GenreInfoDTO;
+import com.upvote.aismpro.entity.GenreInfo;
+import com.upvote.aismpro.entity.Keyword;
+import com.upvote.aismpro.repository.GenreInfoRepository;
+import com.upvote.aismpro.repository.KeywordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.NotContextException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
 public class ComposeService implements ComposeServiceInter {
 
     @Autowired
-    private ComposeRepository composeRepository;
+    private GenreInfoRepository genreInfoRepository;
 
-    // 키워드 가져오기
-    @Override
-    public List<String> getKeywords(String keyword) {
-        if (keyword.equals("genre")) {
-            List<String> tmpKwd = composeRepository.findKeyword(keyword);
-            return Stream.of(tmpKwd.subList(13, 14),
-                            tmpKwd.subList(11, 12), tmpKwd.subList(10, 11),tmpKwd.subList(12, 13),tmpKwd.subList(9, 10),tmpKwd.subList(8, 9),
-                            tmpKwd.subList(0, 8), tmpKwd.subList(14, tmpKwd.size()))
-                    .flatMap(x -> x.stream())
-                    .collect(Collectors.toList());
-        }
-        return composeRepository.findKeyword(keyword);
+    @Autowired
+    private KeywordRepository keywordRepository;
+
+    @Autowired
+    private CustomModelMapper modelMapper;
+
+
+    public List<String> getGenreList() {
+        List<String> genres = genreInfoRepository.findGenreQD();
+        return genres;
     }
 
-    // 장르 -> 첫번째 분위기 가져오기
-    @Override
-    public List<String> getFirstMoodByGenre(String genre) {
-        return composeRepository.findFirstMoodByGenre(genre);
+    public GenreInfoDTO getCategoryList(String genre) {
+        GenreInfo genreInfo = genreInfoRepository.findByGenre(genre);
+        return modelMapper.toGenreInfoDTO().map(genreInfo, GenreInfoDTO.class);
     }
 
-    // 장르 & 첫번째 분위기 -> 두번째 분위기 가져오기
-    @Override
-    public List<String> getSecondMoodByFirstMood(String genre, String firstMood) {
-        return composeRepository.findSecondMoodByFirstMood(genre, firstMood);
+    public List<String> get2ndList(String one) throws Exception {
+        List<String> twos = keywordRepository.find2ndQD(one);
+        if (twos.isEmpty()) throw new Exception();
+        return twos;
     }
-    // 장르 & 첫번째 분위기 & 두번째 분위기 -> 샘플 사운드 가져오기
-    @Override
-    public String[] getSampleSoundByKeywords(String genre, String firstMood, String secondMood) {
-        return composeRepository.findSampleSoundByKeywords(genre, firstMood, secondMood).split(",");
+
+    public List<String> get3rdList(String one, String two) throws Exception {
+        List<String> threes = keywordRepository.find3rdQD(one, two);
+        if (threes.isEmpty()) throw new Exception();
+        return threes;
     }
+
+    public List<String> get4thList(String one, String two, String three) throws Exception {
+        List<String> fours = keywordRepository.find4thQD(one, two, three);
+        if (fours.isEmpty()) throw new Exception();
+        return fours;
+    }
+
+    public List<String> get5thList(String one, String two, String three, String four) throws Exception {
+        List<String> fives = keywordRepository.find5thQD(one, two, three, four);
+        if (fives.isEmpty()) throw new Exception();
+        return fives;
+    }
+
+    public List<String> get6thList(String one, String two, String three, String four, String five) throws Exception {
+        List<String> sixs = keywordRepository.find6thQD(one, two, three, four, five);
+        if (sixs.isEmpty()) throw new Exception();
+        return sixs;
+    }
+
 }
