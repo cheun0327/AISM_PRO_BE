@@ -95,7 +95,7 @@ public class CustomModelMapper {
         @Override
         public String convert(MappingContext<Song, String> context) {
             // 음원 파일 경로 : song/wav/songId
-            return context.getSource().getSongId() + ".wav";
+            return context.getSource().getSongId() + ".mp3";
         }
     };
 
@@ -229,7 +229,9 @@ public class CustomModelMapper {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
-        modelMapper.createTypeMap(PlaylistSaveDTO.class, Playlist.class);
+        modelMapper.createTypeMap(PlaylistSaveDTO.class, Playlist.class)
+                .addMapping(PlaylistSaveDTO::getPlaylistName, Playlist::setName)
+                .addMapping(PlaylistSaveDTO::getState, Playlist::setState);
         return modelMapper;
     }
 

@@ -77,10 +77,13 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
         List<Playlist> pl = query.select(playlist)
                 .from(playlist)
                 .where(
-                        playlist.name.contains(myLibrarySearchDTO.getSearch())
-                                .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
-                                .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
-                                .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
+                        playlist.user.userId.eq(userId)
+                                        .and(
+                                                playlist.name.contains(myLibrarySearchDTO.getSearch())
+                                                        .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
+                                                        .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
+                                                        .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
+                                        )
                 )
                 .fetch();
         return pl;

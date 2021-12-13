@@ -43,6 +43,9 @@ public class PlaylistService {
         try {
             Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
             playlist.setUser(userRepository.getById(userId));
+            System.out.println(playlistSaveDTO);
+            System.out.println(playlist.getName());
+            System.out.println(playlist.getPlaylistId());
 
             // playlist 정보 저장
             Playlist savedPlaylist = playlistRepository.save(playlist);
@@ -233,5 +236,16 @@ public class PlaylistService {
         playlistLikeRepository.save(
                 new PlaylistLike(userRepository.getById(userId), playlistRepository.getById(playlistId))
         );
+    }
+
+    public Boolean validPlaylistName(String playlistName) throws Exception {
+        try {
+            List<Playlist> sameNamePls = playlistRepository.findAllByName(playlistName);
+            if (sameNamePls.isEmpty()) return true;
+            throw new Exception("플레이리스트 이름 중복");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 }
