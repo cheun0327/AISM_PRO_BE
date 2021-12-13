@@ -237,4 +237,15 @@ public class PlaylistService {
                 new PlaylistLike(userRepository.getById(userId), playlistRepository.getById(playlistId))
         );
     }
+
+    public Boolean validPlaylistName(String playlistName) throws Exception {
+        try {
+            List<Playlist> sameNamePls = playlistRepository.findAllByName(playlistName);
+            if (sameNamePls.isEmpty()) return true;
+            throw new Exception("플레이리스트 이름 중복");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
 }
