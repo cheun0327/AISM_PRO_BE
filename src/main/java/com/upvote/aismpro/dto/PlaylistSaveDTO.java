@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 public class PlaylistSaveDTO {
 
     private String playlistName;
-    private String state;
+    private Boolean state;
 }

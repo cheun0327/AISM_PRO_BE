@@ -37,13 +37,16 @@ public class BuyRepositoryImpl implements BuyRepositoryCustom{
         List<Song> songs = query.select(buy.song)
                 .from(buy)
                 .where(
-                        buy.song.songName.contains(search)
-                                .or(buy.song.one.contains(search))
-                                .or(buy.song.two.contains(search))
-                                .or(buy.song.three.contains(search))
-                                .or(buy.song.four.contains(search))
-                                .or(buy.song.five.contains(search))
-                                .or(buy.song.six.contains(search))
+                        buy.user.userId.eq(userId)
+                                        .and(
+                                                buy.song.songName.contains(search)
+                                                        .or(buy.song.one.contains(search))
+                                                        .or(buy.song.two.contains(search))
+                                                        .or(buy.song.three.contains(search))
+                                                        .or(buy.song.four.contains(search))
+                                                        .or(buy.song.five.contains(search))
+                                                        .or(buy.song.six.contains(search))
+                                        )
                 )
                 .orderBy(buy.song.createDate.desc())
                 .fetch();
@@ -56,13 +59,16 @@ public class BuyRepositoryImpl implements BuyRepositoryCustom{
         List<Song> songs = query.select(buy.song)
                 .from(buy)
                 .where(
-                        buy.song.songName.contains(search)
-                                .or(buy.song.one.contains(search))
-                                .or(buy.song.two.contains(search))
-                                .or(buy.song.three.contains(search))
-                                .or(buy.song.four.contains(search))
-                                .or(buy.song.five.contains(search))
-                                .or(buy.song.six.contains(search))
+                        buy.user.userId.eq(userId)
+                                .and(
+                                        buy.song.songName.contains(search)
+                                                .or(buy.song.one.contains(search))
+                                                .or(buy.song.two.contains(search))
+                                                .or(buy.song.three.contains(search))
+                                                .or(buy.song.four.contains(search))
+                                                .or(buy.song.five.contains(search))
+                                                .or(buy.song.six.contains(search))
+                                )
                 )
                 .fetch();
         return songs;

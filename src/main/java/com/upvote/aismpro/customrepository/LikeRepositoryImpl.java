@@ -36,13 +36,16 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom{
         List<Song> songs = query.select(like.song)
                 .from(like)
                 .where(
-                        like.song.songName.contains(search)
-                                .or(like.song.one.contains(search))
-                                .or(like.song.two.contains(search))
-                                .or(like.song.three.contains(search))
-                                .or(like.song.four.contains(search))
-                                .or(like.song.five.contains(search))
-                                .or(like.song.six.contains(search))
+                        like.user.userId.eq(userId)
+                                        .and(
+                                                like.song.songName.contains(search)
+                                                        .or(like.song.one.contains(search))
+                                                        .or(like.song.two.contains(search))
+                                                        .or(like.song.three.contains(search))
+                                                        .or(like.song.four.contains(search))
+                                                        .or(like.song.five.contains(search))
+                                                        .or(like.song.six.contains(search))
+                                        )
                 )
                 .orderBy(like.song.createDate.desc())
                 .fetch();
@@ -55,13 +58,16 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom{
         List<Song> songs = query.select(like.song)
                 .from(like)
                 .where(
-                        like.song.songName.contains(search)
-                                .or(like.song.one.contains(search))
-                                .or(like.song.two.contains(search))
-                                .or(like.song.three.contains(search))
-                                .or(like.song.four.contains(search))
-                                .or(like.song.five.contains(search))
-                                .or(like.song.six.contains(search))
+                        like.user.userId.eq(userId)
+                                .and(
+                                        like.song.songName.contains(search)
+                                                .or(like.song.one.contains(search))
+                                                .or(like.song.two.contains(search))
+                                                .or(like.song.three.contains(search))
+                                                .or(like.song.four.contains(search))
+                                                .or(like.song.five.contains(search))
+                                                .or(like.song.six.contains(search))
+                                )
                 )
                 .fetch();
         return songs;
