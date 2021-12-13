@@ -173,4 +173,14 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/playlist/validate/name/{playlistName}")
+    public ResponseEntity<Boolean> validatePlaylistName(@PathVariable("playlistName") String playlistName) {
+        try{
+            return new ResponseEntity<>(playlistService.validPlaylistName(playlistName), HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
