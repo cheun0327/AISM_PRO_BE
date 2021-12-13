@@ -1,5 +1,5 @@
 package com.upvote.aismpro.security;
 
 public enum Authority {
-    ROLE_USER, ROLE_ADMIN
+    ROLE_GUEST, ROLE_MEMBER, ROLE_SELLER, ROLE_ADMIN
 }

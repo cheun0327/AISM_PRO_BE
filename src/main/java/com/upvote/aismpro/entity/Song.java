@@ -15,7 +15,8 @@ import java.sql.Timestamp;
 public class Song {
 
     @Id
-    @Column(name = "songId", nullable = false)
+    @Column(name = "songId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long songId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,6 +34,9 @@ public class Song {
 
     @Column(name = "playtime")
     private String playtime;
+
+    @Column(name = "imgFile")
+    private String imgFile;
 
     // fileName 이랑 thumbnail 경로 둘다 필요 없음 - userId랑 songId 조합해서 만들면 됨.
 

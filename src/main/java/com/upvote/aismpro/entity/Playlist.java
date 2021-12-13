@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +16,17 @@ import java.util.List;
 public class Playlist {
     @Id
     @Column(name = "playlistId", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long playlistId;
 
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "createDate")
+    private Timestamp createDate;
+
+    @Column
+    private Boolean state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="creatorId", referencedColumnName="userId")
@@ -40,9 +48,6 @@ public class Playlist {
     @Column(name="three")
     private String three;
 
-    @Column(nullable = false)
-    private String state;
-
-    @Column(nullable = false)
-    private String img;
+    @Column(name = "imgFile")
+    private String imgFile;
 }

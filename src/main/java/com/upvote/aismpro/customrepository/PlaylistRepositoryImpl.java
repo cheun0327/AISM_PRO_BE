@@ -2,14 +2,14 @@ package com.upvote.aismpro.customrepository;
 
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
-import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.QPlaylist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -29,6 +29,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 )
                 .fetch();
 
+        // TODO 개수 제한
         if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
         return pl;
     }
@@ -45,8 +46,46 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 )
                 .fetch();
 
+        // TODO 개수 제한
         if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
 
+        return pl;
+    }
+
+    @Override
+    public List<Playlist> findNewSimilarPlaylistByTagsQD(SongTagDTO songTagDTO) {
+        // TODO song category 개수 변동
+        List<String> tags = new ArrayList<>(Arrays.asList(songTagDTO.getOne(), songTagDTO.getTwo(),
+                songTagDTO.getThree(), songTagDTO.getFour(), songTagDTO.getFive(), songTagDTO.getSix()));
+
+        List<Playlist> pl = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.one.in(tags)
+                                .or(playlist.two.in(tags))
+                                .or(playlist.three.in(tags))
+                )
+                .fetch();
+        // TODO 개수 제한
+        if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+
+        return pl;
+    }
+
+    @Override
+    public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
+        List<Playlist> pl = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.user.userId.eq(userId)
+                                        .and(
+                                                playlist.name.contains(myLibrarySearchDTO.getSearch())
+                                                        .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
+                                                        .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
+                                                        .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
+                                        )
+                )
+                .fetch();
         return pl;
     }
 }

@@ -14,6 +14,7 @@ public class Create {
 
     @Id
     @Column(name = "createId", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long createId;
 
     @ManyToOne(fetch = FetchType.LAZY)

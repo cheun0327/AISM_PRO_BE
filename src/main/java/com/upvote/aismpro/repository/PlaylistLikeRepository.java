@@ -19,4 +19,6 @@ public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long
     Integer countPlaylistLikeByID(@Param("playlistId") Long playlistId);
 
     public List<PlaylistLike> findAllByUser_UserIdAndPlaylist_PlaylistId(Long userId, Long playlistId);
+
+    public List<PlaylistLike> findAllByUser_UserId(Long userId);
 }

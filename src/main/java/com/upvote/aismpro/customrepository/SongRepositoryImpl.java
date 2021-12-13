@@ -1,12 +1,17 @@
 package com.upvote.aismpro.customrepository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.SimilarSrcDTO;
+import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,34 +39,68 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public List<Song> findSimilarSongByTagsQD(SongTagDTO songTagDTO) {
+        List<Song> songs = query.select(song)
+                .from(song)
+                .where(
+                        oneEq(songTagDTO.getOne())
+                                .and(twoEq(songTagDTO.getTwo()))
+                                .or(threeEq(songTagDTO.getThree()))
+                                .or(fourEq(songTagDTO.getFour()))
+                                .or(fiveEq(songTagDTO.getFive()))
+                                .or(fiveEq(songTagDTO.getSix()))
+                )
+                .fetch();
+
+        if (songs.isEmpty()) {
+            System.out.println("비슷한 곡 없음");
+            return query.select(song)
+                    .from(song)
+                    .fetch();
+        }
+
+        return songs;
+    }
+
     // 라이브러리 검색 결과 반환
-    public List<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
+
+    public Page<Song> findSongBySearchParamQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+
         switch (librarySearchDTO.getSort()) {
-            case "업로드 날짜" : return searchOrderByDate(librarySearchDTO);
+            case "업로드 날짜": return searchOrderByDate(pageable, librarySearchDTO);
             // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
-            default : return search(librarySearchDTO);
+            default: return search(pageable, librarySearchDTO);
         }
     }
 
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
-    private List<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
-        return query.select(song)
+    private Page<Song> searchOrderByDate(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results = query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .orderBy(song.createDate.asc())
-                .fetch();
+                .orderBy(song.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     // 라이브러리 검색 결과 그냥 반환
-    private List<Song> search(LibrarySearchDTO librarySearchDTO) {
-        return query.select(song)
+    private Page<Song> search(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results =  query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .fetch();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     // 라이브러리 검색 공통 where문
@@ -91,7 +130,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     private BooleanExpression genreIn(List<String> genre) {
-        return genre.isEmpty() ?null : song.one.in(genre);
+        return genre.isEmpty() ? null : song.one.in(genre);
     }
     private BooleanExpression instIn(List<String> inst) {
         return inst.isEmpty() ? null : song.four.in(inst);

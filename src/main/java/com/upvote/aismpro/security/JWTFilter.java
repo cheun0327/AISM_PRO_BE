@@ -1,6 +1,7 @@
 package com.upvote.aismpro.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,7 @@ public class JWTFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
 
     // JWT 토큰 정보를 현제 스레드의 SecurityContext에 저장함
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -29,11 +31,15 @@ public class JWTFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         // 토큰 검증하고 올바르면, SecurityContext에 저장
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        }
+//        try {
+            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                Authentication authentication = tokenProvider.getAuthentication(jwt);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//            throw new ServletException();
+//        }
 
         filterChain.doFilter(request, response);
     }
@@ -42,7 +48,9 @@ public class JWTFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         // header에 토큰 정보 있으면 가공해서 보내고, 아니면 null 처리
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.hasText(bearerToken)) System.out.println("토큰 길이 : " + !bearerToken.substring(7).equals("null"));
+
+        if (StringUtils.hasText(bearerToken) && !bearerToken.substring(7).equals("null") && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
         return null;
