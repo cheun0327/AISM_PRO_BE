@@ -39,11 +39,11 @@ public class UserService {
             List<String> genres = creates.stream().map(song -> song.getSong().getOne()).collect(Collectors.toList());
             List<String> firstKeywords = creates.stream().map(song -> song.getSong().getTwo()).collect(Collectors.toList());
             List<String> secondKeywords = creates.stream().map(song -> song.getSong().getThree()).collect(Collectors.toList());
-//            List<String> thirdKeywords = creates.stream().map(song -> song.getSong().getFour()).collect(Collectors.toList());
+            List<String> thirdKeywords = creates.stream().map(song -> song.getSong().getFour()).collect(Collectors.toList());
 //            List<String> fourthKeywords = creates.stream().map(song -> song.getSong().getFive()).collect(Collectors.toList());
 //            List<String> sixthKeywords = creates.stream().map(song -> song.getSong().getSix()).collect(Collectors.toList());
 
-            List<String> keywords = new ArrayList<>(Arrays.asList(getMostFrequentTags(genres, 1), getMostFrequentTags(firstKeywords, 1), getMostFrequentTags(secondKeywords, 1)));
+            List<String> keywords = new ArrayList<>(Arrays.asList(getMostFrequentTags(genres, 1), getMostFrequentTags(firstKeywords, 1), getMostFrequentTags(secondKeywords, 1), getMostFrequentTags(thirdKeywords, 1)));
 
             return new ArtistDetailDTO(user.getUserId(), user.getNickname(), user.getProfile(), keywords);
         } catch (Exception e) {
