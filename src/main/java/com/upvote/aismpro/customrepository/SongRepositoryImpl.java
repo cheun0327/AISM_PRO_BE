@@ -64,43 +64,43 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     // 라이브러리 검색 결과 반환
-
-    public Page<Song> findSongBySearchParamQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    @Override
+    public Page<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO) {
 
         switch (librarySearchDTO.getSort()) {
-            case "업로드 날짜": return searchOrderByDate(pageable, librarySearchDTO);
+            case "업로드 날짜": return searchOrderByDate(librarySearchDTO);
             // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
-            default: return search(pageable, librarySearchDTO);
+            default: return search(librarySearchDTO);
         }
     }
 
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
-    private Page<Song> searchOrderByDate(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    private Page<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
         QueryResults<Song> results = query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
                 .orderBy(song.createDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .offset(0)
+                .limit(6)
                 .fetchResults();
 
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+        return new PageImpl<>(results.getResults());
     }
 
     // 라이브러리 검색 결과 그냥 반환
-    private Page<Song> search(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    private Page<Song> search(LibrarySearchDTO librarySearchDTO) {
         QueryResults<Song> results =  query.select(song)
                 .from(song)
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .offset(0)
+                .limit(6)
                 .fetchResults();
 
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+        return new PageImpl<>(results.getResults());
     }
 
     // 라이브러리 검색 공통 where문

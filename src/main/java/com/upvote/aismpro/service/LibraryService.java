@@ -9,11 +9,13 @@ import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.GsonTester;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,24 +53,26 @@ public class LibraryService {
         return map;
     }
 
-    public Map<String, Object> getSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) throws Exception {
+    @Transactional
+    public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDTO) throws Exception {
         Map<String, Object> map = new HashMap<>();
 
         try {
-            // song type 있으면 플레이리스트 가져옴.
-            List<PlaylistDTO> playlists = new ArrayList<>();
+            // song type 있으면 플레이리스트 가져옴. -> playlist like 적용 안한 버전
+            List<PlaylistDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
+            /*
             if (!librarySearchDTO.getUserId().equals(-1L)) {
-                playlists = getPlaylistsWithLike(librarySearchDTO.getType(), librarySearchDTO.getUserId());
+                playlists = getPlaylistsWithLike(pageable, librarySearchDTO.getType(), librarySearchDTO.getUserId());getUserId
             }
             else {
-                playlists = getPlaylistsWithoutLike(librarySearchDTO.getType());
+                playlists = getPlaylistsWithoutLike(pageable, librarySearchDTO.getType());
             }
+             */
 
-            Collections.shuffle(playlists);
             map.put("playlist", playlists);
 
             // 검색 결과에 해당하는 song 리스트 가져옴
-            Page<Song> songList = songRepository.findSongBySearchParamQD(pageable, librarySearchDTO);
+            Page<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDTO);
 
             // like 추가 & 형변환
             // 정렬 구현 안됨.
@@ -92,6 +96,7 @@ public class LibraryService {
             }
 
             // artist
+            // TODO 아티스트 검색
             List<ArtistDTO> artists = new ArrayList<>();
             for (SongDTO ns : songDTOList) {
                 User artist = songRepository.getById(ns.getSongId()).getUser();
@@ -148,24 +153,12 @@ public class LibraryService {
                 .collect(Collectors.toList());
     }
 
-    public List<PlaylistDTO> getPlaylistsWithoutLike(String type) {
-        if (type.equals("모두") || type.equals("음원")){
-            List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
-            for (Playlist pl : playlistRepository.findAll()) {
-                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-                dto.setPlaylistLike(false);
-                newPlaylistDTOList.add(dto);
-            }
-            return newPlaylistDTOList;
-        }
-
-        return new ArrayList<>();
-    }
-
-    public List<PlaylistDTO> getPlaylistsWithLike(String type, Long userId) {
+    public List<PlaylistDTO> getPlaylistsWithLike(Pageable pageable, String type, Long userId) {
         List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
                 .stream().map(src -> src.getPlaylist().getPlaylistId())
                 .collect(Collectors.toList());
+
+        Page<Playlist> pls = playlistRepository.findAll(pageable);
 
         if (type.equals("모두") || type.equals("음원")){
             List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
@@ -178,6 +171,40 @@ public class LibraryService {
         }
 
         return new ArrayList<>();
+    }
+
+
+    public List<PlaylistDTO> getPlaylistsWithoutLike(Pageable pageable, String type) {
+        if (type.equals("모두") || type.equals("음원")){
+            List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+
+            Page<Playlist> pls = playlistRepository.findAll(pageable);
+
+            for (Playlist pl : playlistRepository.findAll()) {
+                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
+                dto.setPlaylistLike(false);
+                newPlaylistDTOList.add(dto);
+            }
+            return newPlaylistDTOList;
+        }
+
+        return new ArrayList<>();
+    }
+
+    // Library 검색 결과 가져오기(랜더링)
+    public List<PlaylistDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
+
+        try {
+            Page<Playlist> pls = playlistRepository.findLibraryPlaylistSearchQD(librarySearchDTO);
+            return pls
+                    .stream()
+                    .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     // song 검색 결과에서 검색 키워드 필터링
