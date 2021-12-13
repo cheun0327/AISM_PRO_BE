@@ -33,7 +33,7 @@ public class LibraryController {
     }
 
     @PostMapping("/library/search")
-    public ResponseEntity<Map<String, Object>> librarySearch(@PageableDefault Pageable pageable,
+    public ResponseEntity<Map<String, Object>> librarySearch(@PageableDefault(size=6, page=0) Pageable pageable,
                                                              @RequestBody LibrarySearchDTO librarySearchDTO) {
         System.out.println(pageable.getPageNumber());
         try {
