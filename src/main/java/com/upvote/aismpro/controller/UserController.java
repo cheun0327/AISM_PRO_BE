@@ -1,5 +1,6 @@
 package com.upvote.aismpro.controller;
 
+import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
 import com.upvote.aismpro.service.UserService;
 import net.bytebuddy.pool.TypePool;
@@ -18,6 +19,17 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    // 아티스트 디테일 정보 가져오기
+    @GetMapping("/user/detail/{userID}")
+    public ResponseEntity<ArtistDetailDTO> getArtistDetailInfo(@PathVariable("userID") Long userID) {
+        try {
+            return ResponseEntity.ok(userService.getArtistDetailInfo(userID));
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     // 이메일 중복 확인
     @GetMapping("/user/email/validate/{email}")
