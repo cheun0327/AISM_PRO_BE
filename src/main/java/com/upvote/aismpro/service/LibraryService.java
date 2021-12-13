@@ -60,15 +60,6 @@ public class LibraryService {
         try {
             // song type 있으면 플레이리스트 가져옴. -> playlist like 적용 안한 버전
             List<PlaylistDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
-            /*
-            if (!librarySearchDTO.getUserId().equals(-1L)) {
-                playlists = getPlaylistsWithLike(pageable, librarySearchDTO.getType(), librarySearchDTO.getUserId());getUserId
-            }
-            else {
-                playlists = getPlaylistsWithoutLike(pageable, librarySearchDTO.getType());
-            }
-             */
-
             map.put("playlist", playlists);
 
             // 검색 결과에 해당하는 song 리스트 가져옴
@@ -206,6 +197,11 @@ public class LibraryService {
             throw new Exception();
         }
     }
+
+    // song 전체보기
+//    public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+//
+//    }
 
     // song 검색 결과에서 검색 키워드 필터링
     List<SongDTO> filterNewSearchKeyword(String keyword, List<SongDTO> songDTOList) {
