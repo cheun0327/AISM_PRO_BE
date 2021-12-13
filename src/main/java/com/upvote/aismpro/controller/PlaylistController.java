@@ -68,6 +68,16 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/playlist/{userID}")
+    public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID(@PathVariable("userID") Long userId) {
+        try{
+            if (userId == -1) throw new Exception();
+            return new ResponseEntity<>(playlistService.getPlayList(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // 해당 음원이 저장된 플레이리스트 찾기
     @GetMapping("/playlist/saved/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
