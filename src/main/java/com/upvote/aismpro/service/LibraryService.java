@@ -186,7 +186,7 @@ public class LibraryService {
     public List<PlaylistDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
 
         try {
-            Page<Playlist> pls = playlistRepository.findLibraryPlaylistSearchQD(librarySearchDTO);
+            Page<Playlist> pls = playlistRepository.findLibraryTotalPlaylistSearchQD(librarySearchDTO);
             return pls
                     .stream()
                     .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
@@ -199,9 +199,12 @@ public class LibraryService {
     }
 
     // song 전체보기
-//    public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
-//
-//    }
+    public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        return songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO)
+                .stream()
+                .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                .collect(Collectors.toList());
+    }
 
     // song 검색 결과에서 검색 키워드 필터링
     List<SongDTO> filterNewSearchKeyword(String keyword, List<SongDTO> songDTOList) {

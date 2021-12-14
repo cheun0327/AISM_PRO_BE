@@ -74,6 +74,16 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
         }
     }
 
+    // 라이브러리 검색 이후 전체보기 페이지
+    @Override
+    public Page<Song> findLibraryTotalSongSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        switch (librarySearchDTO.getSort()) {
+            case "업로드 날짜": return pagingSearchOrderByDate(pageable, librarySearchDTO);
+            // case "좋아요 수" : return searchOrderByLike(newLibrarySearchDTO);
+            default: return pagingSearch(pageable, librarySearchDTO);
+        }
+    }
+
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
     private Page<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
         QueryResults<Song> results = query.select(song)
@@ -102,6 +112,35 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
 
         return new PageImpl<>(results.getResults());
     }
+
+    //// ㄹㅏ이브러리 검색 전체보기
+    private Page<Song> pagingSearchOrderByDate(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results = query.select(song)
+                .from(song)
+                .where(
+                        searchWhere(librarySearchDTO)
+                )
+                .orderBy(song.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults());
+    }
+
+    private Page<Song> pagingSearch(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        QueryResults<Song> results = query.select(song)
+                .from(song)
+                .where(
+                        searchWhere(librarySearchDTO)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults());
+    }
+
 
     // 라이브러리 검색 공통 where문
     private BooleanExpression searchWhere(LibrarySearchDTO librarySearchDTO) {

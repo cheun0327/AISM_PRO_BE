@@ -95,7 +95,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
 
     // Library 플리이리스트 검색 결과
     @Override
-    public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
+    public Page<Playlist> findLibraryTotalPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
 
         QueryResults<Playlist> result = query.select(playlist)
                 .from(playlist)
