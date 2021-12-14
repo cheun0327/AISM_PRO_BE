@@ -24,8 +24,6 @@ public class QSell extends EntityPathBase<Sell> {
 
     public final StringPath id = createString("id");
 
-    public final NumberPath<Integer> price = createNumber("price", Integer.class);
-
     public final QSong song;
 
     public final QUser user;

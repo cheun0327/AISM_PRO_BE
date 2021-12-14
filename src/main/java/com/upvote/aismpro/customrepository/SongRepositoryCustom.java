@@ -13,4 +13,5 @@ public interface SongRepositoryCustom {
     public List<Song> findSimilarSongQD(Song song);
     public List<Song> findSimilarSongByTagsQD(SongTagDTO songTagDTO);
     public Page<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO);
+    public Page<Song> findLibraryTotalSongSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO);
 }

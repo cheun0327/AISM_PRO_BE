@@ -20,25 +20,19 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final ListPath<Buy, QBuy> buys = this.<Buy, QBuy>createList("buys", Buy.class, QBuy.class, PathInits.DIRECT2);
-
-    public final ListPath<Create, QCreate> creates = this.<Create, QCreate>createList("creates", Create.class, QCreate.class, PathInits.DIRECT2);
+    public final EnumPath<com.upvote.aismpro.security.Authority> authority = createEnum("authority", com.upvote.aismpro.security.Authority.class);
 
     public final StringPath email = createString("email");
 
-    public final StringPath id = createString("id");
-
     public final ListPath<Like, QLike> likes = this.<Like, QLike>createList("likes", Like.class, QLike.class, PathInits.DIRECT2);
 
-    public final StringPath nickName = createString("nickName");
+    public final StringPath nickname = createString("nickname");
 
     public final StringPath platform = createString("platform");
 
-    public final ListPath<PlayList, QPlayList> playlists = this.<PlayList, QPlayList>createList("playlists", PlayList.class, QPlayList.class, PathInits.DIRECT2);
-
     public final StringPath profile = createString("profile");
 
-    public final ListPath<Sell, QSell> sells = this.<Sell, QSell>createList("sells", Sell.class, QSell.class, PathInits.DIRECT2);
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QUser(String variable) {
         super(User.class, forVariable(variable));

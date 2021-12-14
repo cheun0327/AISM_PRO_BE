@@ -10,29 +10,29 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QPlayListSong is a Querydsl query type for PlayListSong
+ * QPlaylistSong is a Querydsl query type for PlaylistSong
  */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QPlayListSong extends EntityPathBase<PlayListSong> {
+public class QPlaylistSong extends EntityPathBase<PlaylistSong> {
 
-    private static final long serialVersionUID = -1533904877L;
+    private static final long serialVersionUID = -1598549005L;
 
-    public static final QPlayListSong playListSong = new QPlayListSong("playListSong");
+    public static final QPlaylistSong playlistSong = new QPlaylistSong("playlistSong");
 
-    public final StringPath playlistId = createString("playlistId");
+    public final NumberPath<Long> playlistId = createNumber("playlistId", Long.class);
 
-    public final StringPath songId = createString("songId");
+    public final NumberPath<Long> songId = createNumber("songId", Long.class);
 
-    public QPlayListSong(String variable) {
-        super(PlayListSong.class, forVariable(variable));
+    public QPlaylistSong(String variable) {
+        super(PlaylistSong.class, forVariable(variable));
     }
 
-    public QPlayListSong(Path<? extends PlayListSong> path) {
+    public QPlaylistSong(Path<? extends PlaylistSong> path) {
         super(path.getType(), path.getMetadata());
     }
 
-    public QPlayListSong(PathMetadata metadata) {
-        super(PlayListSong.class, metadata);
+    public QPlaylistSong(PathMetadata metadata) {
+        super(PlaylistSong.class, metadata);
     }
 
 }

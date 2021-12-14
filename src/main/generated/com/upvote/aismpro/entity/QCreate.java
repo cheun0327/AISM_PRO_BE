@@ -22,7 +22,7 @@ public class QCreate extends EntityPathBase<Create> {
 
     public static final QCreate create = new QCreate("create");
 
-    public final StringPath id = createString("id");
+    public final NumberPath<Long> createId = createNumber("createId", Long.class);
 
     public final QSong song;
 

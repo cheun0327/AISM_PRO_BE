@@ -22,9 +22,9 @@ public class QPlaylistLike extends EntityPathBase<PlaylistLike> {
 
     public static final QPlaylistLike playlistLike = new QPlaylistLike("playlistLike");
 
-    public final StringPath Id = createString("Id");
+    public final NumberPath<Long> Id = createNumber("Id", Long.class);
 
-    public final QPlayList playlist;
+    public final QPlaylist playlist;
 
     public final QUser user;
 
@@ -46,7 +46,7 @@ public class QPlaylistLike extends EntityPathBase<PlaylistLike> {
 
     public QPlaylistLike(Class<? extends PlaylistLike> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.playlist = inits.isInitialized("playlist") ? new QPlayList(forProperty("playlist"), inits.get("playlist")) : null;
+        this.playlist = inits.isInitialized("playlist") ? new QPlaylist(forProperty("playlist"), inits.get("playlist")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 

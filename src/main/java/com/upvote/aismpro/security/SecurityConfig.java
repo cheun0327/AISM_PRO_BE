@@ -54,6 +54,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
+                // swagger 설정
+                .antMatchers("/v3/api-docs").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/token/**").permitAll()
@@ -61,6 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/user/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/song/**").permitAll()
+
+                .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/playlist/validate/**").authenticated()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 

@@ -11,52 +11,54 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPlayList is a Querydsl query type for PlayList
+ * QPlaylist is a Querydsl query type for Playlist
  */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QPlayList extends EntityPathBase<PlayList> {
+public class QPlaylist extends EntityPathBase<Playlist> {
 
-    private static final long serialVersionUID = -829346338L;
+    private static final long serialVersionUID = -828393026L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QPlayList playList = new QPlayList("playList");
+    public static final QPlaylist playlist = new QPlaylist("playlist");
 
-    public final StringPath firstMood = createString("firstMood");
+    public final DateTimePath<java.sql.Timestamp> createDate = createDateTime("createDate", java.sql.Timestamp.class);
 
-    public final StringPath img = createString("img");
+    public final StringPath imgFile = createString("imgFile");
 
     public final StringPath name = createString("name");
 
-    public final StringPath playlistId = createString("playlistId");
+    public final StringPath one = createString("one");
 
-    public final StringPath secondMood = createString("secondMood");
+    public final NumberPath<Long> playlistId = createNumber("playlistId", Long.class);
 
     public final ListPath<Song, QSong> songs = this.<Song, QSong>createList("songs", Song.class, QSong.class, PathInits.DIRECT2);
 
-    public final StringPath state = createString("state");
+    public final BooleanPath state = createBoolean("state");
 
-    public final StringPath thirdMood = createString("thirdMood");
+    public final StringPath three = createString("three");
+
+    public final StringPath two = createString("two");
 
     public final QUser user;
 
-    public QPlayList(String variable) {
-        this(PlayList.class, forVariable(variable), INITS);
+    public QPlaylist(String variable) {
+        this(Playlist.class, forVariable(variable), INITS);
     }
 
-    public QPlayList(Path<? extends PlayList> path) {
+    public QPlaylist(Path<? extends Playlist> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QPlayList(PathMetadata metadata) {
+    public QPlaylist(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QPlayList(PathMetadata metadata, PathInits inits) {
-        this(PlayList.class, metadata, inits);
+    public QPlaylist(PathMetadata metadata, PathInits inits) {
+        this(Playlist.class, metadata, inits);
     }
 
-    public QPlayList(Class<? extends PlayList> type, PathMetadata metadata, PathInits inits) {
+    public QPlaylist(Class<? extends Playlist> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }

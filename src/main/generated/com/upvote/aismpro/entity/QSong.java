@@ -22,25 +22,27 @@ public class QSong extends EntityPathBase<Song> {
 
     public static final QSong song = new QSong("song");
 
-    public final StringPath createDate = createString("createDate");
+    public final DateTimePath<java.sql.Timestamp> createDate = createDateTime("createDate", java.sql.Timestamp.class);
 
-    public final StringPath fileName = createString("fileName");
+    public final StringPath five = createString("five");
 
-    public final StringPath firstMood = createString("firstMood");
+    public final StringPath four = createString("four");
 
-    public final StringPath genre = createString("genre");
+    public final StringPath imgFile = createString("imgFile");
 
-    public final StringPath length = createString("length");
+    public final StringPath one = createString("one");
 
-    public final StringPath secondMood = createString("secondMood");
+    public final StringPath playtime = createString("playtime");
 
-    public final StringPath songId = createString("songId");
+    public final StringPath six = createString("six");
+
+    public final NumberPath<Long> songId = createNumber("songId", Long.class);
 
     public final StringPath songName = createString("songName");
 
-    public final StringPath thirdMood = createString("thirdMood");
+    public final StringPath three = createString("three");
 
-    public final StringPath thumbnail = createString("thumbnail");
+    public final StringPath two = createString("two");
 
     public final StringPath type = createString("type");
 
