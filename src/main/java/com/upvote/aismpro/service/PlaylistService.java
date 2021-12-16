@@ -8,6 +8,7 @@ import com.upvote.aismpro.entity.PlaylistLike;
 import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -227,6 +228,7 @@ public class PlaylistService {
             throw new Exception();
         }
     }
+
 
     public Integer getPlaylistLikeCnt(Long playlistId) {
         return playlistLikeRepository.countPlaylistLikeByID(playlistId);
