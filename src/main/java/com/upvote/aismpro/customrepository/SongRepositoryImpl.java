@@ -75,6 +75,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     // 라이브러리 검색 이후 전체보기 페이지
+    // TODO Paging 처리 적용하기 -> 무한 스크롤 개발 시점에
     @Override
     public Page<Song> findLibraryTotalSongSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
         switch (librarySearchDTO.getSort()) {
@@ -121,8 +122,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                         searchWhere(librarySearchDTO)
                 )
                 .orderBy(song.createDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
                 .fetchResults();
 
         return new PageImpl<>(results.getResults());
@@ -134,8 +135,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
                 .fetchResults();
 
         return new PageImpl<>(results.getResults());
