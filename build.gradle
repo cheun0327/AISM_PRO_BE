@@ -36,6 +36,13 @@ dependencies {
     implementation "com.querydsl:querydsl-core:4.4.0"
     implementation "com.querydsl:querydsl-jpa:4.4.0"
     implementation "javax.xml.bind:jaxb-api"
+//    implementation 'io.springfox:springfox-swagger2:3.0.0'
+//    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+    implementation "org.springframework.data:spring-data-rest-hal-explorer"
+    implementation "org.springframework.boot:spring-boot-starter-hateoas"
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
     implementation 'org.springframework.boot:spring-boot-test-autoconfigure:2.5.3'
     implementation 'org.apache.commons:commons-lang3:3.0'

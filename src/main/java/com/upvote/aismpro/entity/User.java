@@ -2,6 +2,7 @@ package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.upvote.aismpro.security.Authority;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "user")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
 
@@ -31,10 +34,11 @@ public class User {
     private String platform;
 
     // song처럼 그냥 그때그때 조합해서 쓸지 고민해봥
-    @Column(name = "profile", nullable = false)
+    @Column(name = "profile")
     private String profile;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "authority")
     private Authority authority;
 
 

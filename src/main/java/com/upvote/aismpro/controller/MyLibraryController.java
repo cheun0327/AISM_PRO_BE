@@ -32,8 +32,7 @@ public class MyLibraryController {
     @GetMapping("/my-library/search")
     public ResponseEntity<Object> getMyLibrarySearch(@RequestParam("category") String category, @RequestParam("sort") String sort, @RequestParam("search") String search) {
         MyLibrarySearchDTO myLibrarySearchDTO = new MyLibrarySearchDTO(search, sort, category);
-        System.out.println(myLibrarySearchDTO);
-        System.out.println(category + sort + search);
+
         try {
             switch (myLibrarySearchDTO.getCategory()) {
                 case "playlist" : {

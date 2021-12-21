@@ -50,23 +50,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                // 회원가입, 로그인 api는 토큰 없어도 허용
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
+                // swagger 설정
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/v3/api-docs").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+
+                // 회원가입, 로그인 api는 토큰 없어도 허용
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/token/**").permitAll()
+
                 .antMatchers("/library/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/user/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/song/**").permitAll()
+
+                .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/playlist/validate/**").authenticated()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
                 .and()
                 .cors()
-//                .cors().configurationSource(corsConfigurationSource())
 
                 // JWTFilter을 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .and()
