@@ -235,4 +235,15 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
+    @Bean
+    public ModelMapper toArtistDTO() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.createTypeMap(User.class, ArtistDTO.class)
+                .addMapping(User::getUserId, ArtistDTO::setArtistId)
+                .addMapping(User::getNickname, ArtistDTO::setArtistName)
+                .addMapping(User::getProfile, ArtistDTO::setArtistProfile);
+        return modelMapper;
+    }
 }

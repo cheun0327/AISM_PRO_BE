@@ -1,5 +1,6 @@
 package com.upvote.aismpro.customrepository;
 
+import com.google.api.client.util.Lists;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,13 +9,16 @@ import com.upvote.aismpro.dto.SimilarSrcDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -85,6 +89,31 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
         }
     }
 
+    @Override
+    public List<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search) {
+
+        if (!search.equals("") && search != null) {
+            System.out.println(pageable);
+            QueryResults<User> results = query.selectDistinct(song.user)
+                    .from(song)
+                    .where(
+                            song.user.nickname.contains(search)
+                    )
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetchResults();
+
+            return results.getResults();
+
+        } else {
+            System.out.println("결과 없음");
+            List<User> results = query.selectDistinct(song.user)
+                    .from(song)
+                    .fetch();
+            return results;
+        }
+    }
+
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
     private Page<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
         QueryResults<Song> results = query.select(song)
@@ -122,8 +151,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                         searchWhere(librarySearchDTO)
                 )
                 .orderBy(song.createDate.desc())
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
 
         return new PageImpl<>(results.getResults());
@@ -135,37 +164,116 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .where(
                         searchWhere(librarySearchDTO)
                 )
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
 
         return new PageImpl<>(results.getResults());
     }
 
+    // 아티스트
+    public List<User> findLibraryArtistSearchQD(String search) {
+        if (!Objects.equals(search, "") && search != null) {
+            List<User> results = query.selectDistinct(song.user)
+                    .from(song)
+                    .fetch();
+
+            Collections.shuffle(results);
+
+            return Lists.newArrayList(results.subList(0, 8));
+        } else {
+            QueryResults<User> results = query.selectDistinct(song.user)
+                    .from(song)
+                    .where(
+                            song.user.nickname.contains(search)
+                    )
+                    .offset(0)
+                    .limit(8)
+                    .fetchResults();
+
+            return results.getResults();
+        }
+    }
 
     // 라이브러리 검색 공통 where문
     private BooleanExpression searchWhere(LibrarySearchDTO librarySearchDTO) {
+        System.out.println("\n\n하이\n\n"+librarySearchDTO.getSearch());
         if (isNull(librarySearchDTO)) {
             return null;
         }
+
+        if (librarySearchDTO.getSearch().equals("") || librarySearchDTO.getSearch() == null){
+            System.out.println("키워드 없음");
+            switch(librarySearchDTO.getType()) {
+                case "모두" : {
+                    return song.one.in(librarySearchDTO.getGenre())
+                            .or(instIn(librarySearchDTO.getInst()))
+                            .or(moodIn(librarySearchDTO.getMood()))
+                            .or(playtimeIn(librarySearchDTO.getPlaytime()));
+                }
+                default : {
+                    return song.type.in(librarySearchDTO.getType())
+                            .or(genreIn(librarySearchDTO.getGenre()))
+                            .or(instIn(librarySearchDTO.getInst()))
+                            .or(moodIn(librarySearchDTO.getMood()))
+                            .or(playtimeIn(librarySearchDTO.getPlaytime()));
+                }
+            }
+        }
         else {
             switch(librarySearchDTO.getType()) {
-                case "모두" : return song.one.in(librarySearchDTO.getGenre())
-                        .or(instIn(librarySearchDTO.getInst()))
-                        .or(moodIn(librarySearchDTO.getMood()))
-                        .or(playtimeIn(librarySearchDTO.getPlaytime()));
-                default : return song.type.in(librarySearchDTO.getType())
-                        .or(genreIn(librarySearchDTO.getGenre()))
-                        .or(instIn(librarySearchDTO.getInst()))
-                        .or(moodIn(librarySearchDTO.getMood()))
-                        .or(playtimeIn(librarySearchDTO.getPlaytime()));
+                case "모두" : {
+                    return song.songName.contains(librarySearchDTO.getSearch())
+                            .or(
+                                    song.user.nickname.contains(librarySearchDTO.getSearch())
+                            )
+                            .or(
+                                    song.one.contains(librarySearchDTO.getSearch())
+                                        .or(song.two.contains(librarySearchDTO.getSearch()))
+                                        .or(song.three.contains(librarySearchDTO.getSearch()))
+                                        .or(song.four.contains(librarySearchDTO.getSearch()))
+                                        .or(song.five.contains(librarySearchDTO.getSearch()))
+                                        .or(song.six.contains(librarySearchDTO.getSearch()))
+                            )
+                          .or(
+                                  song.one.in(librarySearchDTO.getGenre())
+                                      .or(instIn(librarySearchDTO.getInst()))
+                                      .or(moodIn(librarySearchDTO.getMood()))
+                                      .or(playtimeIn(librarySearchDTO.getPlaytime()))
+
+                          );
+                }
+                default : {
+                    return song.type.in(librarySearchDTO.getType())
+                            .and(
+                                    song.songName.contains(librarySearchDTO.getSearch())
+                                            .or(
+                                                    song.user.nickname.contains(librarySearchDTO.getSearch())
+                                            )
+                                            .or(
+                                                    song.one.contains(librarySearchDTO.getSearch())
+                                                            .or(song.two.contains(librarySearchDTO.getSearch()))
+                                                            .or(song.three.contains(librarySearchDTO.getSearch()))
+                                                            .or(song.four.contains(librarySearchDTO.getSearch()))
+                                                            .or(song.five.contains(librarySearchDTO.getSearch()))
+                                                            .or(song.six.contains(librarySearchDTO.getSearch()))
+                                            )
+                                            .or(
+                                                    song.one.in(librarySearchDTO.getGenre())
+                                                            .or(instIn(librarySearchDTO.getInst()))
+                                                            .or(moodIn(librarySearchDTO.getMood()))
+                                                            .or(playtimeIn(librarySearchDTO.getPlaytime()))
+                                            )
+                            );
+                }
             }
         }
     }
 
     // 라이브러리 검색 옵션 모두 null 인지 체크
     private Boolean isNull(LibrarySearchDTO obj) {
-        return (obj.getType().equals("모두") && obj.getSort().equals("업로드 날짜") && obj.getGenre().isEmpty() && obj.getInst().isEmpty()
+        return (obj.getType().equals("모두") && obj.getSort().equals("업로드 날짜")
+                && obj.getSearch().isEmpty() && obj.getGenre().isEmpty() && obj.getInst().isEmpty()
                 && obj.getMood().isEmpty() && obj.getPlaytime().isEmpty() && obj.getTempo().isEmpty());
     }
 
