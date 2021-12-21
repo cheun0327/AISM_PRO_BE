@@ -90,12 +90,13 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                                         )
                 )
                 .fetch();
+
         return pl;
     }
 
     // Library 플리이리스트 검색 결과
     @Override
-    public Page<Playlist> findLibraryTotalPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
+    public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
 
         QueryResults<Playlist> result = query.select(playlist)
                 .from(playlist)
@@ -107,9 +108,54 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                                 .or(playlist.three.contains(librarySearchDTO.getSearch()))
                 )
                 .offset(0)
-                .limit(15)
+                .limit(8)
                 .orderBy(playlist.createDate.desc())
                 .fetchResults();
+
+        // 검색 결과 없으면 디폴트(최신) 8개 가져오기
+        if (result.getResults().isEmpty()) {
+            QueryResults<Playlist> defaultResult = query.select(playlist)
+                    .from(playlist)
+                    .offset(0)
+                    .limit(8)
+                    .orderBy(playlist.createDate.desc())
+                    .fetchResults();
+
+            return new PageImpl<>(defaultResult.getResults());
+        }
+
+        return new PageImpl<>(result.getResults());
+    }
+
+    @Override
+    public Page<Playlist> findLibraryTotalPlaylistSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+
+        QueryResults<Playlist> result = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.name.contains(librarySearchDTO.getSearch())
+                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
+                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
+                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
+                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(playlist.createDate.desc())
+                .fetchResults();
+
+        // 검색 결과 없으면 디폴트(최신) page size개 가져오기
+        if (result.getResults().isEmpty()) {
+            System.out.println("토탈 플레이리스트 없음");
+            QueryResults<Playlist> defaultResult = query.select(playlist)
+                    .from(playlist)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(playlist.createDate.desc())
+                    .fetchResults();
+
+            return new PageImpl<>(defaultResult.getResults());
+        }
 
         return new PageImpl<>(result.getResults());
     }

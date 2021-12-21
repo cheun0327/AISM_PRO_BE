@@ -1,2 +1,7 @@
-package com.upvote.aismpro.service;public class ArtistService {
+package com.upvote.aismpro.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class ArtistService {
 }
