@@ -29,7 +29,7 @@ public class CreateService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getCreates(Long userId) throws Exception {
         try{
-            List<SongDTO> creates = createRepository.findAllByUser_UserId(userId)
+            List<SongDTO> creates = createRepository.findAllByUser_UserIdOrderBySong_CreateDateDesc(userId)
                     .stream()
                     .map(s -> modelMapper.toSongDTO().map(songRepository.getById(s.getSong().getSongId()), SongDTO.class))
                     .collect(Collectors.toList());
