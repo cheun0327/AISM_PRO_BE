@@ -11,12 +11,13 @@ import java.util.LinkedHashMap;
 @NoArgsConstructor
 public class SignupVO {
     private String sns;
-    private LinkedHashMap<String, Object> info;
-//    private String nickname;
-//    private MultipartFile profileImg;
+//    private LinkedHashMap<String, Object> info;
+    private String nickname;
+    private MultipartFile profileImg;
 
     public void print() {
         System.out.println(sns);
-        System.out.println(info);
+//        System.out.println(info);
+        System.out.println(nickname);
     }
 }
