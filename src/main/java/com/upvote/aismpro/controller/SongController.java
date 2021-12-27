@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
+import com.upvote.aismpro.service.CreateService;
 import com.upvote.aismpro.vo.SongSaveVO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
@@ -26,6 +27,8 @@ public class SongController {
     @Autowired
     private SongService songService;
     @Autowired
+    private CreateService createService;
+    @Autowired
     private PlaylistService playlistService;
 
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
@@ -44,6 +47,7 @@ public class SongController {
 
             // song 기본 정보 저장
             song = songService.saveSong(songDTO, songVO.getImg());
+//            createService.saveSong(userId, song.getSongId());
 
             // song wav file tmp에서 이동
             songService.moveSongWavFile(song.getSongId());

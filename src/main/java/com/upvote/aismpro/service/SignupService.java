@@ -32,21 +32,24 @@ public class SignupService {
     @Autowired
     private UserRepository userRepository;
 
-    public LoginUserDTO signup(HttpSession session, String nickname, MultipartFile file) throws Exception {
+    public LoginUserDTO signup(SignupDTO signupDTO, MultipartFile file) throws Exception {
         try {
-            String platform = session.getAttribute("platform").toString();
-            String email = session.getAttribute("email").toString();
-
-            List<User> users = userRepository.findAllByPlatformAndEmail(platform, email);
+            System.out.println(signupDTO.getEmail());
+            List<User> users = userRepository.findAllByPlatformAndEmail(signupDTO.getSns(), signupDTO.getEmail());
             if (users.size() >= 1) throw new IllegalAccessException();
 
             // 유저 저장
-            User savedUser = userRepository.save(new User(nickname, email, platform));
-            System.out.println(savedUser.getUserId());
+            User user = User.builder()
+                    .nickname(signupDTO.getNickname())
+                    .email(signupDTO.getEmail())
+                    .platform(signupDTO.getSns())
+                    .authority(Authority.ROLE_GUEST)
+                    .build();
+            userRepository.save(user);
 
             // 프로필 이미지 파일 이름 세팅
             String[] imgNameArr = file.getOriginalFilename().split("\\.");
-            String imgFolder = savedUser.getUserId().toString();
+            String imgFolder = user.getUserId().toString();
             String imgName = imgFolder + "." + imgNameArr[imgNameArr.length - 1];
 
             String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgFolder;
@@ -57,16 +60,16 @@ public class SignupService {
             if (!profileDir.exists())   profileDir.mkdir();
             file.transferTo(new File(dirPath + "/" + imgName));
 
-            savedUser = userRepository.save(savedUser.setProfile(imgFolder + "/" + imgName));
+            user = userRepository.save(user.setProfile(imgFolder + "/" + imgName));
 
             //user token 생성
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(savedUser.getUserId(), savedUser.getEmail());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
 
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
 
             TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
 
-            LoginUserDTO loginUserDTO = new LoginUserDTO(tokenDTO.getAccessToken(), savedUser);
+            LoginUserDTO loginUserDTO = new LoginUserDTO(tokenDTO.getAccessToken(), user);
 
             return loginUserDTO;
 
