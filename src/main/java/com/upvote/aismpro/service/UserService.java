@@ -34,7 +34,7 @@ public class UserService {
         try {
             User user = userRepository.getById(userID);
 
-            List<Create> creates = createRepository.findAllByUser_UserId(userID);
+            List<Create> creates = createRepository.findAllByUser_UserIdOrderBySong_CreateDateDesc(userID);
 
             List<String> genres = creates.stream().map(song -> song.getSong().getOne()).collect(Collectors.toList());
             List<String> firstKeywords = creates.stream().map(song -> song.getSong().getTwo()).collect(Collectors.toList());

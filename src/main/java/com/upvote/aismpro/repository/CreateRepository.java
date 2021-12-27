@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface CreateRepository extends JpaRepository<Create, Long>, CreateRepositoryCustom {
-    public List<Create> findAllByUser_UserId(Long userId);
+    public List<Create> findAllByUser_UserIdOrderBySong_CreateDateDesc(Long userId);
     public void deleteByUser_UserIdAndSong_SongId(Long userId, Long songId);
 }
