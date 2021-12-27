@@ -67,48 +67,48 @@ public class SignupController {
         }
     }
 
-//    @PostMapping("/signup/no-profile")
-//    public ResponseEntity<LoginUserDTO> signupWithoutProfile(@RequestBody SignupVO signupVO) {
-//        try {
-//            SignupDTO signupDTO = new SignupDTO();
-//            switch (signupVO.getSns()) {
-//                case "카카오": {
-//                    LinkedHashMap<String, Object> kakaoAccount = (LinkedHashMap<String, Object>) signupVO.getInfo().get("kakao_account");
-//                    LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) signupVO.getInfo().get("properties");
-//
-//                    signupDTO = SignupDTO.builder()
-//                            .sns(signupVO.getSns())
-//                            .name((String) properties.get("nickname"))
-//                            .email((String) kakaoAccount.get("email"))
-//                            .nickname(signupVO.getNickname())
-//                            .build();
-//                    break;
-//                }
-//                case "구글": {
-//                    signupDTO = SignupDTO.builder()
-//                            .sns(signupVO.getSns())
-//                            .name((String) signupVO.getInfo().get("name"))
-//                            .email((String) signupVO.getInfo().get("email"))
-//                            .nickname(signupVO.getNickname())
-//                            .build();
-//                    break;
-//                }
-//                case "네이버": {
-//                    // TODO 네이버 개발자 모드임.
-//                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//                }
-//            }
-//
-//            LoginUserDTO loginUserDTO = accountService.signupWithoutProfile(signupDTO);
-//            return new ResponseEntity<>(loginUserDTO, HttpStatus.OK);
-//
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @PostMapping("/signup/no-profile")
+    public ResponseEntity<LoginUserDTO> signupWithoutProfile(@RequestBody SignupVO signupVO) {
+        try {
+            SignupDTO signupDTO = new SignupDTO();
+            switch (signupVO.getSns()) {
+                case "카카오": {
+                    LinkedHashMap<String, Object> kakaoAccount = (LinkedHashMap<String, Object>) signupVO.getInfo().get("kakao_account");
+                    LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) signupVO.getInfo().get("properties");
+
+                    signupDTO = SignupDTO.builder()
+                            .sns(signupVO.getSns())
+                            .name((String) properties.get("nickname"))
+                            .email((String) kakaoAccount.get("email"))
+                            .nickname(signupVO.getNickname())
+                            .build();
+                    break;
+                }
+                case "구글": {
+                    signupDTO = SignupDTO.builder()
+                            .sns(signupVO.getSns())
+                            .name((String) signupVO.getInfo().get("name"))
+                            .email((String) signupVO.getInfo().get("email"))
+                            .nickname(signupVO.getNickname())
+                            .build();
+                    break;
+                }
+                case "네이버": {
+                    // TODO 네이버 개발자 모드임.
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+            }
+
+            LoginUserDTO loginUserDTO = accountService.signupWithoutProfile(signupDTO);
+            return new ResponseEntity<>(loginUserDTO, HttpStatus.OK);
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
