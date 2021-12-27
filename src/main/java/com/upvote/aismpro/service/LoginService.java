@@ -20,6 +20,7 @@ public class LoginService {
     private CustomModelMapper modelMapper;
 
     public User checkUser(String platform, String email) throws Exception {
+
         List<User> users = userRepository.findAllByPlatformAndEmail(platform, email);
 
         if (users.isEmpty()) throw new NoSuchElementException();

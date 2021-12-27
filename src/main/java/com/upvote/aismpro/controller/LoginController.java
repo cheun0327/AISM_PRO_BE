@@ -45,8 +45,6 @@ public class LoginController {
         // 카카오 로그인 유저 정보 json
         LinkedHashMap<String, Object> kakaoProfileInfo = (LinkedHashMap<String, Object>) kakaoProfile.get("kakao_account");
 
-        LinkedHashMap<String, Object> profile = (LinkedHashMap<String, Object>) kakaoProfileInfo.get("profile");
-
         try {
             User user = loginService.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
 
@@ -62,27 +60,9 @@ public class LoginController {
 
         } catch (NoSuchElementException e){
             e.printStackTrace();
-
-            // Session 설정
-            HttpSession session = request.getSession();
-
-            session.setAttribute("platform", "카카오");
-            session.setAttribute("name", (String) profile.get("nickname"));
-            session.setAttribute("email", kakaoProfileInfo.get("email"));
-            session.setMaxInactiveInterval(6*60*60);
-
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-
-            // Session 설정
-            HttpSession session = request.getSession();
-
-            session.setAttribute("platform", "카카오");
-            session.setAttribute("name", (String) profile.get("nickname"));
-            session.setAttribute("email", kakaoProfileInfo.get("email"));
-            session.setMaxInactiveInterval(6*60*60);
-
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             System.out.println("예외 여기로!!!!");
@@ -96,30 +76,22 @@ public class LoginController {
         // 구글 로그인 정보 json
         LinkedHashMap<String, String> googleProfile = (LinkedHashMap<String, String>) googleInfo.get("profile");
 
-        System.out.println("google 로그인 : " + googleProfile.get("email"));
-
         try {
             User user = loginService.checkUser("구글", googleProfile.get("email"));
 
-            // token 생성
-            // TODO token 생성
-            String token = "token";
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
 
-            return new ResponseEntity<>(new LoginUserDTO(token, user), HttpStatus.OK);
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+
+            TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
+
+            // TODO refresh token 저장
+
+            return new ResponseEntity<>(new LoginUserDTO(tokenDTO.getAccessToken(), user), HttpStatus.OK);
 
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-
-            HttpSession session = request.getSession();
-            System.out.println("생성 세션 : " + session.getId());
-
-            session.setAttribute("platform", "구글");
-            session.setAttribute("name", googleProfile.get("name"));
-            session.setAttribute("email", googleProfile.get("email"));
-            session.setMaxInactiveInterval(6*60*60);
-
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

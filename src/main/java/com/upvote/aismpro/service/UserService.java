@@ -1,16 +1,23 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
+import com.upvote.aismpro.entity.Create;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -18,7 +25,36 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private CreateRepository createRepository;
+    @Autowired
     private CustomModelMapper modelMapper;
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ArtistDetailDTO getArtistDetailInfo(Long userID) throws Exception {
+        try {
+            User user = userRepository.getById(userID);
+
+            List<Create> creates = createRepository.findAllByUser_UserIdOrderBySong_CreateDateDesc(userID);
+
+            List<String> genres = creates.stream().map(song -> song.getSong().getOne()).collect(Collectors.toList());
+            List<String> firstKeywords = creates.stream().map(song -> song.getSong().getTwo()).collect(Collectors.toList());
+            List<String> secondKeywords = creates.stream().map(song -> song.getSong().getThree()).collect(Collectors.toList());
+            List<String> thirdKeywords = creates.stream().map(song -> song.getSong().getFour()).collect(Collectors.toList());
+//            List<String> fourthKeywords = creates.stream().map(song -> song.getSong().getFive()).collect(Collectors.toList());
+//            List<String> sixthKeywords = creates.stream().map(song -> song.getSong().getSix()).collect(Collectors.toList());
+
+            List<String> keywords = new ArrayList<>(Arrays.asList(getMostFrequentTags(genres, 1), getMostFrequentTags(firstKeywords, 1), getMostFrequentTags(secondKeywords, 1), getMostFrequentTags(thirdKeywords, 1)));
+
+            return new ArtistDetailDTO(user.getUserId(), user.getNickname(), user.getProfile(), keywords);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public String getMostFrequentTags(List<String> genres, int cntLimit) {
+        return genres.stream().collect(Collectors.groupingBy(genre -> genre, Collectors.counting())).entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).map(Map.Entry::getKey).limit(cntLimit).reduce("", String::concat);
+    }
 
     // email 중복 체크
     public void emailDoubleCheck(String email) {

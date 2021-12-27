@@ -21,6 +21,7 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
         List<String> twos = query.selectDistinct(keyword.two)
                 .from(keyword)
                 .where(keyword.one.eq(one))
+//                .orderBy(keyword.id.asc())
                 .fetch();
         return twos;
     }
@@ -30,6 +31,7 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
         List<String> threes = query.selectDistinct(keyword.three)
                 .from(keyword)
                 .where(keyword.one.eq(one).and(keyword.two.eq(two)))
+//                .orderBy(keyword.id.asc())
                 .fetch();
         return threes;
     }
@@ -43,13 +45,14 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
                                 .and(keyword.two.eq(two))
                                 .and(keyword.three.eq(three))
                 )
+//                .orderBy(keyword.id.asc())
                 .fetch();
         return fours;
     }
 
     @Override
     public List<String> find5thQD(String one, String two, String three, String four){
-        List<String> fives = query.selectDistinct(keyword.five)
+        List<String> fives = query.select(keyword.five)
                 .from(keyword)
                 .where(
                         keyword.one.eq(one)
@@ -57,6 +60,7 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
                                 .and(keyword.three.eq(three))
                                 .and(keyword.four.eq(four))
                 )
+                .orderBy(keyword.id.asc())
                 .fetch();
         return fives;
     }
@@ -72,6 +76,7 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
                                 .and(keyword.four.eq(four))
                                 .and(keyword.five.eq(five))
                 )
+//                .orderBy(keyword.id.asc())
                 .fetch();
         return sixs;
     }
