@@ -54,15 +54,7 @@ public class PlaylistService {
 
             // playlist img 저장
             // null로 들어오면 그냥 아무 처리도 안하고 리턴 줄때 만들어서 주기
-            if (file == null) {
-                savedPlaylist.setImgFile("defaultPlaylist.jpg");
-                // 음원 없을 때
-
-                // 음원 개수 < 4
-
-                // 음원 개수 >= 4
-            }
-            else {
+            if (file != null) {
                 String dirPath = "/var/lib/jenkins/workspace/img/playlist";
                 String[] imgNameArr = file.getOriginalFilename().split("\\.");
                 String imgName = savedPlaylist.getPlaylistId() + "." + imgNameArr[imgNameArr.length - 1];
