@@ -191,24 +191,24 @@ public class CustomModelMapper {
             if (context.getSource().getImgFile() == null) {
                 // 음원 없음
                 if (context.getSource().getSongs().isEmpty()) {
-                    playlistImgs.add("defaultPlaylist.png");
+                    playlistImgs.add("/playlistImg/defaultPlaylist.png");
                 }
                 // 음원 4개 미만
                 else {
                     if (context.getSource().getSongs().size() < 4) {
                         // 랜덤 값은 안넣음. 새로고침 할때마다 바뀌면 정신 없을 것 같아서
                         List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
-                        playlistImgs.add(songs.get(0));
+                        playlistImgs.add("/songImg/" + songs.get(0));
                     }
                     // 음원 4개 이상
                     else {
                         List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
-                        playlistImgs = songs.subList(0, 4);
+                        playlistImgs = songs.subList(0, 4).stream().map(img -> "/songImg/" + img).collect(Collectors.toList());
                     }
                 }
             }
             else {
-                playlistImgs.add(context.getSource().getImgFile());
+                playlistImgs.add("/playlistImg/" + context.getSource().getImgFile());
             }
             System.out.println(playlistImgs);
             return playlistImgs;
