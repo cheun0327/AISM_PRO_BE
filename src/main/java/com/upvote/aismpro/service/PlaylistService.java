@@ -53,14 +53,23 @@ public class PlaylistService {
             // TODO 디폴트 플레이리스트 제목 여부
 
             // playlist img 저장
-            if (file != null) {
+            // null로 들어오면 그냥 아무 처리도 안하고 리턴 줄때 만들어서 주기
+            if (file == null) {
+                savedPlaylist.setImgFile("defaultPlaylist.jpg");
+                // 음원 없을 때
+
+                // 음원 개수 < 4
+
+                // 음원 개수 >= 4
+            }
+            else {
                 String dirPath = "/var/lib/jenkins/workspace/img/playlist";
                 String[] imgNameArr = file.getOriginalFilename().split("\\.");
                 String imgName = savedPlaylist.getPlaylistId() + "." + imgNameArr[imgNameArr.length - 1];
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedPlaylist.setImgFile(imgName);
-                playlistRepository.save(savedPlaylist);
             }
+            playlistRepository.save(savedPlaylist);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,7 +1,10 @@
 package com.upvote.aismpro.dto;
 
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -10,7 +13,7 @@ public class PlaylistDTO {
     private String playlistName;
     private String playlistCreatorName;
     private String playlistState;
-    private String playlistImg;
+    private List<String> playlistImgs;
     private Boolean playlistLike;
     private Integer playlistSongCount;
     private Integer playlistPlaytime;

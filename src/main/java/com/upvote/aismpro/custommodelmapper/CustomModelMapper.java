@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class CustomModelMapper {
@@ -180,6 +182,36 @@ public class CustomModelMapper {
         }
     };
 
+    Converter<Playlist, List<String>> playlistImgsCvt = new Converter<Playlist, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<Playlist, List<String>> context) {
+            List<String> playlistImgs = new ArrayList<>();
+            if (context.getSource().getImgFile() == null) {
+                // 음원 없음
+                if (context.getSource().getSongs().isEmpty()) {
+                    playlistImgs.add("defaultPlaylist.png");
+                }
+                // 음원 4개 미만
+                else {
+                    if (context.getSource().getSongs().size() < 4) {
+                        // 랜덤 값은 안넣음. 새로고침 할때마다 바뀌면 정신 없을 것 같아서
+                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        playlistImgs.add(songs.get(0));
+                    }
+                    // 음원 4개 이상
+                    else {
+                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        playlistImgs = songs.subList(0, 4);
+                    }
+                }
+            }
+            else {
+                playlistImgs.add(context.getSource().getImgFile());
+            }
+            return playlistImgs;
+        }
+    };
+
     @Bean
     public ModelMapper toPlaylistDTO() {
         modelMapper.getConfiguration()
@@ -190,9 +222,9 @@ public class CustomModelMapper {
                 .addMapping(src -> src.getUser().getNickname(), PlaylistDTO::setPlaylistCreatorName)
                 .addMappings(modelMapper -> modelMapper.using(playlistSongCntCvt).map(src -> src, PlaylistDTO::setPlaylistSongCount))
                 .addMappings(modelMapper -> modelMapper.using(playlistPlaytimeCvt).map(src -> src, PlaylistDTO::setPlaylistPlaytime))
+                .addMappings(modelMapper -> modelMapper.using(playlistImgsCvt).map(src -> src, PlaylistDTO::setPlaylistImgs))
                 .addMapping(Playlist::getName, PlaylistDTO::setPlaylistName)
-                .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState)
-                .addMapping(Playlist::getImgFile, PlaylistDTO::setPlaylistImg);
+                .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState);
         return modelMapper;
     }
 
