@@ -56,7 +56,7 @@ public class User {
 //
     @OneToMany(mappedBy = "user")
     @JsonBackReference
-    private List<Like> likes = new ArrayList<Like>();
+    private List<Like> likes;
 //
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JsonBackReference

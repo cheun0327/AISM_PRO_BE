@@ -3,8 +3,11 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.entity.Create;
+import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,8 @@ public class CreateService {
     private CreateRepository createRepository;
     @Autowired
     private SongRepository songRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private CustomModelMapper modelMapper;
 
@@ -69,10 +74,18 @@ public class CreateService {
         }
     }
 
-//    @Transactional
-//    public void saveSong(Long userId, Long songId) {
-//        try {
-//            createRepository.save(Create.b)
-//        }
-//    }
+    @Transactional
+    public void saveSong(Long songId) throws Exception {
+        try {
+            createRepository.save(Create.builder()
+                    .user(userRepository.findById(SecurityUtil.getCurrentUserId()).get())
+                    .song(songRepository.findById(songId).get())
+                    .build()
+            );
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("create 저장 실패");
+        }
+    }
 }
