@@ -13,7 +13,7 @@ public class PlaylistDetailDTO {
     private String playlistCreatorName;
     private String playlistName;
     private String playlistState;
-    private String playlistImg;
+    private List<String> playlistImgs;
     private Boolean playlistLike;
     private List<SongDTO> songs;
     private List<String> keywords;
