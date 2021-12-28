@@ -186,6 +186,8 @@ public class CustomModelMapper {
         @Override
         public List<String> convert(MappingContext<Playlist, List<String>> context) {
             List<String> playlistImgs = new ArrayList<>();
+            System.out.println("플레이리스트 이미지");
+            System.out.println(context.getSource().getImgFile());
             if (context.getSource().getImgFile() == null) {
                 // 음원 없음
                 if (context.getSource().getSongs().isEmpty()) {
@@ -208,6 +210,7 @@ public class CustomModelMapper {
             else {
                 playlistImgs.add(context.getSource().getImgFile());
             }
+            System.out.println(playlistImgs);
             return playlistImgs;
         }
     };
@@ -243,13 +246,13 @@ public class CustomModelMapper {
     public ModelMapper toPlaylistDetailDTO() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
-
+        System.out.println("플레이리스트 디테일");
         modelMapper.createTypeMap(Playlist.class, PlaylistDetailDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
+                .addMappings(modelMapper -> modelMapper.using(playlistImgsCvt).map(src -> src, PlaylistDetailDTO::setPlaylistImgs))
                 .addMapping(Playlist::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(Playlist::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDetailDTO::setPlaylistState)
-                .addMapping(Playlist::getImgFile, PlaylistDetailDTO::setPlaylistImg)
                 .addMapping(src -> src.getUser().getUserId(), PlaylistDetailDTO::setPlaylistCreatorId)
                 .addMapping(src -> src.getUser().getNickname(), PlaylistDetailDTO::setPlaylistCreatorName);
 
