@@ -27,12 +27,12 @@ public class PlaylistController {
 
     ////////////////////////   playlist create   ////////////////////////
     // 플레이리스트 좋아요 저장하기
-    @PostMapping("/playlist/like/{playlistId}")
-    public ResponseEntity<Object> createPlaylistLike(@PathVariable("playlistId") Long playlistId) {
-        Long userId = SecurityUtil.getCurrentUserId();
-        playlistService.createPlaylistLike(userId, playlistId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PostMapping("/playlist/like/{playlistId}")
+//    public ResponseEntity<Object> createPlaylistLike(@PathVariable("playlistId") Long playlistId) {
+//        Long userId = SecurityUtil.getCurrentUserId();
+//        playlistService.createPlaylistLike(userId, playlistId);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     // 플리이리스트 껍데기 만들기
     @PostMapping("/playlist")
@@ -86,10 +86,6 @@ public class PlaylistController {
 
             Long userId = SecurityUtil.getCurrentUserId();
 
-            if (userId != -1) {
-                playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
-            }
-
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
 
         } catch(NoSuchElementException e) {
@@ -107,10 +103,6 @@ public class PlaylistController {
 
             Long userId = SecurityUtil.getCurrentUserId();
 
-            if (userId != -1) {
-                playlistDetailDTO = playlistService.setLike2PlaylistDetailDTO(playlistDetailDTO, userId);
-            }
-
             return new ResponseEntity<>(playlistDetailDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -127,10 +119,6 @@ public class PlaylistController {
 
             Long userId = SecurityUtil.getCurrentUserId();
 
-            if (userId != -1) {
-                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
-            }
-
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
         } catch(NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -146,10 +134,6 @@ public class PlaylistController {
             List<PlaylistDTO> playlistDTOList = playlistService.getSimilarPlaylistBySong(songId);
 
             Long userId = SecurityUtil.getCurrentUserId();
-
-            if (userId != -1) {
-                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
-            }
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
         } catch(NoSuchElementException e) {
@@ -172,16 +156,16 @@ public class PlaylistController {
 
     ////////////////////////   playlist utils   ////////////////////////
     // 플레이리스트 좋아요 개수 가져오기
-    @GetMapping("/playlist/like/count/{playlistId}")
-    public ResponseEntity<Integer> getPlaylistLikeCnt(@PathVariable("playlistId") Long playlistId) {
-        try {
-            return new ResponseEntity<>(playlistService.getPlaylistLikeCnt(playlistId), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @GetMapping("/playlist/like/count/{playlistId}")
+//    public ResponseEntity<Integer> getPlaylistLikeCnt(@PathVariable("playlistId") Long playlistId) {
+//        try {
+//            return new ResponseEntity<>(playlistService.getPlaylistLikeCnt(playlistId), HttpStatus.OK);
+//        } catch (NoSuchElementException e) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @GetMapping("/playlist/validate/name/{playlistName}")
     public ResponseEntity<Boolean> validatePlaylistName(@PathVariable("playlistName") String playlistName) {

@@ -117,10 +117,10 @@ public class SongController {
             List<SongDTO> songDTOList = songService.getSimilarSongByTags(songTagDTO);
             List<PlaylistDTO> playlistDTOList = playlistService.getSimilarPlaylistByTags(songTagDTO);
 
-            if (userId != -1) {
-                songDTOList = songService.setLike2SongDTOList(songDTOList, userId);
-                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
-            }
+//            if (userId != -1) {
+//                songDTOList = songService.setLike2SongDTOList(songDTOList, userId);
+//                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
+//            }
 
             map.put("song", songDTOList);
             map.put("playlist", playlistDTOList);
