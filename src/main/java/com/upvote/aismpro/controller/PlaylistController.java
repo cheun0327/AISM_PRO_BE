@@ -83,7 +83,7 @@ public class PlaylistController {
     public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
         try {
             List<PlaylistDTO> playlistDTOList = playlistService.getSavedPlaylistBySongId(songId);
-
+            System.out.println("저장된 플리 " + playlistDTOList.size());
             Long userId = SecurityUtil.getCurrentUserId();
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);

@@ -194,10 +194,14 @@ public class PlaylistService {
     }
 
     // 해당 음원이 저장된 플레이리스트 찾기
-    public  List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws  Exception {
-        return playlistSongRepository.findPlaylistBySongIdQD(songId)
+    public  List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws Exception {
+        List<PlaylistDTO> savedPlaylists = playlistSongRepository.findPlaylistBySongIdQD(songId)
                 .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))
                 .collect(Collectors.toList());
+
+        if (savedPlaylists.isEmpty()) throw new NoSuchElementException();
+
+        return savedPlaylists;
     }
 
     // MyLibrary 검색 결과 가져오기
