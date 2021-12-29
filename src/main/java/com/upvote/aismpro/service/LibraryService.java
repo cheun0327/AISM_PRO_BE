@@ -31,8 +31,6 @@ public class LibraryService {
     @Autowired
     private PlaylistRepository playlistRepository;
     @Autowired
-    private PlaylistLikeRepository playlistLikeRepository;
-    @Autowired
     private GenreInfoRepository genreInfoRepository;
     @Autowired
     private KeywordRepository keywordRepository;
@@ -148,25 +146,25 @@ public class LibraryService {
                 .collect(Collectors.toList());
     }
 
-    public List<PlaylistDTO> getPlaylistsWithLike(Pageable pageable, String type, Long userId) {
-        List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
-                .stream().map(src -> src.getPlaylist().getPlaylistId())
-                .collect(Collectors.toList());
-
-        Page<Playlist> pls = playlistRepository.findAll(pageable);
-
-        if (type.equals("모두") || type.equals("음원")){
-            List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
-            for (Playlist pl : playlistRepository.findAll()) {
-                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
-                newPlaylistDTOList.add(dto);
-            }
-            return newPlaylistDTOList;
-        }
-
-        return new ArrayList<>();
-    }
+//    public List<PlaylistDTO> getPlaylistsWithLike(Pageable pageable, String type, Long userId) {
+//        List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
+//                .stream().map(src -> src.getPlaylist().getPlaylistId())
+//                .collect(Collectors.toList());
+//
+//        Page<Playlist> pls = playlistRepository.findAll(pageable);
+//
+//        if (type.equals("모두") || type.equals("음원")){
+//            List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
+//            for (Playlist pl : playlistRepository.findAll()) {
+//                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
+//                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
+//                newPlaylistDTOList.add(dto);
+//            }
+//            return newPlaylistDTOList;
+//        }
+//
+//        return new ArrayList<>();
+//    }
 
 
     public List<PlaylistDTO> getPlaylistsWithoutLike(Pageable pageable, String type) {
