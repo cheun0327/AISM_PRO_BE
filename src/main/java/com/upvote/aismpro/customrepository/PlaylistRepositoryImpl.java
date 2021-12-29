@@ -41,11 +41,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 .from(playlist)
                 .where(
                         playlist.state.eq(true)
-                                        .and(
-                                                playlist.one.in(playlistDetailDTO.getKeywords())
-                                                        .or(playlist.two.in(playlistDetailDTO.getKeywords())
-                                                                .or(playlist.three.in(playlistDetailDTO.getKeywords())))
-                                        )
+                                .and(
+                                        playlist.songs.size().goe(1)
+                                )
+                                .and(
+                                            playlist.one.in(playlistDetailDTO.getKeywords())
+                                                    .or(playlist.two.in(playlistDetailDTO.getKeywords())
+                                                            .or(playlist.three.in(playlistDetailDTO.getKeywords())))
+                                    )
                 )
                 .fetch();
 
@@ -56,6 +59,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                     .from(playlist)
                     .where(
                             playlist.state.eq(true)
+                                    .and(
+                                            playlist.songs.size().goe(1)
+                                    )
                     )
                     .fetch();
         }
@@ -138,13 +144,16 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 .from(playlist)
                 .where(
                         playlist.state.eq(true)
-                                        .and(
-                                                playlist.name.contains(librarySearchDTO.getSearch())
-                                                        .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.one.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.two.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.three.contains(librarySearchDTO.getSearch()))
-                                        )
+                                .and(
+                                        playlist.songs.size().goe(1)
+                                )
+                                .and(
+                                        playlist.name.contains(librarySearchDTO.getSearch())
+                                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                                )
                 )
                 .offset(0)
                 .limit(8)
@@ -156,7 +165,10 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
             QueryResults<Playlist> defaultResult = query.select(playlist)
                     .from(playlist)
                     .where(
-                            playlist.state.eq(true)
+                        playlist.state.eq(true)
+                            .and(
+                                    playlist.songs.size().goe(1)
+                            )
                     )
                     .offset(0)
                     .limit(8)
@@ -176,13 +188,16 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 .from(playlist)
                 .where(
                         playlist.state.eq(true)
-                                        .and(
-                                                playlist.name.contains(librarySearchDTO.getSearch())
-                                                        .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.one.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.two.contains(librarySearchDTO.getSearch()))
-                                                        .or(playlist.three.contains(librarySearchDTO.getSearch()))
-                                        )
+                                .and(
+                                        playlist.songs.size().goe(1)
+                                )
+                                .and(
+                                        playlist.name.contains(librarySearchDTO.getSearch())
+                                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
+                                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                                )
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -196,6 +211,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                     .from(playlist)
                     .where(
                             playlist.state.eq(true)
+                                .and(
+                                        playlist.songs.size().goe(1)
+                                )
                     )
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
