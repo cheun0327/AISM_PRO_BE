@@ -78,6 +78,7 @@ public class PlaylistController {
         }
     }
 
+
     // 해당 음원이 저장된 플레이리스트 찾기
     @GetMapping("/playlist/saved/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {

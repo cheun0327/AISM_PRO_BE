@@ -89,6 +89,18 @@ public class PlaylistService {
         }
     }
 
+    public List<PlaylistDTO> getUserPlaylist(Long userId) throws Exception {
+        try {
+            List<PlaylistDTO> playlistDTOList = playlistRepository.findMyLibraryAllPlaylistQD(userId)
+                    .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                    .collect(Collectors.toList());
+            return playlistDTOList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
     // playlist detail 가져오기
     public PlaylistDetailDTO getPlayListDetail(Long playlistId) throws Exception {
         try {

@@ -22,19 +22,43 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
     private final JPAQueryFactory query;
     private final QPlaylist playlist = QPlaylist.playlist;
 
+
+    @Override
+    public List<Playlist> findAllPlaylistQD() {
+        List<Playlist> pls = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.state.eq(true)
+                )
+                .orderBy(playlist.createDate.desc())
+                .fetch();
+        return pls;
+    }
+
     @Override
     public List<Playlist> findSimilarPlaylistQD(PlaylistDetailDTO playlistDetailDTO) {
         List<Playlist> pl = query.select(playlist)
                 .from(playlist)
                 .where(
-                        playlist.one.in(playlistDetailDTO.getKeywords())
-                                .or(playlist.two.in(playlistDetailDTO.getKeywords())
-                                        .or(playlist.three.in(playlistDetailDTO.getKeywords())))
+                        playlist.state.eq(true)
+                                        .and(
+                                                playlist.one.in(playlistDetailDTO.getKeywords())
+                                                        .or(playlist.two.in(playlistDetailDTO.getKeywords())
+                                                                .or(playlist.three.in(playlistDetailDTO.getKeywords())))
+                                        )
                 )
                 .fetch();
 
         // TODO 개수 제한
-        if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+        if(pl.isEmpty()) {
+            return query
+                    .select(playlist)
+                    .from(playlist)
+                    .where(
+                            playlist.state.eq(true)
+                    )
+                    .fetch();
+        }
         return pl;
     }
 
@@ -77,6 +101,18 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
     }
 
     @Override
+    public List<Playlist> findMyLibraryAllPlaylistQD(Long userId) {
+        List<Playlist> pls = query.select(playlist)
+                .from(playlist)
+                .where(
+                        playlist.user.userId.eq(userId)
+                )
+                .orderBy(playlist.createDate.desc())
+                .fetch();
+        return pls;
+    }
+
+    @Override
     public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
         List<Playlist> pl = query.select(playlist)
                 .from(playlist)
@@ -101,11 +137,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
         QueryResults<Playlist> result = query.select(playlist)
                 .from(playlist)
                 .where(
-                        playlist.name.contains(librarySearchDTO.getSearch())
-                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                        playlist.state.eq(true)
+                                        .and(
+                                                playlist.name.contains(librarySearchDTO.getSearch())
+                                                        .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.one.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.two.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                                        )
                 )
                 .offset(0)
                 .limit(8)
@@ -116,6 +155,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
         if (result.getResults().isEmpty()) {
             QueryResults<Playlist> defaultResult = query.select(playlist)
                     .from(playlist)
+                    .where(
+                            playlist.state.eq(true)
+                    )
                     .offset(0)
                     .limit(8)
                     .orderBy(playlist.createDate.desc())
@@ -133,11 +175,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
         QueryResults<Playlist> result = query.select(playlist)
                 .from(playlist)
                 .where(
-                        playlist.name.contains(librarySearchDTO.getSearch())
-                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
-                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                        playlist.state.eq(true)
+                                        .and(
+                                                playlist.name.contains(librarySearchDTO.getSearch())
+                                                        .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.one.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.two.contains(librarySearchDTO.getSearch()))
+                                                        .or(playlist.three.contains(librarySearchDTO.getSearch()))
+                                        )
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -149,6 +194,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
             System.out.println("토탈 플레이리스트 없음");
             QueryResults<Playlist> defaultResult = query.select(playlist)
                     .from(playlist)
+                    .where(
+                            playlist.state.eq(true)
+                    )
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .orderBy(playlist.createDate.desc())
