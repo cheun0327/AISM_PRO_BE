@@ -52,14 +52,17 @@ public class SongService implements SongServiceInter{
             if (savedSong.getSongName().equals("음원 제목")) savedSong.setSongName("Song" + savedSong.getSongId());
 
             // song img 저장
-            if (file != null) {
-                  String dirPath = "/var/lib/jenkins/workspace/img/song";
-//                String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
+            if (file == null) {
+                savedSong.setImgFile("defaultAlbum.jpg");
+            }
+            else {
+                String dirPath = "/var/lib/jenkins/workspace/img/song";
+                // String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
                 String[] imgNameArr = file.getOriginalFilename().split("\\.");
                 String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedSong.setImgFile(imgName);
-            };
+            }
             songRepository.save(savedSong);
 
             // songDTO

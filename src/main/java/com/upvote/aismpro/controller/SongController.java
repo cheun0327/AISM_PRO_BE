@@ -47,10 +47,12 @@ public class SongController {
 
             // song 기본 정보 저장
             song = songService.saveSong(songDTO, songVO.getImg());
-//            createService.saveSong(userId, song.getSongId());
 
             // song wav file tmp에서 이동
             songService.moveSongWavFile(song.getSongId());
+
+            // create 테이블에 동기화
+            createService.saveSong(song.getSongId());
 
             return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
 
@@ -115,10 +117,10 @@ public class SongController {
             List<SongDTO> songDTOList = songService.getSimilarSongByTags(songTagDTO);
             List<PlaylistDTO> playlistDTOList = playlistService.getSimilarPlaylistByTags(songTagDTO);
 
-            if (userId != -1) {
-                songDTOList = songService.setLike2SongDTOList(songDTOList, userId);
-                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
-            }
+//            if (userId != -1) {
+//                songDTOList = songService.setLike2SongDTOList(songDTOList, userId);
+//                playlistDTOList = playlistService.setLike2PlaylistDTOList(playlistDTOList, userId);
+//            }
 
             map.put("song", songDTOList);
             map.put("playlist", playlistDTOList);

@@ -62,7 +62,7 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom {
                 )
                 .orderBy(keyword.id.asc())
                 .fetch();
-        return fives;
+        return fives.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
