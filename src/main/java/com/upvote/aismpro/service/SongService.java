@@ -14,7 +14,11 @@ import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.vo.SongSaveVO;
 import org.apache.commons.io.FileUtils;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +75,12 @@ public class SongService implements SongServiceInter{
 
             return songDTO;
 
+        } catch (FileSizeLimitExceededException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (SizeLimitExceededException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
