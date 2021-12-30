@@ -45,10 +45,10 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                                         playlist.songs.size().goe(1)
                                 )
                                 .and(
-                                            playlist.one.in(playlistDetailDTO.getKeywords())
-                                                    .or(playlist.two.in(playlistDetailDTO.getKeywords())
-                                                            .or(playlist.three.in(playlistDetailDTO.getKeywords())))
-                                    )
+                                        playlist.one.in(playlistDetailDTO.getKeywords())
+                                                .or(playlist.two.in(playlistDetailDTO.getKeywords())
+                                                        .or(playlist.three.in(playlistDetailDTO.getKeywords())))
+                                )
                 )
                 .fetch();
 
