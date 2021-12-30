@@ -11,6 +11,7 @@ import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +59,7 @@ public class SongController {
 
             return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
 
-        } catch (FileSizeLimitExceededException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (SizeLimitExceededException e) {
+        } catch (FileUploadException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
