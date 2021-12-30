@@ -13,9 +13,10 @@ import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.vo.SongSaveVO;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.SizeLimitExceededException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -44,7 +46,7 @@ public class SongService implements SongServiceInter{
 
     // 생성 song 저장
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
+    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception, FileUploadException {
         Long userId = SecurityUtil.getCurrentUserId();
 
         try {
@@ -58,8 +60,7 @@ public class SongService implements SongServiceInter{
             // song img 저장
             if (file == null) {
                 savedSong.setImgFile("defaultAlbum.jpg");
-            }
-            else {
+            } else {
                 String dirPath = "/var/lib/jenkins/workspace/img/song";
                 // String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
                 String[] imgNameArr = file.getOriginalFilename().split("\\.");
@@ -75,12 +76,10 @@ public class SongService implements SongServiceInter{
 
             return songDTO;
 
+
         } catch (FileSizeLimitExceededException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (SizeLimitExceededException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            e.printStackTrace();;
+            throw new FileUploadException();
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
