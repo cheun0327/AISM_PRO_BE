@@ -59,9 +59,6 @@ public class SongController {
 
             return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
 
-        } catch (FileUploadException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             if (song != null) songService.deleteSong(song.getSongId());
