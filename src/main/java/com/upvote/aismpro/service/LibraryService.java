@@ -1,5 +1,6 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.controller.SongController;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
@@ -8,12 +9,17 @@ import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.pagination.PagedModelUtil;
 import com.upvote.aismpro.repository.*;
-import com.upvote.aismpro.security.SecurityUtil;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.json.GsonTester;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +27,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Service
+@RequiredArgsConstructor
 public class LibraryService {
 
     @Autowired
@@ -37,6 +47,8 @@ public class LibraryService {
 
     @Autowired
     private CustomModelMapper modelMapper;
+
+    private final PagedResourcesAssembler<Song> songAssembler;
 
     // 라이브러리 검색 옵션
     public Map<String, Object> getSearchOptionDate() {
@@ -146,25 +158,6 @@ public class LibraryService {
                 .collect(Collectors.toList());
     }
 
-//    public List<PlaylistDTO> getPlaylistsWithLike(Pageable pageable, String type, Long userId) {
-//        List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
-//                .stream().map(src -> src.getPlaylist().getPlaylistId())
-//                .collect(Collectors.toList());
-//
-//        Page<Playlist> pls = playlistRepository.findAll(pageable);
-//
-//        if (type.equals("모두") || type.equals("음원")){
-//            List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
-//            for (Playlist pl : playlistRepository.findAll()) {
-//                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-//                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
-//                newPlaylistDTOList.add(dto);
-//            }
-//            return newPlaylistDTOList;
-//        }
-//
-//        return new ArrayList<>();
-//    }
 
 
     public List<PlaylistDTO> getPlaylistsWithoutLike(Pageable pageable, String type) {
@@ -203,12 +196,30 @@ public class LibraryService {
 
     // song 전체보기
     @Transactional
-    public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    public Page<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        // 이걸로 페이징 가능하게 변경해야함
+        Page<Song> searchResults = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
+        Long total = searchResults.getTotalElements();
 
-        return songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO)
+        Page<SongDTO> songDTOList = new PageImpl<>(
+                searchResults
                 .stream()
                 .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                , pageable, total
+        );
+//        Page<Song> songDTOList = songRepository.findAll(pageable);
+
+//        PagedModel<EntityModel<Song>> entityModels = PagedModelUtil.getEntityModels(
+//                songAssembler,
+//                songDTOList,
+//                linkTo(methodOn(SongController.class).getSongDetail(null)),
+//                Song::getSongId
+//        );
+        // 페이징 상태전이 값 링크 남겨주기
+//        PagedModel<EntityModel<SongDTO>> entityModels = songAssembler.toModel(songDTOList);
+//        return new PageImpl<>(songDTOList);
+        return songDTOList;
     }
 
     // playlist 전체 보기

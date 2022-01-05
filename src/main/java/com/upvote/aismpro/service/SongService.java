@@ -9,10 +9,12 @@ import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SongService implements SongServiceInter{
 
     @Autowired
@@ -82,21 +85,6 @@ public class SongService implements SongServiceInter{
         songRepository.deleteById(songId);
     }
 
-    public void moveSongWavFile(Long songId) throws IOException {
-        Long userId = SecurityUtil.getCurrentUserId();
-        String dirPath = "/var/lib/jenkins/workspace/song";
-//        String dirPath = "/Users/upvote3/Desktop/springTest/song";
-
-        // 생성 곡 저장 위치 디렉토리 확인
-        String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".mp3";
-//        File songDir  = new File(songDirPath);
-//        if (!new File(songDirPath).exists()) songDir.mkdir();
-
-        // 저장된 곡 위치 이동
-        File source = new File(songDirPath);
-        File target = new File(dirPath + "/" + songId + ".mp3");
-        FileUtils.moveFile(source, target);
-    }
 
     // song detail 페이지에 뿌릴 상세 정보 리턴
     // like 어떻게 뿌려줄지 생각
@@ -167,6 +155,22 @@ public class SongService implements SongServiceInter{
         } catch (Exception e) {
             throw new Exception();
         }
+    }
+
+    public void moveSongWavFile(Long songId) throws IOException {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String dirPath = "/var/lib/jenkins/workspace/song";
+//        String dirPath = "/Users/upvote3/Desktop/springTest/song";
+
+        // 생성 곡 저장 위치 디렉토리 확인
+        String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".mp3";
+//        File songDir  = new File(songDirPath);
+//        if (!new File(songDirPath).exists()) songDir.mkdir();
+
+        // 저장된 곡 위치 이동
+        File source = new File(songDirPath);
+        File target = new File(dirPath + "/" + songId + ".mp3");
+        FileUtils.moveFile(source, target);
     }
 
     // 업로드 파일 확장자 추출

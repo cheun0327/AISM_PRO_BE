@@ -159,7 +159,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetchResults();
 
-        return new PageImpl<>(results.getResults());
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     private Page<Song> pagingSearch(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
