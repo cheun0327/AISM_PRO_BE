@@ -42,10 +42,6 @@ public class LibraryController {
 
     @Autowired
     private LibraryService libraryService;
-    @Autowired
-    private SongRepository songRepository;
-    @Autowired
-    private CustomModelMapper modelMapper;
 
     private final PagedResourcesAssembler<SongDTO> songDtoAssembler;
     private final PagedResourcesAssembler<PlaylistDTO> playlistDtoAssembler;
@@ -87,8 +83,9 @@ public class LibraryController {
     }
 
     @PostMapping("/library/search/total/song")
-    public ResponseEntity<PagedModel<EntityModel<SongDTO>>> songTotalLibrarySearch(Pageable pageable,
-                                                                                   @RequestBody LibrarySearchDTO librarySearchDTO) {
+    public ResponseEntity<PagedModel<EntityModel<SongDTO>>> songTotalLibrarySearch(
+            @PageableDefault(size=20,direction=Sort.Direction.DESC) final Pageable pageable,
+            @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
             Page<SongDTO> songDTOList = libraryService.getTotalSongSearchResult(pageable, librarySearchDTO);
 
@@ -105,8 +102,9 @@ public class LibraryController {
 
     @PostMapping("/library/search/total/playlist")
     // TODO key값 변경 _embedded.playlistDToes -> _embedded.playlistDTOs
-    public ResponseEntity<PagedModel<EntityModel<PlaylistDTO>>> playlistTotalLibrarySearch(final Pageable pageable,
-                                                                        @RequestBody LibrarySearchDTO librarySearchDTO) {
+    public ResponseEntity<PagedModel<EntityModel<PlaylistDTO>>> playlistTotalLibrarySearch(
+            @PageableDefault(size=15, direction=Sort.Direction.DESC) final Pageable pageable,
+            @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
             Page<PlaylistDTO> playlistDTOList = libraryService.getTotalPlaylistSearchResult(pageable, librarySearchDTO);
 
@@ -121,8 +119,9 @@ public class LibraryController {
     }
 
     @PostMapping("/library/search/total/artist")
-    public ResponseEntity<PagedModel<EntityModel<ArtistDTO>>> artistTotalLibrarySearch(final Pageable pageable,
-                                                                    @RequestBody LibrarySearchDTO librarySearchDTO) {
+    public ResponseEntity<PagedModel<EntityModel<ArtistDTO>>> artistTotalLibrarySearch(
+            @PageableDefault(size=10, direction=Sort.Direction.DESC) final Pageable pageable,
+            @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
             Page<ArtistDTO> artistDTOList = libraryService.getTotalArtistSearchResult(pageable, librarySearchDTO);
 
