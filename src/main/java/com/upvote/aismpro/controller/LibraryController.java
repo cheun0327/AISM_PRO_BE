@@ -48,6 +48,8 @@ public class LibraryController {
     private CustomModelMapper modelMapper;
 
     private final PagedResourcesAssembler<SongDTO> songDtoAssembler;
+    private final PagedResourcesAssembler<PlaylistDTO> playlistDtoAssembler;
+    private final PagedResourcesAssembler<ArtistDTO> artistDtoAssembler;
 
     @GetMapping("/library/render")
     public ResponseEntity<Map<String, Object>> librarySearchOption() {
@@ -88,17 +90,8 @@ public class LibraryController {
     public ResponseEntity<PagedModel<EntityModel<SongDTO>>> songTotalLibrarySearch(Pageable pageable,
                                                                                    @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
-            System.out.println(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
-            System.out.println(pageable.getOffset() + " / " + pageable.getPageSize() + " / " + pageable.getPageNumber());
-
             Page<SongDTO> songDTOList = libraryService.getTotalSongSearchResult(pageable, librarySearchDTO);
 
-//            PagedModel<EntityModel<SongDTO>> entityModels = PagedModelUtil.getEntityModels(
-//                    songDtoAssembler,
-//                    songDTOList,
-//                    linkTo(methodOn(SongController.class).getSongDetail(SongDTO::getSongId)),
-//                    SongDTO::getSongId
-//            );
             PagedModel<EntityModel<SongDTO>> entityModels = songDtoAssembler.toModel(songDTOList,
                     model -> EntityModel.of(model, linkTo(methodOn(SongController.class).getSongDetail(model.getSongId())).withSelfRel()));
 
@@ -110,46 +103,17 @@ public class LibraryController {
         }
     }
 
-//    @PostMapping("/library/search/total/song")
-//    public ResponseEntity<List<SongDTO>> songTotalLibrarySearch(final Pageable pageable,
-//                                                                @RequestBody LibrarySearchDTO librarySearchDTO) {
-//        try {
-//            System.out.println(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
-//            System.out.println(pageable.getOffset() + " / " + pageable.getPageSize() + " / " + pageable.getPageNumber());
-//
-//            List<SongDTO> songDTOList = libraryService.getTotalSongSearchResult(pageable, librarySearchDTO);
-//
-//
-//
-////            CollectionModel<SongDTO> result = CollectionModel.of(songDTOList);
-////            Link link = linkTo(methodOn(LibraryController.class)
-////                        .librarySearch(librarySearchDTO)).withRel("hi");
-////            result.add(link);
-////            System.out.println(result);
-//
-////            for (final EntityModel<SongDTO> s : result) {
-////                System.out.println(s.getClass());
-////                Link link = linkTo(methodOn(LibraryController.class)
-////                        .librarySearch(librarySearchDTO)).withRel("hi");
-////                System.out.println(link);
-////                s.add(link);
-////                System.out.println(s);
-////            }
-////            return new ResponseEntity<>(result, HttpStatus.OK);
-//
-//            return new ResponseEntity<>(songDTOList, HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-
     @PostMapping("/library/search/total/playlist")
-    public ResponseEntity<List<PlaylistDTO>> playlistTotalLibrarySearch(final Pageable pageable,
+    // TODO key값 변경 _embedded.playlistDToes -> _embedded.playlistDTOs
+    public ResponseEntity<PagedModel<EntityModel<PlaylistDTO>>> playlistTotalLibrarySearch(final Pageable pageable,
                                                                         @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
-            List<PlaylistDTO> playlistDTOList = libraryService.getTotalPlaylistSearchResult(pageable, librarySearchDTO);
-            return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
+            Page<PlaylistDTO> playlistDTOList = libraryService.getTotalPlaylistSearchResult(pageable, librarySearchDTO);
+
+            PagedModel<EntityModel<PlaylistDTO>> entityModels = playlistDtoAssembler.toModel(playlistDTOList,
+                    model -> EntityModel.of(model, linkTo(methodOn(PlaylistController.class).getPlaylistDetail(model.getPlaylistId())).withSelfRel()));
+
+            return new ResponseEntity<>(entityModels, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -157,11 +121,15 @@ public class LibraryController {
     }
 
     @PostMapping("/library/search/total/artist")
-    public ResponseEntity<List<ArtistDTO>> artistTotalLibrarySearch(final Pageable pageable,
+    public ResponseEntity<PagedModel<EntityModel<ArtistDTO>>> artistTotalLibrarySearch(final Pageable pageable,
                                                                     @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
-            List<ArtistDTO> playlistDTOList = libraryService.getTotalArtistSearchResult(pageable, librarySearchDTO);
-            return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
+            Page<ArtistDTO> artistDTOList = libraryService.getTotalArtistSearchResult(pageable, librarySearchDTO);
+
+            PagedModel<EntityModel<ArtistDTO>> entityModels = artistDtoAssembler.toModel(artistDTOList,
+                    model -> EntityModel.of(model, linkTo(methodOn(UserController.class).getArtistDetailInfo(model.getArtistId())).withSelfRel()));
+
+            return new ResponseEntity<>(entityModels, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

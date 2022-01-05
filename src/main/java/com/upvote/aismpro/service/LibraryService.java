@@ -197,51 +197,53 @@ public class LibraryService {
     // song 전체보기
     @Transactional
     public Page<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
-        // 이걸로 페이징 가능하게 변경해야함
+        // TODO 한 번 검색할때마다 전체 검색 - 효율성 떨어짐.
         Page<Song> searchResults = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
         Long total = searchResults.getTotalElements();
 
         Page<SongDTO> songDTOList = new PageImpl<>(
                 searchResults
-                .stream()
-                .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
-                .collect(Collectors.toList())
+                    .stream()
+                    .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
+                    .collect(Collectors.toList())
                 , pageable, total
         );
-//        Page<Song> songDTOList = songRepository.findAll(pageable);
-
-//        PagedModel<EntityModel<Song>> entityModels = PagedModelUtil.getEntityModels(
-//                songAssembler,
-//                songDTOList,
-//                linkTo(methodOn(SongController.class).getSongDetail(null)),
-//                Song::getSongId
-//        );
-        // 페이징 상태전이 값 링크 남겨주기
-//        PagedModel<EntityModel<SongDTO>> entityModels = songAssembler.toModel(songDTOList);
-//        return new PageImpl<>(songDTOList);
         return songDTOList;
     }
 
     // playlist 전체 보기
     @Transactional
-    public List<PlaylistDTO> getTotalPlaylistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    public Page<PlaylistDTO> getTotalPlaylistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
-        return playlistRepository.findLibraryTotalPlaylistSearchQD(pageable, librarySearchDTO)
-                .stream()
-                .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
-                .collect(Collectors.toList());
+        Page<Playlist> searchResults = playlistRepository.findLibraryTotalPlaylistSearchQD(pageable, librarySearchDTO);
+        Long total= searchResults.getTotalElements();
 
+        Page<PlaylistDTO> playlistDTOList = new PageImpl<>(
+                searchResults
+                        .stream()
+                        .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                        .collect(Collectors.toList())
+                , pageable, total
+        );
+        return playlistDTOList;
     }
 
     // artist 전체 보기
     @Transactional
-    public List<ArtistDTO> getTotalArtistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    public Page<ArtistDTO> getTotalArtistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
-        return songRepository.findLibraryTotalArtistSearchQD(pageable, librarySearchDTO.getSearch())
-                .stream()
-                .map(a -> modelMapper.toPlaylistDTO().map(a, ArtistDTO.class))
-                .collect(Collectors.toList());
+        Page<User> searchResults = songRepository.findLibraryTotalArtistSearchQD(pageable, librarySearchDTO.getSearch());
+        Long total = searchResults.getTotalElements();
 
+        Page<ArtistDTO> artistDTOList = new PageImpl<>(
+                searchResults
+                        .stream()
+                        .map(a -> modelMapper.toArtistDTO().map(a, ArtistDTO.class))
+                        .collect(Collectors.toList())
+                , pageable, total
+        );
+
+        return artistDTOList;
     }
 
     // song 검색 결과에서 검색 키워드 필터링

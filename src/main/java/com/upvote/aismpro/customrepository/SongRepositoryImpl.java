@@ -91,30 +91,28 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
     }
 
     @Override
-    public List<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search) {
+    public Page<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search) {
 
         if (!search.equals("") && search != null) {
-            System.out.println(pageable);
             QueryResults<User> results = query.selectDistinct(song.user)
                     .from(song)
                     .where(
                             song.user.nickname.contains(search)
                     )
                     .offset(pageable.getOffset())
-                    .limit(15)
+                    .limit(pageable.getPageSize())
                     .fetchResults();
-
-            return results.getResults();
+            System.out.println("아아아"+results.getTotal());
+            return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 
         } else {
-            System.out.println("결과 없음");
             QueryResults<User> results = query.selectDistinct(song.user)
                     .from(song)
                     .offset(pageable.getOffset())
-                    .limit(15)
+                    .limit(pageable.getPageSize())
                     .fetchResults();
-
-            return results.getResults();
+            System.out.println("아아아"+results.getTotal());
+            return new PageImpl<>(results.getResults(), pageable, results.getTotal());
         }
     }
 

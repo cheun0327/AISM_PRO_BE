@@ -16,5 +16,5 @@ public interface SongRepositoryCustom {
     public Page<Song> findSongBySearchParamQD(LibrarySearchDTO librarySearchDTO);
     public Page<Song> findLibraryTotalSongSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO);
     public List<User> findLibraryArtistSearchQD(String search);
-    public List<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search);
+    public Page<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search);
 }

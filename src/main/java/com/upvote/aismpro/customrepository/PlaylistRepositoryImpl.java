@@ -206,7 +206,6 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
 
         // 검색 결과 없으면 디폴트(최신) page size개 가져오기
         if (result.getResults().isEmpty()) {
-            System.out.println("토탈 플레이리스트 없음");
             QueryResults<Playlist> defaultResult = query.select(playlist)
                     .from(playlist)
                     .where(
@@ -220,9 +219,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                     .orderBy(playlist.createDate.desc())
                     .fetchResults();
 
-            return new PageImpl<>(defaultResult.getResults());
+            return new PageImpl<>(defaultResult.getResults(), pageable, defaultResult.getTotal());
         }
 
-        return new PageImpl<>(result.getResults());
+        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 }
