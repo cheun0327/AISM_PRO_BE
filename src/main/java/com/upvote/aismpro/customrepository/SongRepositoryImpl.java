@@ -10,6 +10,7 @@ import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -271,6 +272,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
             }
         }
     }
+
 
     // 라이브러리 검색 옵션 모두 null 인지 체크
     private Boolean isNull(LibrarySearchDTO obj) {

@@ -2,6 +2,7 @@ package com.upvote.aismpro.controller;
 
 import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
+import com.upvote.aismpro.service.SignupService;
 import com.upvote.aismpro.service.UserService;
 import net.bytebuddy.pool.TypePool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SignupService accountService;
 
     // 아티스트 디테일 정보 가져오기
     @GetMapping("/user/detail/{userID}")

@@ -126,6 +126,7 @@ public class PlaylistController {
         }
     }
 
+
     // 곡 디테일에서 비슷한 플레이 리스트 가져오기
     @GetMapping("/playlist/similar/song/{songId}")
     public ResponseEntity<List<PlaylistDTO>> getNewSimilarPlaylist(@PathVariable("songId") Long songId) throws Exception {
@@ -154,17 +155,6 @@ public class PlaylistController {
 
 
     ////////////////////////   playlist utils   ////////////////////////
-    // 플레이리스트 좋아요 개수 가져오기
-//    @GetMapping("/playlist/like/count/{playlistId}")
-//    public ResponseEntity<Integer> getPlaylistLikeCnt(@PathVariable("playlistId") Long playlistId) {
-//        try {
-//            return new ResponseEntity<>(playlistService.getPlaylistLikeCnt(playlistId), HttpStatus.OK);
-//        } catch (NoSuchElementException e) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @GetMapping("/playlist/validate/name/{playlistName}")
     public ResponseEntity<Boolean> validatePlaylistName(@PathVariable("playlistName") String playlistName) {
