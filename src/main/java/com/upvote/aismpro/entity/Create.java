@@ -1,6 +1,8 @@
 package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +11,9 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "creates")
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Create {
 
     @Id

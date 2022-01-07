@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -100,17 +101,20 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                             song.user.nickname.contains(search)
                     )
                     .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
+                    .limit(15)
                     .fetchResults();
 
             return results.getResults();
 
         } else {
             System.out.println("결과 없음");
-            List<User> results = query.selectDistinct(song.user)
+            QueryResults<User> results = query.selectDistinct(song.user)
                     .from(song)
-                    .fetch();
-            return results;
+                    .offset(pageable.getOffset())
+                    .limit(15)
+                    .fetchResults();
+
+            return results.getResults();
         }
     }
 
@@ -180,7 +184,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
 
             Collections.shuffle(results);
 
-            return Lists.newArrayList(results.subList(0, 8));
+            return Lists.newArrayList(results.subList(0, 9));
         } else {
             QueryResults<User> results = query.selectDistinct(song.user)
                     .from(song)
@@ -188,7 +192,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom{
                             song.user.nickname.contains(search)
                     )
                     .offset(0)
-                    .limit(8)
+                    .limit(10)
                     .fetchResults();
 
             return results.getResults();

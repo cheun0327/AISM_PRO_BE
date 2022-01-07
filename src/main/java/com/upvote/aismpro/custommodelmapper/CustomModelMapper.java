@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class CustomModelMapper {
@@ -180,6 +182,39 @@ public class CustomModelMapper {
         }
     };
 
+    Converter<Playlist, List<String>> playlistImgsCvt = new Converter<Playlist, List<String>>() {
+        @Override
+        public List<String> convert(MappingContext<Playlist, List<String>> context) {
+            List<String> playlistImgs = new ArrayList<>();
+            System.out.println("플레이리스트 이미지");
+            System.out.println(context.getSource().getImgFile());
+            if (context.getSource().getImgFile() == null) {
+                // 음원 없음
+                if (context.getSource().getSongs().isEmpty()) {
+                    playlistImgs.add("/playlistImg/defaultPlaylist.png");
+                }
+                // 음원 4개 미만
+                else {
+                    if (context.getSource().getSongs().size() < 4) {
+                        // 랜덤 값은 안넣음. 새로고침 할때마다 바뀌면 정신 없을 것 같아서
+                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        playlistImgs.add("/songImg/" + songs.get(0));
+                    }
+                    // 음원 4개 이상
+                    else {
+                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        playlistImgs = songs.subList(0, 4).stream().map(img -> "/songImg/" + img).collect(Collectors.toList());
+                    }
+                }
+            }
+            else {
+                playlistImgs.add("/playlistImg/" + context.getSource().getImgFile());
+            }
+            System.out.println(playlistImgs);
+            return playlistImgs;
+        }
+    };
+
     @Bean
     public ModelMapper toPlaylistDTO() {
         modelMapper.getConfiguration()
@@ -190,9 +225,9 @@ public class CustomModelMapper {
                 .addMapping(src -> src.getUser().getNickname(), PlaylistDTO::setPlaylistCreatorName)
                 .addMappings(modelMapper -> modelMapper.using(playlistSongCntCvt).map(src -> src, PlaylistDTO::setPlaylistSongCount))
                 .addMappings(modelMapper -> modelMapper.using(playlistPlaytimeCvt).map(src -> src, PlaylistDTO::setPlaylistPlaytime))
+                .addMappings(modelMapper -> modelMapper.using(playlistImgsCvt).map(src -> src, PlaylistDTO::setPlaylistImgs))
                 .addMapping(Playlist::getName, PlaylistDTO::setPlaylistName)
-                .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState)
-                .addMapping(Playlist::getImgFile, PlaylistDTO::setPlaylistImg);
+                .addMapping(Playlist::getState, PlaylistDTO::setPlaylistState);
         return modelMapper;
     }
 
@@ -211,13 +246,13 @@ public class CustomModelMapper {
     public ModelMapper toPlaylistDetailDTO() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
-
+        System.out.println("플레이리스트 디테일");
         modelMapper.createTypeMap(Playlist.class, PlaylistDetailDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
+                .addMappings(modelMapper -> modelMapper.using(playlistImgsCvt).map(src -> src, PlaylistDetailDTO::setPlaylistImgs))
                 .addMapping(Playlist::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(Playlist::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDetailDTO::setPlaylistState)
-                .addMapping(Playlist::getImgFile, PlaylistDetailDTO::setPlaylistImg)
                 .addMapping(src -> src.getUser().getUserId(), PlaylistDetailDTO::setPlaylistCreatorId)
                 .addMapping(src -> src.getUser().getNickname(), PlaylistDetailDTO::setPlaylistCreatorName);
 

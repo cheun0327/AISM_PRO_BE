@@ -3,6 +3,7 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.MyLibraryDeleteDTO;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
+import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,18 @@ public class MyLibraryController {
     private PlaylistService playlistService;
     @Autowired
     private SongService songService;
+
+    @GetMapping("/my-library/playlist")
+    public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID() {
+        try{
+            Long userId = SecurityUtil.getCurrentUserId();
+            if(userId < 0) throw new Exception();
+            return new ResponseEntity<>(playlistService.getUserPlaylist(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @GetMapping("/my-library/search")
     public ResponseEntity<Object> getMyLibrarySearch(@RequestParam("category") String category, @RequestParam("sort") String sort, @RequestParam("search") String search) {
