@@ -214,7 +214,7 @@ public class LibraryService {
         else {
             songDTOList = mapToSongDTOWithoutLike(songList);
         }
-
+        System.out.println("total like add");
         return songDTOList;
     }
 
