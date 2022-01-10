@@ -11,6 +11,11 @@ import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +39,12 @@ public class SongController {
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
     @PostMapping("/song")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Song created successfully"),
+            @ApiResponse(code = 400, message = "Bad Request(+File Size Exceeded)"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO){
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -54,7 +65,7 @@ public class SongController {
             // create 테이블에 동기화
             createService.saveSong(song.getSongId());
 
-            return new ResponseEntity<>(song.getSongId(), HttpStatus.OK);
+            return new ResponseEntity<>(song.getSongId(), HttpStatus.CREATED);
 
         } catch (Exception e) {
             e.printStackTrace();

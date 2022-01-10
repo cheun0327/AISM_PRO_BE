@@ -1,8 +1,5 @@
 package com.upvote.aismpro.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
@@ -12,12 +9,15 @@ import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
-import com.upvote.aismpro.vo.SongSaveVO;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class SongService implements SongServiceInter{
 
     // 생성 song 저장
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception {
+    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception, FileUploadException {
         Long userId = SecurityUtil.getCurrentUserId();
 
         try {
@@ -53,13 +53,11 @@ public class SongService implements SongServiceInter{
 
             // song img 저장
             if (file == null) {
-                savedSong.setImgFile("defaultAlbum.jpg");
-            }
-            else {
+//                savedSong.setImgFile("defaultAlbum.jpg");
+            } else {
                 String dirPath = "/var/lib/jenkins/workspace/img/song";
-                // String dirPath = "/Users/upvote3/Desktop/springTest/img/song";
-                String[] imgNameArr = file.getOriginalFilename().split("\\.");
-                String imgName = savedSong.getSongId() + "." + imgNameArr[imgNameArr.length - 1];
+                String imgName = savedSong.getSongId() + "." + extractExt(file.getOriginalFilename());
+
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedSong.setImgFile(imgName);
             }
@@ -72,7 +70,8 @@ public class SongService implements SongServiceInter{
             return songDTO;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("일반 에러로!!!!!");
+//            e.printStackTrace();
             throw new Exception();
         }
     }
@@ -168,6 +167,12 @@ public class SongService implements SongServiceInter{
         } catch (Exception e) {
             throw new Exception();
         }
+    }
+
+    // 업로드 파일 확장자 추출
+    private String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
     }
 
 }

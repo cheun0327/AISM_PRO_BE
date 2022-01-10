@@ -204,11 +204,18 @@ public class LibraryService {
     // song 전체보기
     @Transactional
     public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        Page<Song> songList = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
 
-        return songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO)
-                .stream()
-                .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
-                .collect(Collectors.toList());
+        List<SongDTO> songDTOList = new ArrayList<>();
+        if (!userId.equals(-1L)) {
+            songDTOList = mapToSongDTOWithLike(songList, userId);
+        }
+        else {
+            songDTOList = mapToSongDTOWithoutLike(songList);
+        }
+        System.out.println("total like add");
+        return songDTOList;
     }
 
     // playlist 전체 보기
