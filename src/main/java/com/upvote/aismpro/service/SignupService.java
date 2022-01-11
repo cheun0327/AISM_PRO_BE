@@ -48,12 +48,11 @@ public class SignupService {
             userRepository.save(user);
 
             // 프로필 이미지 파일 이름 세팅
-            String[] imgNameArr = file.getOriginalFilename().split("\\.");
             String imgFolder = user.getUserId().toString();
-            String imgName = imgFolder + "." + imgNameArr[imgNameArr.length - 1];
+            String imgName = imgFolder + "." + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
 
-            String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgFolder;
-            // String dirPath = "/var/lib/jenkins/workspace/AISM_PRO_REACT/src/components/content/image/user/" + imgFolder;
+            //String dirPath = "/Users/upvote3/chaeeun/dev/react-workspace/AISM_PRO_FE/src/components/content/image/user/" + imgFolder;
+            String dirPath = "/var/lib/jenkins/workspace/img/profile/" + imgFolder;
 
             File profileDir = new File(dirPath);
 
