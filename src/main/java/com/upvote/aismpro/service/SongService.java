@@ -82,20 +82,24 @@ public class SongService implements SongServiceInter{
         songRepository.deleteById(songId);
     }
 
-    public void moveSongWavFile(Long songId) throws IOException {
+    public void moveSongFiles(Long songId) throws IOException {
         Long userId = SecurityUtil.getCurrentUserId();
         String dirPath = "/var/lib/jenkins/workspace/song";
-//        String dirPath = "/Users/upvote3/Desktop/springTest/song";
+        String midiDirPath = "/var/lib/jenkins/workspace/midi";
 
         // 생성 곡 저장 위치 디렉토리 확인
         String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".mp3";
-//        File songDir  = new File(songDirPath);
-//        if (!new File(songDirPath).exists()) songDir.mkdir();
+        String songMidiPath = dirPath + "/" + userId + "/tmp/MergeMid.mid";
 
         // 저장된 곡 위치 이동
         File source = new File(songDirPath);
         File target = new File(dirPath + "/" + songId + ".mp3");
         FileUtils.moveFile(source, target);
+
+        // 저장된 미디 파일 위치 이동
+        File midiSource  = new File(songMidiPath);
+        File midiTarget = new File(midiDirPath + "/" + songId + ".mid");
+        FileUtils.moveFile(midiSource, midiTarget);
     }
 
     // song detail 페이지에 뿌릴 상세 정보 리턴

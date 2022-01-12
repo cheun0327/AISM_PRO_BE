@@ -29,6 +29,8 @@ public class SongDTO extends EntityModel<SongDTO> {
 
     private String imgFile;
 
+    private String midiFile;
+
     private Boolean like;
 }
 

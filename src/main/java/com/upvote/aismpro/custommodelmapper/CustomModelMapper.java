@@ -101,6 +101,13 @@ public class CustomModelMapper {
         }
     };
 
+    Converter<Song, String> songMidiFilePathCvt = new Converter<Song, String>() {
+        @Override
+        public String convert(MappingContext<Song, String > context) {
+            return context.getSource().getSongId() + ".mid";
+        }
+    };
+
     Converter<Song, Boolean> songLikeCvt = new Converter<Song, Boolean>() {
         @Override
         public Boolean convert(MappingContext<Song, Boolean> context) {
@@ -118,6 +125,7 @@ public class CustomModelMapper {
         modelMapper.createTypeMap(Song.class, SongDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
                 .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setWavFile))
+                .addMappings(modelMapper -> modelMapper.using(songMidiFilePathCvt).map(src -> src, SongDTO::setMidiFile))
                 .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, SongDTO::setLike))
                 .addMapping(src -> src.getUser().getNickname(), SongDTO::setCreatorName)
                 .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
