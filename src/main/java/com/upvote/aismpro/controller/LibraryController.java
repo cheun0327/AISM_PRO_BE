@@ -88,27 +88,6 @@ public class LibraryController {
 
             List<SongDTO> songDTOList = libraryService.getTotalSongSearchResult(pageable, librarySearchDTO);
 
-
-
-//            CollectionModel<SongDTO> result = CollectionModel.of(songDTOList);
-//            Link link = linkTo(methodOn(LibraryController.class)
-//                        .librarySearch(librarySearchDTO)).withRel("hi");
-//            result.add(link);
-//            System.out.println(result);
-
-//            for (final EntityModel<SongDTO> s : result) {
-//                System.out.println(s.getClass());
-//                Link link = linkTo(methodOn(LibraryController.class)
-//                        .librarySearch(librarySearchDTO)).withRel("hi");
-//                System.out.println(link);
-//                s.add(link);
-//                System.out.println(s);
-//            }
-//            return new ResponseEntity<>(result, HttpStatus.OK);
-
-
-
-
             return new ResponseEntity<>(songDTOList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
