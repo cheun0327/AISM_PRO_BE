@@ -175,7 +175,6 @@ public class LibraryService {
 
             for (Playlist pl : playlistRepository.findAll()) {
                 PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-                dto.setPlaylistLike(false);
                 newPlaylistDTOList.add(dto);
             }
             return newPlaylistDTOList;

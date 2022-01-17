@@ -28,13 +28,11 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 5;        // 5시간
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;   // 7시간
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;   // 7일
 
     private final Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secreteKey) {
-//        byte[] keyBytes = Decoders.BASE64.decode(secreteKey);
-//        this.key = Keys.hmacShaKeyFor(keyBytes);
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] keyBytes = DatatypeConverter.parseBase64Binary(secreteKey);
         this.key = new SecretKeySpec(keyBytes, signatureAlgorithm.getJcaName());

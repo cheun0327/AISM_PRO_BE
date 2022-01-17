@@ -14,7 +14,6 @@ public class PlaylistDTO {
     private String playlistCreatorName;
     private String playlistState;
     private List<String> playlistImgs;
-    private Boolean playlistLike;
     private Integer playlistSongCount;
     private Integer playlistPlaytime;
 }

@@ -15,17 +15,4 @@ public class GenreInfoDTO {
     private String five;
     private String six;
 
-    public GenreInfoDTO(String genre, String one, String two, String three, String four, String five, String six) {
-        this.genre = genre;
-        this.one = one;
-        this.two = two;
-        this. three = three;
-        this. four = four;
-        this.five = five;
-        this.six = six;
-        String cateArr[] = {one, two, three, four, five, six};
-        Integer cnt = 0;
-        for (String cate : cateArr) if (cate != null)   cnt++;
-        this.categoryCnt = cnt;
-    }
 }

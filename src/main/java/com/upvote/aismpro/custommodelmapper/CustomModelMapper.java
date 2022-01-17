@@ -31,9 +31,6 @@ public class CustomModelMapper {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    @Autowired
-    private SongRepository songRepository;
-
     @Bean
     public ModelMapper toUserDTO() {
         modelMapper.getConfiguration()

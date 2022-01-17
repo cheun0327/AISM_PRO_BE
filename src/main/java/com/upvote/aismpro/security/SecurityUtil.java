@@ -16,9 +16,6 @@ public class SecurityUtil {
             throw new RuntimeException("SecurityContext에 인증 정보가 없습니다.");
         }
 
-        System.out.println("토큰 추출 아이디");
-        System.out.println(authentication.getName() + " / " + authentication.getPrincipal() + " / " + authentication.getCredentials());
-
         if (authentication.getName().equals("anonymousUser")) return Long.parseLong("-1");
         return Long.parseLong(authentication.getName());
     }
