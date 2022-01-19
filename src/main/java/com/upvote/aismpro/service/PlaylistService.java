@@ -68,15 +68,10 @@ public class PlaylistService {
     // user 별 play list 가져오기
     public List<PlaylistDTO> getPlayList(Long userId) throws Exception {
         try{
-//            List<Long> likes= playlistLikeRepository.findAllByUser(userRepository.getById(userId))
-//                    .stream().map(src -> src.getPlaylist().getPlaylistId())
-//                    .collect(Collectors.toList());
-
             // playlist like
             List<PlaylistDTO> playlistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
                 PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-//                dto.setPlaylistLike(likes.contains(pl.getPlaylistId()));
                 playlistDTOList.add(dto);
             }
             return playlistDTOList;
