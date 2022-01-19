@@ -1,27 +1,27 @@
 package com.upvote.aismpro.security;
 
+import com.upvote.aismpro.service.UserService;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.apache.http.auth.AUTH;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class TokenProvider {
 
@@ -30,9 +30,15 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 5;        // 5시간
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;   // 7일
 
-    private final Key key;
+    @Value("${jwt.secret}")
+    private String secreteKey;
 
-    public TokenProvider(@Value("${jwt.secret}") String secreteKey) {
+    private Key key;
+
+    private final UserService userService;
+
+    @PostConstruct
+    void init() {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] keyBytes = DatatypeConverter.parseBase64Binary(secreteKey);
         this.key = new SecretKeySpec(keyBytes, signatureAlgorithm.getJcaName());
@@ -75,40 +81,49 @@ public class TokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        // 권한 확인
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 없는 토큰입니다.");
-        }
-
-        Collection<? extends  GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-
-        // spring security 자체 클래스 UserDetail, User
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-
         // SecurityContext 사용하기 위한 security 제공 객체 생성
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return new UsernamePasswordAuthenticationToken(
+                claims.getSubject(),
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority(claims.get(AUTHORITIES_KEY).toString()))
+        );
     }
 
     // 검증
-    public boolean validateToken(String token) throws IllegalAccessException {
+    public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            Claims claims = jws.getBody();
+
+            if (!StringUtils.hasText(claims.getSubject())) {
+                throw new MalformedJwtException("sub does not exist");
+            }
+
+            if (Objects.isNull(claims.get(AUTHORITIES_KEY))) {
+                throw new MalformedJwtException("auth does not exist");
+            }
+
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            System.out.println(e.getMessage());
-            System.out.println("잘못된 JWT 서명");
-            throw new IllegalAccessException("잘못된 JWT 서명");
+        } catch (MalformedJwtException e) {
+            System.out.println("잘못된 JWT payload");
+            return false;
+        } catch (SignatureException e) {
+            System.out.println("잘못된 JWT 시그니쳐");
+            return false;
         } catch (ExpiredJwtException e) {
             System.out.println("만료된 JWT 토큰");
+            return false;
         } catch (UnsupportedJwtException e) {
             System.out.println("지원되지 않는 JWT 토큰");
+            return false;
         } catch (IllegalArgumentException e) {
             System.out.println("잘못된 JWT 토큰");
+            return false;
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

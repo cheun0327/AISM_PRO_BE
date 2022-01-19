@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,7 +37,7 @@ public class User {
     private String profile;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "authority")
+    @Column(name = "authority", nullable = false)
     private Authority authority;
 
     @OneToMany(mappedBy = "user")

@@ -7,7 +7,7 @@ import com.upvote.aismpro.entity.Create;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.CreateRepository;
 import com.upvote.aismpro.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +17,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private CreateRepository createRepository;
-    @Autowired
     private CustomModelMapper modelMapper;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

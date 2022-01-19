@@ -1,6 +1,5 @@
 package com.upvote.aismpro.security;
 
-import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,17 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
-@Service
 @RequiredArgsConstructor
+@Transactional
+@Service
 public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     // DB에서 Id로 사용자 이름 가져오기
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException{
-        return userRepository.findAllByUserId(Long.parseLong(id))
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+        return userRepository.findById(Long.parseLong(id))
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(id + " -> 해당 아이디는 DB에서 찾을 수 없습니다."));
     }
@@ -34,7 +33,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(
                 String.valueOf(user.getUserId()),
-                "{noop}"+user.getEmail(),
+                null,
                 Collections.singleton(grantedAuthority)
         );
     }
