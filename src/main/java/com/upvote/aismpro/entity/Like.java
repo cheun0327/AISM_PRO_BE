@@ -19,7 +19,7 @@ public class Like {
     @Id
     @Column(name="likeId")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private String id;
+    private Long likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")

@@ -15,7 +15,7 @@ public class Buy {
     @Id
     @Column(name="buyId", nullable = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private String id;
+    private Long buyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
