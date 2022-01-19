@@ -1,7 +1,7 @@
 package com.upvote.aismpro.security;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -23,11 +23,12 @@ public class JWTFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
 
     // JWT 토큰 정보를 현재 스레드의 SecurityContext에 저장함
-    @SneakyThrows
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
+    ) throws IOException, ServletException {
         // 토큰 추출
         String jwt = resolveToken(request);
 
@@ -45,13 +46,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
-        // TODO 토큰 없이 요청 왔을 때 처리 방식 고민
-        // header에 토큰 정보 있으면 가공해서 보내고, 아니면 null 처리
-        if (StringUtils.hasText(bearerToken)) System.out.println("토큰 길이 : " + !bearerToken.substring(7).equals("null"));
-
-        if (StringUtils.hasText(bearerToken) && !bearerToken.substring(7).equals("null") && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+        // Authorization 헤더가 없을 경우
+        if (!StringUtils.hasText(bearerToken)) {
+            return null;
         }
-        return null;
+
+        // "Bearer " 문자열 이후 토큰이 없을 경우
+        if (!StringUtils.hasText(bearerToken.replace(BEARER_PREFIX.trim(), ""))) {
+            return null;
+        }
+
+        return bearerToken.substring(7);
     }
 }
