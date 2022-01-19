@@ -54,7 +54,7 @@ public class LibraryController {
     }
 
     @PostMapping(value = "/library/search", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> librarySearch(@RequestBody LibrarySearchDTO librarySearchDTO) {
+    public ResponseEntity<EntityModel<Map<String, Object>>> librarySearch(@RequestBody LibrarySearchDTO librarySearchDTO) {
 
         try {
             Map<String, Object> map = libraryService.getSearchResult(librarySearchDTO);
@@ -73,9 +73,7 @@ public class LibraryController {
                             .artistTotalLibrarySearch(artistTotalDefaultPageable, librarySearchDTO)).withRel("artist")
             );
 
-            System.out.println(result);
-
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
