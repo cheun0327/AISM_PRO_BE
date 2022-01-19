@@ -31,9 +31,6 @@ public class CustomModelMapper {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    @Autowired
-    private SongRepository songRepository;
-
     @Bean
     public ModelMapper toUserDTO() {
         modelMapper.getConfiguration()
@@ -101,11 +98,30 @@ public class CustomModelMapper {
         }
     };
 
-    Converter<Song, Boolean> songLikeCvt = new Converter<Song, Boolean>() {
+    Converter<Song, String> songMidiFilePathCvt = new Converter<Song, String>() {
         @Override
-        public Boolean convert(MappingContext<Song, Boolean> context) {
-            // like default setting -> false로!
-            return false;
+        public String convert(MappingContext<Song, String > context) {
+            return context.getSource().getSongId() + ".mid";
+        }
+    };
+
+    Converter<Song, Boolean> songLikeCvt = new Converter<Song, Boolean>() {
+            @Override
+            public Boolean convert(MappingContext<Song, Boolean> context) {
+                // like default setting -> false로!
+                return false;
+            }
+    };
+
+    Converter<Song, String> songPlaytimeCvt = new Converter<Song, String>() {
+        @Override
+        public String convert(MappingContext<Song, String> context) {
+            int playtime = Integer.parseInt(context.getSource().getPlaytime());
+            String minute = String.valueOf(playtime / 60);
+            String second = String.valueOf(playtime % 60);
+            if (minute.length() == 1) minute = "0" + minute;
+            if (second.length() == 1) second = "0" + second;
+            return minute + ":" + second;
         }
     };
 
@@ -118,13 +134,14 @@ public class CustomModelMapper {
         modelMapper.createTypeMap(Song.class, SongDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
                 .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setWavFile))
+                .addMappings(modelMapper -> modelMapper.using(songMidiFilePathCvt).map(src -> src, SongDTO::setMidiFile))
                 .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, SongDTO::setLike))
+                .addMappings(modelMapper -> modelMapper.using(songPlaytimeCvt).map(src -> src, SongDTO::setPlaytime))
                 .addMapping(src -> src.getUser().getNickname(), SongDTO::setCreatorName)
                 .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
                 .addMapping(Song::getSongId, SongDTO::setSongId)
                 .addMapping(Song::getSongName, SongDTO::setSongName)
                 .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
-                .addMapping(Song::getPlaytime, SongDTO::setPlaytime)
                 .addMapping(Song::getImgFile, SongDTO::setImgFile);
         return modelMapper;
     }
@@ -156,7 +173,6 @@ public class CustomModelMapper {
 
         return modelMapper;
     }
-
 
     Converter<Playlist, Integer> playlistSongCntCvt = new Converter<Playlist, Integer>() {
         @Override

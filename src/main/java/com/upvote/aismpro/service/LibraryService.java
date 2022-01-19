@@ -168,7 +168,6 @@ public class LibraryService {
 
             for (Playlist pl : playlistRepository.findAll()) {
                 PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
-                dto.setPlaylistLike(false);
                 newPlaylistDTOList.add(dto);
             }
             return newPlaylistDTOList;
@@ -208,6 +207,7 @@ public class LibraryService {
                     .collect(Collectors.toList())
                 , pageable, total
         );
+
         return songDTOList;
     }
 

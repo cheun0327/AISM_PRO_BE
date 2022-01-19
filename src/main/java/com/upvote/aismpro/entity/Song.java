@@ -38,8 +38,6 @@ public class Song {
     @Column(name = "imgFile")
     private String imgFile;
 
-    // fileName 이랑 thumbnail 경로 둘다 필요 없음 - userId랑 songId 조합해서 만들면 됨.
-
     @Column(name = "one")
     private String one;
 

@@ -26,13 +26,6 @@ public class PlaylistController {
 
 
     ////////////////////////   playlist create   ////////////////////////
-    // 플레이리스트 좋아요 저장하기
-//    @PostMapping("/playlist/like/{playlistId}")
-//    public ResponseEntity<Object> createPlaylistLike(@PathVariable("playlistId") Long playlistId) {
-//        Long userId = SecurityUtil.getCurrentUserId();
-//        playlistService.createPlaylistLike(userId, playlistId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
     // 플리이리스트 껍데기 만들기
     @PostMapping("/playlist")
@@ -72,7 +65,7 @@ public class PlaylistController {
     public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID(@PathVariable("userID") Long userId) {
         try{
             if (userId == -1) throw new Exception();
-            return new ResponseEntity<>(playlistService.getPlayList(userId), HttpStatus.OK);
+            return new ResponseEntity<>(playlistService.getUserPlaylist(userId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

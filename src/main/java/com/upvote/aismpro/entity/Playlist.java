@@ -37,7 +37,7 @@ public class Playlist {
             joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
             inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
     )
-    private List<Song> songs = new ArrayList<>(); // 여기 왜 새로 생성??
+    private List<Song> songs;
 
     @Column(name = "one")
     private String one;

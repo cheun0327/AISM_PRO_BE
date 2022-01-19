@@ -41,26 +41,9 @@ public class User {
     @Column(name = "authority")
     private Authority authority;
 
-
-//    @OneToMany(mappedBy = "user")
-//    @JsonBackReference
-//    private List<Create> creates = new ArrayList<Create>();
-//
-//    @OneToMany(mappedBy = "user")
-//    @JsonBackReference
-//    private List<Buy> buys = new ArrayList<Buy>();
-//
-//    @OneToMany(mappedBy = "user")
-//    @JsonBackReference
-//    private List<Sell> sells = new ArrayList<Sell>();
-//
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<Like> likes;
-//
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    @JsonBackReference
-//    private List<PlayList> playlists = new ArrayList<PlayList>();
 
     @Builder
     public User(String nickname, String email) {
