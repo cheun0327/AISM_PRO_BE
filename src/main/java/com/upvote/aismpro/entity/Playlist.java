@@ -3,6 +3,7 @@ package com.upvote.aismpro.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "playlist")
 @EntityListeners(AuditingEntityListener.class)
@@ -53,8 +55,4 @@ public class Playlist {
 
     @Column(name = "imgFile")
     private String imgFile;
-
-    public void setImgFile(String imgFile) {
-        this.imgFile = imgFile;
-    }
 }
