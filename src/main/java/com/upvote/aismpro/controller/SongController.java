@@ -60,7 +60,7 @@ public class SongController {
             song = songService.saveSong(songDTO, songVO.getImg());
 
             // song wav file tmp에서 이동
-            song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
+            // song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
 
             // create 테이블에 동기화
             createService.saveSong(song.getSongId());

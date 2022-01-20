@@ -70,6 +70,7 @@ public class SongService implements SongServiceInter{
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedSong.setImgFile(imgName);
             }
+            savedSong.setPlaytime(String.valueOf(moveSongFiles(savedSong.getSongId())));
             songRepository.save(savedSong);
 
             // songDTO
