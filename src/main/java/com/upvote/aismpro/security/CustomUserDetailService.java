@@ -33,7 +33,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(
                 String.valueOf(user.getUserId()),
-                null,
+                "{noop}"+user.getEmail(),
                 Collections.singleton(grantedAuthority)
         );
     }
