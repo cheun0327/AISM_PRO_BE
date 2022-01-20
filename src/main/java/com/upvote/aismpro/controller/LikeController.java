@@ -1,19 +1,17 @@
 package com.upvote.aismpro.controller;
 
 
-import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.LikeService;
 import com.upvote.aismpro.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.env.RandomValuePropertySourceEnvironmentPostProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @RestController
 public class LikeController {
@@ -38,13 +36,13 @@ public class LikeController {
 
     @PostMapping("/like/{songId}")
     public ResponseEntity<Boolean> createLike(@PathVariable("songId") Long songId) {
-        try {
-            likeService.createLike(songId);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+        Long likeId = likeService.createLike(songId);
 
-        } catch (Exception e) {
+        if (Objects.isNull(likeId)) {
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @DeleteMapping("/like/{songId}")

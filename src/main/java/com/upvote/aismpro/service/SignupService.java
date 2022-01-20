@@ -13,13 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -63,7 +59,7 @@ public class SignupService {
 
             //user token 생성
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
-
+            
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
 
             TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);

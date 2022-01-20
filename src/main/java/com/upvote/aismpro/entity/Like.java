@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -14,20 +16,22 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Like {
 
     @Id
-    @Column(name="likeId")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "likeId")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
     @JsonManagedReference
     private Song song;
 
+    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="creatorId")
+    @JoinColumn(name = "creatorId")
     @JsonManagedReference
     private User user;
 
