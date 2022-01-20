@@ -4,11 +4,13 @@ import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
-import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.repository.PlaylistRepository;
+import com.upvote.aismpro.repository.PlaylistSongRepository;
+import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,30 +21,20 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
 public class PlaylistService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PlaylistRepository playlistRepository;
-    @Autowired
-    private PlaylistSongRepository playlistSongRepository;
-    @Autowired
-    private SongRepository songRepository;
-    @Autowired
-    private CustomModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final PlaylistRepository playlistRepository;
+    private final PlaylistSongRepository playlistSongRepository;
+    private final SongRepository songRepository;
+    private final CustomModelMapper modelMapper;
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
-        Long userId = SecurityUtil.getCurrentUserId();
-
         try {
             Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
-            playlist.setUser(userRepository.getById(userId));
-            System.out.println(playlistSaveDTO);
-            System.out.println(playlist.getName());
-            System.out.println(playlist.getPlaylistId());
 
             // playlist 정보 저장
             Playlist savedPlaylist = playlistRepository.save(playlist);
@@ -56,8 +48,8 @@ public class PlaylistService {
                 String imgName = savedPlaylist.getPlaylistId() + "." + imgNameArr[imgNameArr.length - 1];
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedPlaylist.setImgFile(imgName);
+                playlistRepository.save(savedPlaylist);
             }
-            playlistRepository.save(savedPlaylist);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +59,7 @@ public class PlaylistService {
 
     // user 별 play list 가져오기
     public List<PlaylistDTO> getPlayList(Long userId) throws Exception {
-        try{
+        try {
             // playlist like
             List<PlaylistDTO> playlistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
@@ -152,7 +144,7 @@ public class PlaylistService {
             return similar_li
                     .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
                     .collect(Collectors.toList());
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();
         } catch (Exception e) {
@@ -170,10 +162,10 @@ public class PlaylistService {
                     .collect(Collectors.toList());
 
             Collections.shuffle(similar);
-            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0,8));
+            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0, 8));
             return similar;
 
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();
         } catch (Exception e) {
@@ -191,17 +183,17 @@ public class PlaylistService {
                     .collect(Collectors.toList());
 
             Collections.shuffle(similar);
-            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0,8));
+            if (similar.size() > 8) return Lists.newArrayList(similar.subList(0, 8));
             return similar;
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }
     }
 
     // 해당 음원이 저장된 플레이리스트 찾기
-    public  List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws Exception {
+    public List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws Exception {
         List<PlaylistDTO> savedPlaylists = playlistSongRepository.findPlaylistBySongIdQD(songId)
                 .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))
                 .collect(Collectors.toList());
@@ -216,13 +208,13 @@ public class PlaylistService {
         Long userId = SecurityUtil.getCurrentUserId();
         try {
             // TODO 검색어 포함된 플레이리스트 찾기 - 플레이리스트명, 키워드 123,
-            List<PlaylistDTO> result =  playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
+            List<PlaylistDTO> result = playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
                     .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
                     .collect(Collectors.toList());
 
             Collections.shuffle(result);
             if (result.size() > 8) {
-                result = Lists.newArrayList(result.subList(0,8));
+                result = Lists.newArrayList(result.subList(0, 8));
             }
 
 //            // like 추가

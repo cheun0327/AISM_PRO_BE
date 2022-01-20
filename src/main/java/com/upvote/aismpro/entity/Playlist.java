@@ -1,18 +1,20 @@
 package com.upvote.aismpro.entity;
 
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Data
-@Table(name = "playlist")
+@Getter
 @NoArgsConstructor
+@Table(name = "playlist")
+@EntityListeners(AuditingEntityListener.class)
+@Entity
 public class Playlist {
     @Id
     @Column(name = "playlistId", nullable = false)
@@ -28,6 +30,7 @@ public class Playlist {
     @Column
     private Boolean state;
 
+    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="creatorId", referencedColumnName="userId")
     private User user;
@@ -50,4 +53,8 @@ public class Playlist {
 
     @Column(name = "imgFile")
     private String imgFile;
+
+    public void setImgFile(String imgFile) {
+        this.imgFile = imgFile;
+    }
 }
