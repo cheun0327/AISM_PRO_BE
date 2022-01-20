@@ -21,17 +21,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -40,12 +39,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequiredArgsConstructor
 public class LibraryController {
 
-    @Autowired
-    private LibraryService libraryService;
-
     private final PagedResourcesAssembler<SongDTO> songDtoAssembler;
     private final PagedResourcesAssembler<PlaylistDTO> playlistDtoAssembler;
     private final PagedResourcesAssembler<ArtistDTO> artistDtoAssembler;
+
+    private final LibraryService libraryService;
+
 
     @GetMapping("/library/render")
     public ResponseEntity<Map<String, Object>> librarySearchOption() {
@@ -59,9 +58,9 @@ public class LibraryController {
         try {
             Map<String, Object> map = libraryService.getSearchResult(librarySearchDTO);
 
-            Pageable songTotalDefaultPageable = PageRequest.of(0,20);
-            Pageable playlistTotalDefaultPageable = PageRequest.of(0,15);
-            Pageable artistTotalDefaultPageable = PageRequest.of(0,10);
+            Pageable songTotalDefaultPageable = PageRequest.of(0, 20);
+            Pageable playlistTotalDefaultPageable = PageRequest.of(0, 15);
+            Pageable artistTotalDefaultPageable = PageRequest.of(0, 10);
 
             EntityModel<Map<String, Object>> result = new EntityModel<>(map);
             result.add(
@@ -84,6 +83,7 @@ public class LibraryController {
     public ResponseEntity<PagedModel<EntityModel<SongDTO>>> songTotalLibrarySearch(
             @PageableDefault(size=20,direction=Sort.Direction.DESC) final Pageable pageable,
             @RequestBody LibrarySearchDTO librarySearchDTO) {
+
         try {
             Page<SongDTO> songDTOList = libraryService.getTotalSongSearchResult(pageable, librarySearchDTO);
 

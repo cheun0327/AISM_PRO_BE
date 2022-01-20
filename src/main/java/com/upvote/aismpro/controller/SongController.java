@@ -5,18 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
-import com.upvote.aismpro.service.CreateService;
-import com.upvote.aismpro.vo.SongSaveVO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
+import com.upvote.aismpro.service.CreateService;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
+import com.upvote.aismpro.vo.SongSaveVO;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 @RestController
 public class SongController {
 
-    @Autowired
-    private SongService songService;
-    @Autowired
-    private CreateService createService;
-    @Autowired
-    private PlaylistService playlistService;
+    private final SongService songService;
+    private final CreateService createService;
+    private final PlaylistService playlistService;
 
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
@@ -45,7 +40,7 @@ public class SongController {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO){
+    public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO) {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -60,7 +55,7 @@ public class SongController {
             song = songService.saveSong(songDTO, songVO.getImg());
 
             // song wav file tmp에서 이동
-            song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
+            // song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
 
             // create 테이블에 동기화
             createService.saveSong(song.getSongId());
@@ -81,7 +76,7 @@ public class SongController {
     // Song Detail With Like
     @GetMapping("/song/{songId}")
     public ResponseEntity<SongDTO> getSongDetail(@PathVariable("songId") Long songId) {
-        try{
+        try {
             Long userId = SecurityUtil.getCurrentUserId();
 
             SongDTO songDTO = songService.getSongDetail(songId);
@@ -102,7 +97,7 @@ public class SongController {
     // Song Similar With Like
     @GetMapping("/song/similar/{songId}")
     public ResponseEntity<List<SongDTO>> getSimilarSong(@PathVariable("songId") Long songId) {
-        try{
+        try {
             Long userId = SecurityUtil.getCurrentUserId();
 
             List<SongDTO> songDTOList = songService.getSimilarSong(songId);
@@ -111,8 +106,7 @@ public class SongController {
             }
 
             return new ResponseEntity<>(songDTOList, HttpStatus.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -137,8 +131,7 @@ public class SongController {
             map.put("playlist", playlistDTOList);
 
             return new ResponseEntity<>(map, HttpStatus.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -146,11 +139,7 @@ public class SongController {
     ////////////////////////   song update   ////////////////////////
 
 
-
-
     ////////////////////////   song delete   ////////////////////////
-
-
 
 
     ////////////////////////   song utils   ////////////////////////
