@@ -12,8 +12,8 @@ import java.io.IOException;
 @Component
 public class JWTAccessDeniedHandler implements AccessDeniedHandler {
 
-    @Override
     // 유저 정보는 있으나 자원에 접근할 수 있는 권한이 없는 경우 403 response
+    @Override
     public void handle(HttpServletRequest requst, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_FORBIDDEN);

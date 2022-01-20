@@ -11,36 +11,36 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QNewSong is a Querydsl query type for NewSong
+ * QSong is a Querydsl query type for Song
  */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QNewSong extends EntityPathBase<NewSong> {
+public class QSong extends EntityPathBase<Song> {
 
-    private static final long serialVersionUID = -458924695L;
+    private static final long serialVersionUID = 1604322049L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QNewSong newSong = new QNewSong("newSong");
+    public static final QSong song = new QSong("song");
 
-    public final DateTimePath<java.util.Date> createDate = createDateTime("createDate", java.util.Date.class);
-
-    public final StringPath fileName = createString("fileName");
+    public final DateTimePath<java.sql.Timestamp> createDate = createDateTime("createDate", java.sql.Timestamp.class);
 
     public final StringPath five = createString("five");
 
     public final StringPath four = createString("four");
 
+    public final StringPath imgFile = createString("imgFile");
+
     public final StringPath one = createString("one");
 
     public final StringPath playtime = createString("playtime");
 
-    public final StringPath songId = createString("songId");
+    public final StringPath six = createString("six");
+
+    public final NumberPath<Long> songId = createNumber("songId", Long.class);
 
     public final StringPath songName = createString("songName");
 
     public final StringPath three = createString("three");
-
-    public final StringPath thumbnail = createString("thumbnail");
 
     public final StringPath two = createString("two");
 
@@ -48,23 +48,23 @@ public class QNewSong extends EntityPathBase<NewSong> {
 
     public final QUser user;
 
-    public QNewSong(String variable) {
-        this(NewSong.class, forVariable(variable), INITS);
+    public QSong(String variable) {
+        this(Song.class, forVariable(variable), INITS);
     }
 
-    public QNewSong(Path<? extends NewSong> path) {
+    public QSong(Path<? extends Song> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QNewSong(PathMetadata metadata) {
+    public QSong(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QNewSong(PathMetadata metadata, PathInits inits) {
-        this(NewSong.class, metadata, inits);
+    public QSong(PathMetadata metadata, PathInits inits) {
+        this(Song.class, metadata, inits);
     }
 
-    public QNewSong(Class<? extends NewSong> type, PathMetadata metadata, PathInits inits) {
+    public QSong(Class<? extends Song> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }

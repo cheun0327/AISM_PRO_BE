@@ -12,8 +12,8 @@ import java.io.IOException;
 @Component
 public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    @Override
     // 유저 정보 없이 접근하면 401 response
+    @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);

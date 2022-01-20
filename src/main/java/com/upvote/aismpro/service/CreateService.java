@@ -40,7 +40,7 @@ public class CreateService {
                     .collect(Collectors.toList());
             return creates;
         } catch (Exception e) {
-            throw new Exception("좋아요 없음.");
+            throw new Exception("생성 음원 없음.");
         }
     }
 

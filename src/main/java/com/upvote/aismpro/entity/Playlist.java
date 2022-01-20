@@ -1,18 +1,22 @@
 package com.upvote.aismpro.entity;
 
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Data
-@Table(name = "playlist")
+@Getter
+@Setter
 @NoArgsConstructor
+@Table(name = "playlist")
+@EntityListeners(AuditingEntityListener.class)
+@Entity
 public class Playlist {
     @Id
     @Column(name = "playlistId", nullable = false)
@@ -28,6 +32,7 @@ public class Playlist {
     @Column
     private Boolean state;
 
+    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="creatorId", referencedColumnName="userId")
     private User user;
@@ -37,7 +42,7 @@ public class Playlist {
             joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
             inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
     )
-    private List<Song> songs = new ArrayList<>(); // 여기 왜 새로 생성??
+    private List<Song> songs;
 
     @Column(name = "one")
     private String one;

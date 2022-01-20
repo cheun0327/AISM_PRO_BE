@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.dto.PlaylistSaveDTO;
-import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.vo.PlaylistSaveVO;
-import com.upvote.aismpro.vo.SongSaveVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 @RestController
 public class PlaylistController {
 
-    @Autowired
-    private PlaylistService playlistService;
-
+    private final PlaylistService playlistService;
 
     ////////////////////////   playlist create   ////////////////////////
-    // 플레이리스트 좋아요 저장하기
-//    @PostMapping("/playlist/like/{playlistId}")
-//    public ResponseEntity<Object> createPlaylistLike(@PathVariable("playlistId") Long playlistId) {
-//        Long userId = SecurityUtil.getCurrentUserId();
-//        playlistService.createPlaylistLike(userId, playlistId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
     // 플리이리스트 껍데기 만들기
     @PostMapping("/playlist")
     public ResponseEntity<Object> createPlaylist(@ModelAttribute PlaylistSaveVO playlistVO) {
@@ -51,15 +40,13 @@ public class PlaylistController {
         }
     }
 
-
-
     ////////////////////////   playlist read   ////////////////////////
     // 유저의 플레이리스트 리스트 가져오기
     @GetMapping("/playlist")
     public ResponseEntity<List<PlaylistDTO>> getMyPlaylist() {
-        try{
+        try {
             Long userId = SecurityUtil.getCurrentUserId();
-            if (userId == -1) throw  new Exception();
+            if (userId == -1) throw new Exception();
             return new ResponseEntity<>(playlistService.getPlayList(userId), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -70,9 +57,9 @@ public class PlaylistController {
 
     @GetMapping("/playlist/{userID}")
     public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID(@PathVariable("userID") Long userId) {
-        try{
+        try {
             if (userId == -1) throw new Exception();
-            return new ResponseEntity<>(playlistService.getPlayList(userId), HttpStatus.OK);
+            return new ResponseEntity<>(playlistService.getUserPlaylist(userId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -89,9 +76,9 @@ public class PlaylistController {
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
 
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -99,7 +86,7 @@ public class PlaylistController {
     // 특정 플레이리스트 디테일 정보 가져오기
     @GetMapping("/playlist/detail/{playlistId}")
     public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") Long playlistId) throws Exception {
-        try{
+        try {
             PlaylistDetailDTO playlistDetailDTO = playlistService.getPlayListDetail(playlistId);
 
             Long userId = SecurityUtil.getCurrentUserId();
@@ -121,9 +108,9 @@ public class PlaylistController {
             Long userId = SecurityUtil.getCurrentUserId();
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -137,9 +124,9 @@ public class PlaylistController {
             Long userId = SecurityUtil.getCurrentUserId();
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -148,11 +135,7 @@ public class PlaylistController {
     ////////////////////////   playlist update   ////////////////////////
 
 
-
-
     ////////////////////////   playlist delete   ////////////////////////
-
-
 
 
     ////////////////////////   playlist utils   ////////////////////////
@@ -170,7 +153,7 @@ public class PlaylistController {
 
     @GetMapping("/playlist/validate/name/{playlistName}")
     public ResponseEntity<Boolean> validatePlaylistName(@PathVariable("playlistName") String playlistName) {
-        try{
+        try {
             return new ResponseEntity<>(playlistService.validPlaylistName(playlistName), HttpStatus.OK);
 
         } catch (Exception e) {

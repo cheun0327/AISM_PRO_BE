@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {
 
+    // 이미지 파일 크기 초과 예외
     @ExceptionHandler(MultipartException.class)
     @ResponseBody
     ResponseEntity<?> handleFileException(HttpServletRequest request, Throwable ex) {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        return "File size exceed";
     }
 }

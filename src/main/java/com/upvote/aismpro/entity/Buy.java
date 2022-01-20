@@ -3,11 +3,9 @@ package com.upvote.aismpro.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 
-@ApiIgnore
 @Entity
 @Data
 @Table(name = "buys")

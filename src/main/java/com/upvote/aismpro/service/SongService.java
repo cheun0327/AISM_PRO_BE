@@ -12,6 +12,12 @@ import com.upvote.aismpro.security.SecurityUtil;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -20,9 +26,14 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,15 +63,14 @@ public class SongService implements SongServiceInter{
             if (savedSong.getSongName().equals("음원 제목")) savedSong.setSongName("Song" + savedSong.getSongId());
 
             // song img 저장
-            if (file == null) {
-//                savedSong.setImgFile("defaultAlbum.jpg");
-            } else {
+            if (file != null) {
                 String dirPath = "/var/lib/jenkins/workspace/img/song";
                 String imgName = savedSong.getSongId() + "." + extractExt(file.getOriginalFilename());
 
                 file.transferTo(new File(dirPath + "/" + imgName));
                 savedSong.setImgFile(imgName);
             }
+            savedSong.setPlaytime(String.valueOf(moveSongFiles(savedSong.getSongId())));
             songRepository.save(savedSong);
 
             // songDTO
@@ -82,7 +92,7 @@ public class SongService implements SongServiceInter{
         songRepository.deleteById(songId);
     }
 
-    public void moveSongFiles(Long songId) throws IOException {
+    public int moveSongFiles(Long songId) throws IOException, CannotReadException, TagException, InvalidAudioFrameException, ReadOnlyFileException {
         Long userId = SecurityUtil.getCurrentUserId();
         String dirPath = "/var/lib/jenkins/workspace/song";
         String midiDirPath = "/var/lib/jenkins/workspace/midi";
@@ -100,6 +110,13 @@ public class SongService implements SongServiceInter{
         File midiSource  = new File(songMidiPath);
         File midiTarget = new File(midiDirPath + "/" + songId + ".mid");
         FileUtils.moveFile(midiSource, midiTarget);
+
+        // 음원 재생시간 계산
+        java.util.logging.Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
+        AudioFile audioFile = AudioFileIO.read(target);
+        int playtime = audioFile.getAudioHeader().getTrackLength();
+
+        return playtime;
     }
 
     // song detail 페이지에 뿌릴 상세 정보 리턴

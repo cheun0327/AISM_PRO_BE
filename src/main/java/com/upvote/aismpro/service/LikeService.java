@@ -2,37 +2,32 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Like;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
-import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
 public class LikeService {
 
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private SongRepository songRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CustomModelMapper modelMapper;
+    private final LikeRepository likeRepository;
+    private final SongRepository songRepository;
+    private final CustomModelMapper modelMapper;
 
     // 사용자가 좋아요 누른 음원 가져오기
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(readOnly = true)
     public List<SongDTO> getLikes(Long userId) throws Exception {
-        try{
+        try {
             List<SongDTO> likes = likeRepository.findAllByUser_UserId(userId)
                     .stream()
                     .map(s -> modelMapper.toSongDTO().map(songRepository.getById(s.getSong().getSongId()), SongDTO.class))
@@ -44,48 +39,38 @@ public class LikeService {
     }
 
     // MyLibrary에서 좋아요 삭제
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteLikes(List<Long> deleteIds) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
         try {
-            deleteIds.stream().forEach(songId -> likeRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
-        }
-        catch (Exception e) {
+            deleteIds.forEach(songId -> likeRepository.deleteByUser_UserIdAndSong_SongId(userId, songId));
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteLike(Long songId) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
         try {
             likeRepository.deleteByUser_UserIdAndSong_SongId(userId, songId);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void createLike(Long songId) throws Exception {
-        Long userId = SecurityUtil.getCurrentUserId();
-        try {
+    public Long createLike(Long songId) {
 
-            Like like = Like.builder()
-                    .user(userRepository.findById(userId).get())
-                    .song(songRepository.findById(songId).get())
-                    .build();
+        Song song = songRepository.findById(songId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 노래를 찾을 수 없습니다."));
 
-            // TODO 이미 있으면 에러 던지기
-            likeRepository.save(like);
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
+        Like like = Like.builder()
+                .song(song)
+                .build();
+
+        return likeRepository.save(like).getId();
     }
 
-    @Transactional
     public List<SongDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
 
