@@ -4,45 +4,31 @@ import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.entity.Playlist;
-import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@RequiredArgsConstructor
 @RestController
 public class LibraryController {
 
-    @Autowired
-    private LibraryService libraryService;
-
-//    @Value("${page.size}")
-//    private int pageSize;
-
+    private final LibraryService libraryService;
 
     @GetMapping("/library/render")
     public ResponseEntity<Map<String, Object>> librarySearchOption() {
@@ -56,9 +42,9 @@ public class LibraryController {
         try {
             Map<String, Object> map = libraryService.getSearchResult(librarySearchDTO);
 
-            Pageable songTotalDefaultPageable = PageRequest.of(0,20);
-            Pageable playlistTotalDefaultPageable = PageRequest.of(0,15);
-            Pageable artistTotalDefaultPageable = PageRequest.of(0,10);
+            Pageable songTotalDefaultPageable = PageRequest.of(0, 20);
+            Pageable playlistTotalDefaultPageable = PageRequest.of(0, 15);
+            Pageable artistTotalDefaultPageable = PageRequest.of(0, 10);
 
             EntityModel<Map<String, Object>> result = new EntityModel<>(map);
             result.add(
@@ -81,7 +67,7 @@ public class LibraryController {
 
     @PostMapping("/library/search/total/song")
     public ResponseEntity<List<SongDTO>> songTotalLibrarySearch(final Pageable pageable,
-                                                               @RequestBody LibrarySearchDTO librarySearchDTO) {
+                                                                @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
             System.out.println(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
             System.out.println(pageable.getOffset() + " / " + pageable.getPageSize() + " / " + pageable.getPageNumber());
