@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private CreateRepository createRepository;
-    private CustomModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final CreateRepository createRepository;
+    private final CustomModelMapper modelMapper;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ArtistDetailDTO getArtistDetailInfo(Long userID) throws Exception {
