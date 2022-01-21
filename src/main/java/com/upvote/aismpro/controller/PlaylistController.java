@@ -2,10 +2,7 @@ package com.upvote.aismpro.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.PlaylistDetailDTO;
-import com.upvote.aismpro.dto.PlaylistSaveDTO;
-import com.upvote.aismpro.dto.SongListForAddToPlaylistDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.vo.PlaylistSaveVO;
@@ -27,15 +24,15 @@ public class PlaylistController {
     ////////////////////////   playlist create   ////////////////////////
     // 플리이리스트 껍데기 만들기
     @PostMapping("/playlist")
-    public ResponseEntity<Object> createPlaylist(@ModelAttribute PlaylistSaveVO playlistVO) {
+    public ResponseEntity<Long> createPlaylist(@ModelAttribute PlaylistSaveVO playlistVO) {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
             PlaylistSaveDTO playlistSaveDTO = mapper.readValue(playlistVO.getVal(), PlaylistSaveDTO.class);
             System.out.println(playlistSaveDTO);
-            playlistService.createPlaylist(playlistSaveDTO, playlistVO.getImg());
-            return new ResponseEntity<>(HttpStatus.OK);
+            Long playlistId = playlistService.createPlaylist(playlistSaveDTO, playlistVO.getImg());
+            return ResponseEntity.ok(playlistId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -46,6 +43,12 @@ public class PlaylistController {
     @GetMapping("/playlist/song/select")
     public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
         return playlistService.getSongListAddToPlaylist();
+    }
+
+    @ApiOperation(value = "플레이리스트에 곡 추가")
+    @PostMapping("/playlist/song")
+    public ResponseEntity<Object> addSongList(@RequestBody AddSongListDTO dto) {
+        return playlistService.addSongList(dto);
     }
 
     ////////////////////////   playlist read   ////////////////////////
