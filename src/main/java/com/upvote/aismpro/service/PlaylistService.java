@@ -10,6 +10,7 @@ import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -249,5 +250,22 @@ public class PlaylistService {
             e.printStackTrace();
             throw new Exception();
         }
+    }
+
+    public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
+        // userId 가져오기
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        // 유저가 작곡한 곡이 3곡 이상인지 확인
+        boolean isEnough = songRepository.isEnoughAddToPlaylistQD(userId);
+
+        // 3곡 이상이면 해당 유저가 작곡한 곡 중 랜덤 3곡
+        // 3곡 미만이면 다른 유저가 작곡한 전체 곡 중 랜덤 3곡
+        // song -> songDTO 변환
+        List<SongDTO> songDTOList = songRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
+                .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new SongListForAddToPlaylistDTO(isEnough, songDTOList));
     }
 }
