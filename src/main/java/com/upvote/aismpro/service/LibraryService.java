@@ -1,5 +1,7 @@
 package com.upvote.aismpro.service;
 
+import com.upvote.aismpro.customassembler.SongDTOModelAssembler;
+import com.upvote.aismpro.custommodel.SongDTOModel;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
@@ -46,6 +48,8 @@ public class LibraryService {
     private CustomModelMapper modelMapper;
 
     private final PagedResourcesAssembler<Song> songAssembler;
+    private final SongDTOModelAssembler songDTOModelAssembler;
+
 
     // 라이브러리 검색 옵션
     public Map<String, Object> getSearchOptionDate() {
@@ -86,10 +90,12 @@ public class LibraryService {
                 songDTOList = mapToSongDTOWithoutLike(songList);
             }
 
+//            List<SongDTOModel> songDTOModelList = songDTOModelAssembler.toModelList(songDTOList);
 
+            CollectionModel<SongDTOModel> songDTOModelList = songDTOModelAssembler.toCollectionModel(songDTOList);
 
             // TODO List를 Page로 변경해줘야하나
-            map.put("song", songDTOList);
+            map.put("song", songDTOModelList);
 
             // 검색 결과 키워드 필터링
 //            if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
@@ -113,6 +119,8 @@ public class LibraryService {
             throw new Exception();
         }
     }
+
+
 
     @Transactional
     private List<SongDTO> mapToSongDTOWithLike(Page<Song> songList, Long userId) {

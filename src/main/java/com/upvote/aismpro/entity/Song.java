@@ -4,6 +4,7 @@ package com.upvote.aismpro.entity;
 import com.upvote.aismpro.entitypk.KeywordPK;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
 @Data
 @Table(name = "song")
 @NoArgsConstructor
-public class Song {
+public class Song{
 
     @Id
     @Column(name = "songId")

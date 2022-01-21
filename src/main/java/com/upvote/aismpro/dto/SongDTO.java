@@ -1,8 +1,10 @@
 package com.upvote.aismpro.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -10,7 +12,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class SongDTO extends EntityModel<SongDTO> {
+@AllArgsConstructor
+public class SongDTO{
     private Long songId;
 
     private String songName;

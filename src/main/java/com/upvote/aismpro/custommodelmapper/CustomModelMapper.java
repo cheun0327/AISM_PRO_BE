@@ -1,11 +1,11 @@
 package com.upvote.aismpro.custommodelmapper;
 
+import com.upvote.aismpro.customassembler.SongDTOModelAssembler;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.SongRepository;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -22,14 +22,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
 public class CustomModelMapper {
 
+    @Autowired
+    private SongDTOModelAssembler songDTOModelAssembler;
+
     private final ModelMapper modelMapper = new ModelMapper();
+
+
+    @Bean
+    public ModelMapper standardMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STANDARD);
+        return modelMapper;
+    }
 
     @Bean
     public ModelMapper toUserDTO() {

@@ -2,6 +2,8 @@ package com.upvote.aismpro.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upvote.aismpro.customassembler.SongDTOModelAssembler;
+import com.upvote.aismpro.custommodel.SongDTOModel;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
@@ -14,6 +16,8 @@ import com.upvote.aismpro.vo.SongSaveVO;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +34,8 @@ public class SongController {
     private final SongService songService;
     private final CreateService createService;
     private final PlaylistService playlistService;
+
+    private final SongDTOModelAssembler songDTOModelAssembler;
 
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
     // song 생성 => 생성 가능 권한 확인
@@ -51,11 +57,8 @@ public class SongController {
 
             SongSaveDTO songDTO = mapper.readValue(songVO.getVal(), SongSaveDTO.class);
 
-            // song 기본 정보 저장
+            // song 기본 정보 저장 및 음원 파일 이동
             song = songService.saveSong(songDTO, songVO.getImg());
-
-            // song wav file tmp에서 이동
-            // song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
 
             // create 테이블에 동기화
             createService.saveSong(song.getSongId());
@@ -74,17 +77,14 @@ public class SongController {
 
     ////////////////////////   song read => GUEST && MEMBER   ////////////////////////
     // Song Detail With Like
-    @GetMapping("/song/{songId}")
-    public ResponseEntity<SongDTO> getSongDetail(@PathVariable("songId") Long songId) {
+    @GetMapping(value = "/song/{songId}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<SongDTOModel> getSongDetail(@PathVariable("songId") Long songId) {
         try {
-            Long userId = SecurityUtil.getCurrentUserId();
-
             SongDTO songDTO = songService.getSongDetail(songId);
-            if (userId != -1) {
-                songDTO = songService.setLike2SongDTO(songDTO, userId);
-            }
 
-            return new ResponseEntity<>(songDTO, HttpStatus.OK);
+            SongDTOModel result = songDTOModelAssembler.toModel(songDTO);
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -96,16 +96,13 @@ public class SongController {
 
     // Song Similar With Like
     @GetMapping("/song/similar/{songId}")
-    public ResponseEntity<List<SongDTO>> getSimilarSong(@PathVariable("songId") Long songId) {
+    public ResponseEntity<CollectionModel<SongDTOModel>> getSimilarSong(@PathVariable("songId") Long songId) {
         try {
-            Long userId = SecurityUtil.getCurrentUserId();
-
             List<SongDTO> songDTOList = songService.getSimilarSong(songId);
-            if (userId != -1) {
-                songDTOList = songService.setLike2SongDTOList(songDTOList, userId);
-            }
 
-            return new ResponseEntity<>(songDTOList, HttpStatus.OK);
+            CollectionModel<SongDTOModel> result = songDTOModelAssembler.toCollectionModel(songDTOList);
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

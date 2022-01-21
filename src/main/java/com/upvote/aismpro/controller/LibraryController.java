@@ -4,6 +4,7 @@ import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.service.LibraryService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
