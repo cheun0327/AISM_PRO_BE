@@ -9,4 +9,6 @@ public interface CreateRepositoryCustom {
 
     // MyLibraru 생성 음원 검색 결과
     public List<Song> findMyLibraryCreateSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO);
+    boolean isEnoughAddToPlaylistQD(Long userId);
+    List<Song> findSongListByUserIdLimit3QD(Long userId);
 }
