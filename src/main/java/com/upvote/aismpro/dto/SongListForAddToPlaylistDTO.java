@@ -10,5 +10,5 @@ import java.util.List;
 public class SongListForAddToPlaylistDTO {
 
     private final Boolean isEnough;
-    private final List<SongDTO> songDTOList;
+    private final List<SongDTO> songs;
 }

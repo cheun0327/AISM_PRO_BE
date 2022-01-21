@@ -3,7 +3,6 @@ package com.upvote.aismpro.service;
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongListForAddToPlaylistDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Like;
@@ -21,7 +20,6 @@ import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -182,18 +180,5 @@ public class SongService implements SongServiceInter {
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
-    }
-
-    public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
-        // userId 가져오기
-        Long userId = SecurityUtil.getCurrentUserId();
-
-        //
-        boolean isEnough = songRepository.isEnoughAddToPlaylistQD(userId);
-        List<SongDTO> songDTOList = songRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
-                .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new SongListForAddToPlaylistDTO(isEnough, songDTOList));
     }
 }
