@@ -1,6 +1,5 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.controller.SongController;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
@@ -9,17 +8,16 @@ import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.pagination.PagedModelUtil;
 import com.upvote.aismpro.repository.*;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.EntityMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +85,8 @@ public class LibraryService {
             else {
                 songDTOList = mapToSongDTOWithoutLike(songList);
             }
+
+
 
             // TODO List를 Page로 변경해줘야하나
             map.put("song", songDTOList);

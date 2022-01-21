@@ -1,4 +1,4 @@
-package com.upvote.aismpro.pagination;
+package com.upvote.aismpro.customassembler;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;

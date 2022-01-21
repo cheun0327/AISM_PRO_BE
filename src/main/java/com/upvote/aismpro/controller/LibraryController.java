@@ -1,21 +1,12 @@
 package com.upvote.aismpro.controller;
 
-import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDTO;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.entity.Playlist;
-import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.pagination.LinkResource;
-import com.upvote.aismpro.pagination.PagedModelUtil;
-import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.service.LibraryService;
 
-import com.upvote.aismpro.service.SongService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -26,9 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -57,6 +46,9 @@ public class LibraryController {
 
         try {
             Map<String, Object> map = libraryService.getSearchResult(librarySearchDTO);
+
+            // 각각의 Detail 페이지 링크 만들어주기
+            System.out.println(map.get("song"));
 
             Pageable songTotalDefaultPageable = PageRequest.of(0, 20);
             Pageable playlistTotalDefaultPageable = PageRequest.of(0, 15);
