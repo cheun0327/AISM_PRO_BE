@@ -27,9 +27,6 @@ nbdist/
 # Mac
 .DS_Store
 
-# QClasses
-generated
-
 # ignore properties file
 config.properties
 

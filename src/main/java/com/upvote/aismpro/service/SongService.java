@@ -117,7 +117,7 @@ public class SongService implements SongServiceInter{
 
         // 음원 재생시간 계산
         java.util.logging.Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
-        AudioFile audioFile = AudioFileIO.read(new File("./song/612.mp3"));
+        AudioFile audioFile = AudioFileIO.read(target);
         int playtime = audioFile.getAudioHeader().getTrackLength();
 
         return playtime;
