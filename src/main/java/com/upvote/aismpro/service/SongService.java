@@ -2,55 +2,50 @@ package com.upvote.aismpro.service;
 
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.*;
+import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.SongListForAddToPlaylistDTO;
+import com.upvote.aismpro.dto.SongSaveDTO;
+import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
-public class SongService implements SongServiceInter{
+public class SongService implements SongServiceInter {
 
-    @Autowired
-    private SongRepository songRepository;
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CustomModelMapper modelMapper;
-
+    private final SongRepository songRepository;
+    private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
+    private final CustomModelMapper modelMapper;
 
     // 생성 song 저장
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception, FileUploadException {
         Long userId = SecurityUtil.getCurrentUserId();
 
@@ -87,7 +82,6 @@ public class SongService implements SongServiceInter{
     }
 
     // song 삭제
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteSong(Long songId) {
         songRepository.deleteById(songId);
     }
@@ -107,7 +101,7 @@ public class SongService implements SongServiceInter{
         FileUtils.moveFile(source, target);
 
         // 저장된 미디 파일 위치 이동
-        File midiSource  = new File(songMidiPath);
+        File midiSource = new File(songMidiPath);
         File midiTarget = new File(midiDirPath + "/" + songId + ".mid");
         FileUtils.moveFile(midiSource, midiTarget);
 
@@ -121,15 +115,13 @@ public class SongService implements SongServiceInter{
 
     // song detail 페이지에 뿌릴 상세 정보 리턴
     // like 어떻게 뿌려줄지 생각
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public SongDTO getSongDetail(Long songId) {
         Optional<Song> songOpt = songRepository.findBySongId(songId);
-        Song song =  songOpt.orElseThrow(() -> new NoSuchElementException());
+        Song song = songOpt.orElseThrow(() -> new NoSuchElementException());
         return modelMapper.toSongDTO().map(song, SongDTO.class);
     }
 
     // 비슷한 곡 가져오기
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getSimilarSong(Long songId) {
         Song song = songRepository.getById(songId);
         List<SongDTO> similar = songRepository.findSimilarSongQD(song)
@@ -137,34 +129,31 @@ public class SongService implements SongServiceInter{
                 .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
                 .collect(Collectors.toList());
         Collections.shuffle(similar);
-        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
+        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0, 6));
         return similar;
     }
 
     // 작곡하기 step2 비슷한 곡 가져오기
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> getSimilarSongByTags(SongTagDTO songTagDTO) {
         List<SongDTO> similar = songRepository.findSimilarSongByTagsQD(songTagDTO)
                 .stream()
                 .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
                 .collect(Collectors.toList());
         Collections.shuffle(similar);
-        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0,6));
+        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0, 6));
         return similar;
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Integer getLikeCnt(Long songId){
+    public Integer getLikeCnt(Long songId) {
         Integer cnt = likeRepository.countBySong_SongId(songId);
         return cnt;
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public SongDTO setLike2SongDTO(SongDTO songDTO, Long userId) throws Exception {
         try {
-            List<Like> likes= likeRepository.findAllByUser_UserIdAndSong_SongId(userId, songDTO.getSongId());
+            List<Like> likes = likeRepository.findAllByUser_UserIdAndSong_SongId(userId, songDTO.getSongId());
 
-            if(likes.size() == 1) songDTO.setLike(true);
+            if (likes.size() == 1) songDTO.setLike(true);
 
             return songDTO;
         } catch (Exception e) {
@@ -172,7 +161,6 @@ public class SongService implements SongServiceInter{
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SongDTO> setLike2SongDTOList(List<SongDTO> songDTOList, Long userId) throws Exception {
         try {
             List<Long> likes = likeRepository.findAllByUser_UserId(userId)
@@ -196,4 +184,16 @@ public class SongService implements SongServiceInter{
         return originalFilename.substring(pos + 1);
     }
 
+    public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
+        // userId 가져오기
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        //
+        boolean isEnough = songRepository.isEnoughAddToPlaylistQD(userId);
+        List<SongDTO> songDTOList = songRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
+                .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new SongListForAddToPlaylistDTO(isEnough, songDTOList));
+    }
 }

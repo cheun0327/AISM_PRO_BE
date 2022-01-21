@@ -1,7 +1,6 @@
 package com.upvote.aismpro.customrepository;
 
 import com.upvote.aismpro.dto.LibrarySearchDTO;
-import com.upvote.aismpro.dto.SimilarSrcDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
@@ -17,4 +16,6 @@ public interface SongRepositoryCustom {
     public Page<Song> findLibraryTotalSongSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO);
     public List<User> findLibraryArtistSearchQD(String search);
     public List<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search);
+    boolean isEnoughAddToPlaylistQD(Long userId);
+    List<Song> findSongListByUserIdLimit3QD(Long userId);
 }

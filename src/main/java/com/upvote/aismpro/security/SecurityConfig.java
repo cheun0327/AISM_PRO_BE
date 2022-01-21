@@ -13,8 +13,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -25,14 +23,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     // 스프링 시큐리티 룰을 무시하게 하는 Url 규칙(여기 등록하면 규칙 적용하지 않음)
-    @Override public void configure(WebSecurity web) throws Exception {
+    @Override
+    public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/resources/**")
                 .antMatchers("/css/**")
                 .antMatchers("/vendor/**")
                 .antMatchers("/js/**")
                 .antMatchers("/favicon*/**")
-                .antMatchers("/img/**") ;
+                .antMatchers("/img/**");
     }
 
     @Override
@@ -67,11 +66,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/token/**").permitAll()
 
                 .antMatchers("/library/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/user/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/playlist/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/playlist/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/song/playlist/insert").authenticated()
                 .antMatchers(HttpMethod.GET, "/song/**").permitAll()
-
                 .antMatchers("/actuator/health").permitAll()
+
                 .antMatchers("/playlist/validate/**").authenticated()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
 
