@@ -2,15 +2,13 @@ package com.upvote.aismpro.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.SongDTO;
-import com.upvote.aismpro.dto.SongSaveDTO;
-import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.CreateService;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
 import com.upvote.aismpro.vo.SongSaveVO;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -147,5 +145,11 @@ public class SongController {
     @GetMapping("/song/like/count/{songId}")
     public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "유저가 작곡한 곡 3개 불러오기", notes = "플레이리스트에 추가할 곡 3개 리스트로 반환")
+    @GetMapping("/song/playlist/insert")
+    public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
+        return songService.getSongListAddToPlaylist();
     }
 }
