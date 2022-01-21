@@ -3,7 +3,6 @@ package com.upvote.aismpro.customrepository;
 import com.google.api.client.util.Lists;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
@@ -119,27 +118,6 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
 
             return results.getResults();
         }
-    }
-
-    // 유저가 작곡한 곡이 3개 이상인지 확인
-    @Override
-    public boolean isEnoughAddToPlaylistQD(Long userId) {
-        long songCount = query.selectFrom(song)
-                .where(song.user.userId.eq(userId))
-                .fetchCount();
-
-        return songCount >= 3;
-    }
-
-    // 유저가 작곡한 곡 3개 불러오기
-    @Override
-    public List<Song> findSongListByUserIdLimit3QD(Long userId) {
-        return query.selectFrom(song)
-                .innerJoin(song.user).fetchJoin()
-                .where(userId != null ? song.user.userId.eq(userId) : null)
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(3)
-                .fetch();
     }
 
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환

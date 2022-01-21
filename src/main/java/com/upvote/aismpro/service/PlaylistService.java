@@ -4,10 +4,7 @@ import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
-import com.upvote.aismpro.repository.PlaylistRepository;
-import com.upvote.aismpro.repository.PlaylistSongRepository;
-import com.upvote.aismpro.repository.SongRepository;
-import com.upvote.aismpro.repository.UserRepository;
+import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +28,7 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
     private final SongRepository songRepository;
+    private final CreateRepository createRepository;
     private final CustomModelMapper modelMapper;
 
     public void createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
@@ -257,12 +255,12 @@ public class PlaylistService {
         Long userId = SecurityUtil.getCurrentUserId();
 
         // 유저가 작곡한 곡이 3곡 이상인지 확인
-        boolean isEnough = songRepository.isEnoughAddToPlaylistQD(userId);
+        boolean isEnough = createRepository.isEnoughAddToPlaylistQD(userId);
 
         // 3곡 이상이면 해당 유저가 작곡한 곡 중 랜덤 3곡
         // 3곡 미만이면 다른 유저가 작곡한 전체 곡 중 랜덤 3곡
         // song -> songDTO 변환
-        List<SongDTO> songDTOList = songRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
+        List<SongDTO> songDTOList = createRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
                 .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
                 .collect(Collectors.toList());
 
