@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.dto.PlaylistSaveDTO;
+import com.upvote.aismpro.dto.SongListForAddToPlaylistDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.vo.PlaylistSaveVO;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,12 @@ public class PlaylistController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @ApiOperation(value = "유저가 작곡한 곡 3개 불러오기", notes = "플레이리스트에 추가할 곡 3개 리스트로 반환")
+    @GetMapping("/playlist/song/select")
+    public ResponseEntity<SongListForAddToPlaylistDTO> getSongListAddToPlaylist() {
+        return playlistService.getSongListAddToPlaylist();
     }
 
     ////////////////////////   playlist read   ////////////////////////
@@ -160,5 +168,4 @@ public class PlaylistController {
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
     }
-
 }
