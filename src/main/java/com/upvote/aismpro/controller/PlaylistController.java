@@ -47,7 +47,7 @@ public class PlaylistController {
 
     @ApiOperation(value = "플레이리스트에 곡 추가")
     @PostMapping("/playlist/song")
-    public ResponseEntity<Object> addSongList(@RequestBody AddSongListDTO dto) {
+    public ResponseEntity<SaveSongListResDTO> addSongList(@RequestBody SaveSongListReqDTO dto) {
         return playlistService.addSongList(dto);
     }
 

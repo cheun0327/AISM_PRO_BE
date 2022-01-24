@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AddSongListDTO {
+public class SaveSongListReqDTO {
 
     private Long playlistId;
     private List<Long> songIdList;
