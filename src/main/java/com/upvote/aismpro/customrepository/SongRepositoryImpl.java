@@ -120,6 +120,14 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
         }
     }
 
+    @Override
+    public List<Song> findAllByIdFetchUserQD(List<Long> songIdList) {
+        return query.selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
+                .where(song.songId.in(songIdList))
+                .fetch();
+    }
+
     // 라이브러리 검색 결과 업로드 날짜로 정렬 반환
     private Page<Song> searchOrderByDate(LibrarySearchDTO librarySearchDTO) {
         QueryResults<Song> results = query.select(song)
