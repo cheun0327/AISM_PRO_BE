@@ -18,7 +18,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
+public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     private final JPAQueryFactory query;
     private final QPlaylist playlist = QPlaylist.playlist;
 
@@ -53,7 +53,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 .fetch();
 
         // TODO 개수 제한
-        if(pl.isEmpty()) {
+        if (pl.isEmpty()) {
             return query
                     .select(playlist)
                     .from(playlist)
@@ -81,7 +81,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 .fetch();
 
         // TODO 개수 제한
-        if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+        if (pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
 
         return pl;
     }
@@ -101,7 +101,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                 )
                 .fetch();
         // TODO 개수 제한
-        if(pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+        if (pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
 
         return pl;
     }
@@ -120,20 +120,20 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
 
     @Override
     public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
-        List<Playlist> pl = query.select(playlist)
+
+        return query.select(playlist)
                 .from(playlist)
                 .where(
                         playlist.user.userId.eq(userId)
-                                        .and(
-                                                playlist.name.contains(myLibrarySearchDTO.getSearch())
-                                                        .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
-                                                        .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
-                                                        .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
-                                        )
+                                .and(
+                                        playlist.name.contains(myLibrarySearchDTO.getSearch())
+                                                .or(playlist.one.contains(myLibrarySearchDTO.getSearch()))
+                                                .or(playlist.two.contains(myLibrarySearchDTO.getSearch()))
+                                                .or(playlist.three.contains(myLibrarySearchDTO.getSearch()))
+                                )
                 )
+                .orderBy(playlist.playlistId.desc())
                 .fetch();
-
-        return pl;
     }
 
     // Library 플리이리스트 검색 결과
@@ -165,10 +165,10 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
             QueryResults<Playlist> defaultResult = query.select(playlist)
                     .from(playlist)
                     .where(
-                        playlist.state.eq(true)
-                            .and(
-                                    playlist.songs.size().goe(1)
-                            )
+                            playlist.state.eq(true)
+                                    .and(
+                                            playlist.songs.size().goe(1)
+                                    )
                     )
                     .offset(0)
                     .limit(8)
@@ -211,9 +211,9 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom{
                     .from(playlist)
                     .where(
                             playlist.state.eq(true)
-                                .and(
-                                        playlist.songs.size().goe(1)
-                                )
+                                    .and(
+                                            playlist.songs.size().goe(1)
+                                    )
                     )
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())

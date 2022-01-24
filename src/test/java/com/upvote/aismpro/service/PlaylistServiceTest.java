@@ -1,6 +1,7 @@
 package com.upvote.aismpro.service;
 
-import com.upvote.aismpro.dto.AddSongListDTO;
+import com.upvote.aismpro.dto.SaveSongListReqDTO;
+import com.upvote.aismpro.dto.SaveSongListResDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,11 +20,11 @@ class PlaylistServiceTest {
     @Test
     void addSongList() {
 
-        AddSongListDTO dto = new AddSongListDTO();
+        SaveSongListReqDTO dto = new SaveSongListReqDTO();
         dto.setPlaylistId(69L);
         dto.setSongIdList(Arrays.asList(1L, 2L, 3L));
 
-        ResponseEntity<Object> httpStatusResponseEntity = playlistService.addSongList(dto);
+        ResponseEntity<SaveSongListResDTO> httpStatusResponseEntity = playlistService.addSongList(dto);
         System.out.println(httpStatusResponseEntity);
     }
 }

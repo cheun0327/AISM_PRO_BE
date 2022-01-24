@@ -5,10 +5,10 @@ import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistSong;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -214,10 +214,6 @@ public class PlaylistService {
                     .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
                     .collect(Collectors.toList());
 
-            Collections.shuffle(result);
-            if (result.size() > 8) {
-                result = Lists.newArrayList(result.subList(0, 8));
-            }
 
 //            // like 추가
 //            result = setLike2PlaylistDTOList(result, userId);
@@ -270,15 +266,39 @@ public class PlaylistService {
         return ResponseEntity.ok(new SongListForAddToPlaylistDTO(isEnough, songDTOList));
     }
 
-    public ResponseEntity<Object> addSongList(AddSongListDTO dto) {
+    public ResponseEntity<SaveSongListResDTO> addSongList(SaveSongListReqDTO reqDTO) {
 
-        Long playlistId = dto.getPlaylistId();
-        List<PlaylistSong> playlistSongList = dto.getSongIdList().stream()
+        Long playlistId = reqDTO.getPlaylistId();
+
+        // 해당 플레이리스트에 곡이 추가되었는지 중복체크
+        List<PlaylistSong> duplicateList = playlistSongRepository.findSavedSongListQD(reqDTO.getPlaylistId(), reqDTO.getSongIdList());
+        List<Song> songList = songRepository.findAllByIdFetchUserQD(reqDTO.getSongIdList());
+
+        List<PlaylistSong> playlistSongList = reqDTO.getSongIdList().stream()
+                .filter(songId -> duplicateList.stream()
+                        .noneMatch(playlistSong -> playlistSong.getSongId().equals(songId))
+                )
                 .map(songId -> new PlaylistSong(playlistId, songId))
                 .collect(Collectors.toList());
 
         playlistSongRepository.saveAll(playlistSongList);
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        SaveSongListResDTO resDTO = new SaveSongListResDTO(
+                // 중복돼서 저장하지 않은 곡 DTO 리스트
+                songList.stream()
+                        .filter(song -> duplicateList.stream()
+                                .anyMatch(playlistSong -> playlistSong.getSongId().equals(song.getSongId())))
+                        .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                        .collect(Collectors.toList()),
+
+                // 저장한 곡 DTO 리스트
+                songList.stream()
+                        .filter(song -> duplicateList.stream()
+                                .noneMatch(playlistSong -> playlistSong.getSongId().equals(song.getSongId())))
+                        .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                        .collect(Collectors.toList())
+        );
+
+        return ResponseEntity.ok(resDTO);
     }
 }

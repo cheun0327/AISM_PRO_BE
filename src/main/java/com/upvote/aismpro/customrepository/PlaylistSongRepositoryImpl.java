@@ -23,4 +23,14 @@ public class PlaylistSongRepositoryImpl implements PlaylistSongRepositoryCustom 
                 )
                 .fetch();
     }
+
+    @Override
+    public List<PlaylistSong> findSavedSongListQD(Long playlistId, List<Long> songIdList) {
+        return query.selectFrom(playlistSong)
+                .where(
+                        playlistSong.playlistId.eq(playlistId),
+                        playlistSong.songId.in(songIdList)
+                )
+                .fetch();
+    }
 }
