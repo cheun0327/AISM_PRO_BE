@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.QPlaylist;
+import com.upvote.aismpro.entity.QPlaylistSong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +22,7 @@ import java.util.List;
 public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     private final JPAQueryFactory query;
     private final QPlaylist playlist = QPlaylist.playlist;
+    private final QPlaylistSong playlistSong = QPlaylistSong.playlistSong;
 
 
     @Override
@@ -37,12 +39,15 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
 
     @Override
     public List<Playlist> findSimilarPlaylistQD(PlaylistDetailDTO playlistDetailDTO) {
-        List<Playlist> pl = query.select(playlist)
-                .from(playlist)
+        List<Playlist> pl = query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.state.eq(true)
                                 .and(
-                                        playlist.songs.size().goe(1)
+                                        playlist.playlistSongs.size().goe(1)
                                 )
                                 .and(
                                         playlist.one.in(playlistDetailDTO.getKeywords())
@@ -55,12 +60,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
         // TODO 개수 제한
         if (pl.isEmpty()) {
             return query
-                    .select(playlist)
-                    .from(playlist)
+                    .selectFrom(playlist)
+                    .innerJoin(playlist.user).fetchJoin()
+                    .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                    .innerJoin(playlistSong.song).fetchJoin()
                     .where(
                             playlist.state.eq(true)
                                     .and(
-                                            playlist.songs.size().goe(1)
+                                            playlist.playlistSongs.size().goe(1)
                                     )
                     )
                     .fetch();
@@ -71,8 +78,11 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     @Override
     public List<Playlist> findNewSimilarPlaylistQD(SongDTO songDTO) {
 
-        List<Playlist> pl = query.select(playlist)
-                .from(playlist)
+        List<Playlist> pl = query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.one.in(songDTO.getTags())
                                 .or(playlist.two.in(songDTO.getTags())
@@ -81,7 +91,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
                 .fetch();
 
         // TODO 개수 제한
-        if (pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+        if (pl.isEmpty()) {
+            return query
+                    .selectFrom(playlist)
+                    .innerJoin(playlist.user).fetchJoin()
+                    .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                    .innerJoin(playlistSong.song).fetchJoin()
+                    .fetch();
+        }
 
         return pl;
     }
@@ -92,8 +109,11 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
         List<String> tags = new ArrayList<>(Arrays.asList(songTagDTO.getOne(), songTagDTO.getTwo(),
                 songTagDTO.getThree(), songTagDTO.getFour(), songTagDTO.getFive(), songTagDTO.getSix()));
 
-        List<Playlist> pl = query.select(playlist)
-                .from(playlist)
+        List<Playlist> pl = query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.one.in(tags)
                                 .or(playlist.two.in(tags))
@@ -101,28 +121,38 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
                 )
                 .fetch();
         // TODO 개수 제한
-        if (pl.isEmpty()) return query.select(playlist).from(playlist).fetch();
+        if (pl.isEmpty()) {
+            return query
+                    .selectFrom(playlist)
+                    .innerJoin(playlist.user).fetchJoin()
+                    .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                    .innerJoin(playlistSong.song).fetchJoin()
+                    .fetch();
+        }
 
         return pl;
     }
 
     @Override
     public List<Playlist> findMyLibraryAllPlaylistQD(Long userId) {
-        List<Playlist> pls = query.select(playlist)
-                .from(playlist)
-                .where(
-                        playlist.user.userId.eq(userId)
-                )
-                .orderBy(playlist.createDate.desc())
+        return query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
+                .where(playlist.user.userId.eq(userId))
+                .orderBy(playlist.playlistId.desc())
                 .fetch();
-        return pls;
     }
 
     @Override
     public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
 
-        return query.select(playlist)
-                .from(playlist)
+        return query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.user.userId.eq(userId)
                                 .and(
@@ -140,13 +170,14 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     @Override
     public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
 
-        QueryResults<Playlist> result = query.select(playlist)
-                .from(playlist)
+        QueryResults<Playlist> result = query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.state.eq(true)
-                                .and(
-                                        playlist.songs.size().goe(1)
-                                )
+                                .and(playlist.playlistSongs.size().goe(1))
                                 .and(
                                         playlist.name.contains(librarySearchDTO.getSearch())
                                                 .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
@@ -155,9 +186,8 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
                                                 .or(playlist.three.contains(librarySearchDTO.getSearch()))
                                 )
                 )
-                .offset(0)
                 .limit(8)
-                .orderBy(playlist.createDate.desc())
+                .orderBy(playlist.playlistId.desc())
                 .fetchResults();
 
         // 검색 결과 없으면 디폴트(최신) 8개 가져오기
@@ -167,7 +197,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
                     .where(
                             playlist.state.eq(true)
                                     .and(
-                                            playlist.songs.size().goe(1)
+                                            playlist.playlistSongs.size().goe(1)
                                     )
                     )
                     .offset(0)
@@ -184,12 +214,15 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     @Override
     public Page<Playlist> findLibraryTotalPlaylistSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
-        QueryResults<Playlist> result = query.select(playlist)
-                .from(playlist)
+        QueryResults<Playlist> result = query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
                 .where(
                         playlist.state.eq(true)
                                 .and(
-                                        playlist.songs.size().goe(1)
+                                        playlist.playlistSongs.size().goe(1)
                                 )
                                 .and(
                                         playlist.name.contains(librarySearchDTO.getSearch())
@@ -201,28 +234,40 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(playlist.createDate.desc())
+                .orderBy(playlist.playlistId.desc())
                 .fetchResults();
 
         // 검색 결과 없으면 디폴트(최신) page size개 가져오기
         if (result.getResults().isEmpty()) {
             System.out.println("토탈 플레이리스트 없음");
-            QueryResults<Playlist> defaultResult = query.select(playlist)
-                    .from(playlist)
+            QueryResults<Playlist> defaultResult = query
+                    .selectFrom(playlist)
+                    .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                    .innerJoin(playlistSong.song).fetchJoin()
                     .where(
                             playlist.state.eq(true)
                                     .and(
-                                            playlist.songs.size().goe(1)
+                                            playlist.playlistSongs.size().goe(1)
                                     )
                     )
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
-                    .orderBy(playlist.createDate.desc())
+                    .orderBy(playlist.playlistId.desc())
                     .fetchResults();
 
             return new PageImpl<>(defaultResult.getResults());
         }
 
         return new PageImpl<>(result.getResults());
+    }
+
+    @Override
+    public List<Playlist> findAllFetchPlaylistSongAndSongQD() {
+        return query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .leftJoin(playlist.playlistSongs, playlistSong).fetchJoin()
+                .innerJoin(playlistSong.song).fetchJoin()
+                .fetch();
     }
 }

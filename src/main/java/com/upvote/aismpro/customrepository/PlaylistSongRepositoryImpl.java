@@ -16,20 +16,21 @@ public class PlaylistSongRepositoryImpl implements PlaylistSongRepositoryCustom 
 
     @Override
     public List<PlaylistSong> findPlaylistBySongIdQD(Long songId) {
-        return query.select(playlistSong)
-                .from(playlistSong)
-                .where(
-                        playlistSong.songId.eq(songId)
-                )
+        return query.selectFrom(playlistSong)
+                .innerJoin(playlistSong.playlist).fetchJoin()
+                .innerJoin(playlistSong.playlist.user).fetchJoin()
+                .where(playlistSong.song.songId.eq(songId))
                 .fetch();
     }
 
     @Override
     public List<PlaylistSong> findSavedSongListQD(Long playlistId, List<Long> songIdList) {
         return query.selectFrom(playlistSong)
+                .innerJoin(playlistSong.song).fetchJoin()
+                .innerJoin(playlistSong.song.user).fetchJoin()
                 .where(
-                        playlistSong.playlistId.eq(playlistId),
-                        playlistSong.songId.in(songIdList)
+                        playlistSong.playlist.playlistId.eq(playlistId),
+                        playlistSong.song.songId.in(songIdList)
                 )
                 .fetch();
     }

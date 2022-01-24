@@ -22,7 +22,7 @@ public class QBuy extends EntityPathBase<Buy> {
 
     public static final QBuy buy = new QBuy("buy");
 
-    public final StringPath id = createString("id");
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QSong song;
 

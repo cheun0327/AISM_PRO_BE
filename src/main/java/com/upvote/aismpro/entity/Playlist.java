@@ -37,12 +37,8 @@ public class Playlist {
     @JoinColumn(name="creatorId", referencedColumnName="userId")
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "playlist_song",
-            joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
-            inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
-    )
-    private List<Song> songs;
+    @OneToMany(mappedBy = "playlist")
+    private List<PlaylistSong> playlistSongs;
 
     @Column(name = "one")
     private String one;

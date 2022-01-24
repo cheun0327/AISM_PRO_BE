@@ -19,4 +19,5 @@ public interface PlaylistRepositoryCustom {
     // Library 플리이리스트 검색 결과
     public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO);
     public Page<Playlist> findLibraryTotalPlaylistSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO);
+    List<Playlist> findAllFetchPlaylistSongAndSongQD();
 }

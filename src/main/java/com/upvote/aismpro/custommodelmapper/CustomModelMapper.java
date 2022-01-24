@@ -5,12 +5,10 @@ import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.SongRepository;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -177,7 +174,7 @@ public class CustomModelMapper {
     Converter<Playlist, Integer> playlistSongCntCvt = new Converter<Playlist, Integer>() {
         @Override
         public Integer convert(MappingContext<Playlist, Integer> context) {
-            return context.getSource().getSongs().size();
+            return context.getSource().getPlaylistSongs().size();
         }
     };
 
@@ -194,7 +191,7 @@ public class CustomModelMapper {
             }
             AudioFormat af = aff.getFormat();
             double playTime = (double) aff.getFrameLength() / af.getFrameRate() * 3.7;
-            return (int) Math.ceil((context.getSource().getSongs().size() * (int) Math.ceil(playTime)) / 60);
+            return (int) Math.ceil((context.getSource().getPlaylistSongs().size() * (int) Math.ceil(playTime)) / 60);
         }
     };
 
@@ -206,19 +203,19 @@ public class CustomModelMapper {
             System.out.println(context.getSource().getImgFile());
             if (context.getSource().getImgFile() == null) {
                 // 음원 없음
-                if (context.getSource().getSongs().isEmpty()) {
+                if (context.getSource().getPlaylistSongs().isEmpty()) {
                     playlistImgs.add("/playlistImg/defaultPlaylist.png");
                 }
                 // 음원 4개 미만
                 else {
-                    if (context.getSource().getSongs().size() < 4) {
+                    if (context.getSource().getPlaylistSongs().size() < 4) {
                         // 랜덤 값은 안넣음. 새로고침 할때마다 바뀌면 정신 없을 것 같아서
-                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        List<String> songs = context.getSource().getPlaylistSongs().stream().map(s -> s.getSong().getImgFile()).collect(Collectors.toList());
                         playlistImgs.add("/songImg/" + songs.get(0));
                     }
                     // 음원 4개 이상
                     else {
-                        List<String> songs = context.getSource().getSongs().stream().map(s -> s.getImgFile()).collect(Collectors.toList());
+                        List<String> songs = context.getSource().getPlaylistSongs().stream().map(s -> s.getSong().getImgFile()).collect(Collectors.toList());
                         playlistImgs = songs.subList(0, 4).stream().map(img -> "/songImg/" + img).collect(Collectors.toList());
                     }
                 }

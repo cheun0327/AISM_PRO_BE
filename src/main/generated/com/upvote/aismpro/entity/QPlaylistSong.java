@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,22 +18,34 @@ public class QPlaylistSong extends EntityPathBase<PlaylistSong> {
 
     private static final long serialVersionUID = -1598549005L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QPlaylistSong playlistSong = new QPlaylistSong("playlistSong");
 
-    public final NumberPath<Long> playlistId = createNumber("playlistId", Long.class);
+    public final QPlaylist playlist;
 
-    public final NumberPath<Long> songId = createNumber("songId", Long.class);
+    public final QSong song;
 
     public QPlaylistSong(String variable) {
-        super(PlaylistSong.class, forVariable(variable));
+        this(PlaylistSong.class, forVariable(variable), INITS);
     }
 
     public QPlaylistSong(Path<? extends PlaylistSong> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QPlaylistSong(PathMetadata metadata) {
-        super(PlaylistSong.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QPlaylistSong(PathMetadata metadata, PathInits inits) {
+        this(PlaylistSong.class, metadata, inits);
+    }
+
+    public QPlaylistSong(Class<? extends PlaylistSong> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.playlist = inits.isInitialized("playlist") ? new QPlaylist(forProperty("playlist"), inits.get("playlist")) : null;
+        this.song = inits.isInitialized("song") ? new QSong(forProperty("song"), inits.get("song")) : null;
     }
 
 }
