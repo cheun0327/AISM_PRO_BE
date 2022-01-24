@@ -32,7 +32,7 @@ public class QPlaylist extends EntityPathBase<Playlist> {
 
     public final NumberPath<Long> playlistId = createNumber("playlistId", Long.class);
 
-    public final ListPath<Song, QSong> songs = this.<Song, QSong>createList("songs", Song.class, QSong.class, PathInits.DIRECT2);
+    public final ListPath<PlaylistSong, QPlaylistSong> playlistSongs = this.<PlaylistSong, QPlaylistSong>createList("playlistSongs", PlaylistSong.class, QPlaylistSong.class, PathInits.DIRECT2);
 
     public final BooleanPath state = createBoolean("state");
 

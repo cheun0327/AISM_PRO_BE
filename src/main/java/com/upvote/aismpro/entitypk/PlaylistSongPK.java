@@ -9,19 +9,19 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlaylistSongPK implements Serializable {
-    private Long playlistId;
-    private Long songId;
+    private Long playlist;
+    private Long song;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlaylistSongPK that = (PlaylistSongPK) o;
-        return playlistId.equals(that.playlistId) && songId.equals(that.songId);
+        return playlist.equals(that.playlist) && song.equals(that.song);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(playlistId, songId);
+        return Objects.hash(playlist, song);
     }
 }

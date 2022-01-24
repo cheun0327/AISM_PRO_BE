@@ -1,37 +1,39 @@
 package com.upvote.aismpro.entity;
 
 import com.upvote.aismpro.entitypk.PlaylistSongPK;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 
-@Entity
+@Getter
 @NoArgsConstructor
-@Table(name = "playlist_song")
-@Data
 @IdClass(PlaylistSongPK.class)
+@Table(name = "playlist_song")
+@Entity
 public class PlaylistSong implements Persistable<PlaylistSongPK> {
     @Id
-    @Column(name = "playlistId", nullable = false)
-    private Long playlistId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "playlistId", referencedColumnName = "playlistId", nullable = false)
+    private Playlist playlist;
 
     @Id
-    @Column(name = "songId", nullable = false)
-    private Long songId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "songId", referencedColumnName = "songId", nullable = false)
+    private Song song;
 
     @Transient
     private boolean isNew = true;
 
-    public PlaylistSong(Long playlistId, Long songId) {
-        this.playlistId = playlistId;
-        this.songId = songId;
+    public PlaylistSong(Playlist playlist, Song song) {
+        this.playlist = playlist;
+        this.song = song;
     }
 
     @Override
     public PlaylistSongPK getId() {
-        return new PlaylistSongPK(playlistId, songId);
+        return new PlaylistSongPK(playlist.getPlaylistId(), song.getSongId());
     }
 
     @Override
