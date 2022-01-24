@@ -4,9 +4,11 @@ import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
+import com.upvote.aismpro.entity.PlaylistSong;
 import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,7 @@ public class PlaylistService {
     private final CreateRepository createRepository;
     private final CustomModelMapper modelMapper;
 
-    public void createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
+    public Long createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
         try {
             Playlist playlist = modelMapper.playlistSaveDTO2playlist().map(playlistSaveDTO, Playlist.class);
 
@@ -50,6 +52,7 @@ public class PlaylistService {
                 playlistRepository.save(savedPlaylist);
             }
 
+            return savedPlaylist.getPlaylistId();
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
@@ -265,5 +268,17 @@ public class PlaylistService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new SongListForAddToPlaylistDTO(isEnough, songDTOList));
+    }
+
+    public ResponseEntity<Object> addSongList(AddSongListDTO dto) {
+
+        Long playlistId = dto.getPlaylistId();
+        List<PlaylistSong> playlistSongList = dto.getSongIdList().stream()
+                .map(songId -> new PlaylistSong(playlistId, songId))
+                .collect(Collectors.toList());
+
+        playlistSongRepository.saveAll(playlistSongList);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
