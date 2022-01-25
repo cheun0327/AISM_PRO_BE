@@ -29,7 +29,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
         return query
                 .selectFrom(playlist).distinct()
                 .leftJoin(playlist.songs, song).fetchJoin()
-                .innerJoin(song.user).fetchJoin()
+                .leftJoin(song.user).fetchJoin()
                 .where(
                         playlist.playlistId.eq(playlistId),
                         song.deletedDate.isNull()
