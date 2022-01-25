@@ -96,7 +96,7 @@ public class PlaylistController {
 
     // 특정 플레이리스트 디테일 정보 가져오기
     @GetMapping("/playlist/detail/{playlistId}")
-    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") Long playlistId) throws Exception {
+    public ResponseEntity<PlaylistDetailDTO> getPlaylistDetail(@PathVariable("playlistId") Long playlistId) {
         try {
             PlaylistDetailDTO playlistDetailDTO = playlistService.getPlayListDetail(playlistId);
 

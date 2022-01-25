@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PlaylistRepositoryCustom {
-    public List<Playlist> findAllPlaylistQD();
+    Playlist findByIdFetchSongQD(Long playlistId);
     public List<Playlist> findSimilarPlaylistQD(PlaylistDetailDTO playlistDetailDTO);
     public List<Playlist> findNewSimilarPlaylistQD(SongDTO songDTO);
     public List<Playlist> findNewSimilarPlaylistByTagsQD(SongTagDTO songTagDTO);

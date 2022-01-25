@@ -3,6 +3,7 @@ package com.upvote.aismpro.customrepository;
 import com.google.api.client.util.Lists;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
@@ -124,7 +125,71 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
     public List<Song> findAllByIdFetchUserQD(List<Long> songIdList) {
         return query.selectFrom(song)
                 .innerJoin(song.user).fetchJoin()
-                .where(song.songId.in(songIdList))
+                .where(
+                        song.songId.in(songIdList),
+                        song.deletedDate.isNull()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findAllByUserIdFetchUserQD(Long userId) {
+        return query
+                .selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
+                .where(
+                        song.user.userId.eq(userId),
+                        song.deletedDate.isNull()
+                )
+                .orderBy(song.songId.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Song> searchSongListQD(Long userId, String searchStr) {
+        return query
+                .selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
+                .where(
+                        song.user.userId.eq(userId),
+                        song.deletedDate.isNull(),
+                        song.songName.contains(searchStr)
+                                .or(song.one.contains(searchStr))
+                                .or(song.two.contains(searchStr))
+                                .or(song.three.contains(searchStr))
+                                .or(song.four.contains(searchStr))
+                                .or(song.five.contains(searchStr))
+                                .or(song.six.contains(searchStr))
+                )
+                .orderBy(song.songId.desc())
+                .fetch();
+    }
+
+    // 유저가 작곡한 곡이 3개 이상인지 확인
+    @Override
+    public boolean isEnoughAddToPlaylistQD(Long userId) {
+        long songCount = query
+                .selectFrom(song)
+                .where(
+                        song.user.userId.eq(userId),
+                        song.deletedDate.isNull()
+                )
+                .fetchCount();
+
+        return songCount >= 3;
+    }
+
+    @Override
+    public List<Song> findSongListByUserIdLimit3QD(Long userId) {
+        return query
+                .selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
+                .where(
+                        song.deletedDate.isNull(),
+                        userId != null ? song.user.userId.eq(userId) : null
+                )
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(3)
                 .fetch();
     }
 
@@ -159,12 +224,14 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
 
     //// ㄹㅏ이브러리 검색 전체보기
     private Page<Song> pagingSearchOrderByDate(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
-        QueryResults<Song> results = query.select(song)
-                .from(song)
+        QueryResults<Song> results = query
+                .selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
                 .where(
+                        song.deletedDate.isNull(),
                         searchWhere(librarySearchDTO)
                 )
-                .orderBy(song.createDate.desc())
+                .orderBy(song.songId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -173,9 +240,11 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
     }
 
     private Page<Song> pagingSearch(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
-        QueryResults<Song> results = query.select(song)
-                .from(song)
+        QueryResults<Song> results = query
+                .selectFrom(song)
+                .innerJoin(song.user).fetchJoin()
                 .where(
+                        song.deletedDate.isNull(),
                         searchWhere(librarySearchDTO)
                 )
                 .offset(pageable.getOffset())

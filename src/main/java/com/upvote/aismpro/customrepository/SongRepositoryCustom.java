@@ -17,4 +17,8 @@ public interface SongRepositoryCustom {
     public List<User> findLibraryArtistSearchQD(String search);
     public List<User> findLibraryTotalArtistSearchQD(Pageable pageable, String search);
     List<Song> findAllByIdFetchUserQD(List<Long> songIdList);
+    List<Song> findAllByUserIdFetchUserQD(Long userId);
+    List<Song> searchSongListQD(Long userId, String searchStr);
+    boolean isEnoughAddToPlaylistQD(Long userId);
+    List<Song> findSongListByUserIdLimit3QD(Long userId);
 }

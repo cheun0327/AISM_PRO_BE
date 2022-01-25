@@ -3,22 +3,19 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
 import com.upvote.aismpro.service.UserService;
-import net.bytebuddy.pool.TypePool;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.ws.Response;
-import java.io.File;
 import java.io.IOException;
 
+@RequiredArgsConstructor
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     // 아티스트 디테일 정보 가져오기
     @GetMapping("/user/detail/{userID}")
