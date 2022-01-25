@@ -6,7 +6,10 @@ import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistSong;
 import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.repository.*;
+import com.upvote.aismpro.repository.PlaylistRepository;
+import com.upvote.aismpro.repository.PlaylistSongRepository;
+import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 @Service
 public class PlaylistService {
 
+    private final UserService userService;
     private final UserRepository userRepository;
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
     private final SongRepository songRepository;
-    private final CreateRepository createRepository;
     private final CustomModelMapper modelMapper;
 
     public Long createPlaylist(PlaylistSaveDTO playlistSaveDTO, MultipartFile file) throws Exception {
@@ -93,7 +93,23 @@ public class PlaylistService {
     // playlist detail 가져오기
     public PlaylistDetailDTO getPlayListDetail(Long playlistId) throws Exception {
         try {
-            return modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
+            Playlist playlist = playlistRepository.findByIdFetchSongQD(playlistId);
+            List<Song> songs = playlist.getSongs();
+
+            List<String> firstKeywords = songs.stream().map(Song::getTwo).collect(Collectors.toList());
+            List<String> secondKeywords = songs.stream().map(Song::getThree).collect(Collectors.toList());
+            List<String> thirdKeywords = songs.stream().map(Song::getFour).collect(Collectors.toList());
+
+            List<String> keywords = Arrays.asList(
+                    userService.getMostFrequentTags(firstKeywords, 1),
+                    userService.getMostFrequentTags(secondKeywords, 1),
+                    userService.getMostFrequentTags(thirdKeywords, 1)
+            );
+
+            PlaylistDetailDTO dto = modelMapper.toPlaylistDetailDTO().map(playlist, PlaylistDetailDTO.class);
+            dto.setKeywords(keywords);
+
+            return dto;
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new NoSuchElementException();
@@ -254,12 +270,12 @@ public class PlaylistService {
         Long userId = SecurityUtil.getCurrentUserId();
 
         // 유저가 작곡한 곡이 3곡 이상인지 확인
-        boolean isEnough = createRepository.isEnoughAddToPlaylistQD(userId);
+        boolean isEnough = songRepository.isEnoughAddToPlaylistQD(userId);
 
         // 3곡 이상이면 해당 유저가 작곡한 곡 중 랜덤 3곡
         // 3곡 미만이면 다른 유저가 작곡한 전체 곡 중 랜덤 3곡
         // song -> songDTO 변환
-        List<SongDTO> songDTOList = createRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
+        List<SongDTO> songDTOList = songRepository.findSongListByUserIdLimit3QD(isEnough ? userId : null).stream()
                 .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
                 .collect(Collectors.toList());
 

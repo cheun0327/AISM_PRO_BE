@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.QPlaylist;
+import com.upvote.aismpro.entity.QSong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,18 +22,19 @@ import java.util.List;
 public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
     private final JPAQueryFactory query;
     private final QPlaylist playlist = QPlaylist.playlist;
-
+    private final QSong song = QSong.song;
 
     @Override
-    public List<Playlist> findAllPlaylistQD() {
-        List<Playlist> pls = query.select(playlist)
-                .from(playlist)
+    public Playlist findByIdFetchSongQD(Long playlistId) {
+        return query
+                .selectFrom(playlist).distinct()
+                .leftJoin(playlist.songs, song).fetchJoin()
+                .innerJoin(song.user).fetchJoin()
                 .where(
-                        playlist.state.eq(true)
+                        playlist.playlistId.eq(playlistId),
+                        song.deletedDate.isNull()
                 )
-                .orderBy(playlist.createDate.desc())
-                .fetch();
-        return pls;
+                .fetchOne();
     }
 
     @Override

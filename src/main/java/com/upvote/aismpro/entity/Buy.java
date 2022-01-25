@@ -13,9 +13,9 @@ import javax.persistence.*;
 public class Buy {
 
     @Id
-    @Column(name="buyId", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private String id;
+    @Column(name = "buyId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "songId")
@@ -23,7 +23,7 @@ public class Buy {
     private Song song;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="creatorId", referencedColumnName="userId")
+    @JoinColumn(name = "creatorId", referencedColumnName = "userId")
     @JsonManagedReference
     private User user;
 

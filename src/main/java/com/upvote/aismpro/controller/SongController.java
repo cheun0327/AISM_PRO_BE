@@ -7,10 +7,10 @@ import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.security.SecurityUtil;
-import com.upvote.aismpro.service.CreateService;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
 import com.upvote.aismpro.vo.SongSaveVO;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 public class SongController {
 
     private final SongService songService;
-    private final CreateService createService;
     private final PlaylistService playlistService;
 
     ////////////////////////   song create => MEMBER(credit>0)   ////////////////////////
@@ -57,11 +56,7 @@ public class SongController {
             // song wav file tmp에서 이동
             // song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
 
-            // create 테이블에 동기화
-            createService.saveSong(song.getSongId());
-
             return new ResponseEntity<>(song.getSongId(), HttpStatus.CREATED);
-
         } catch (Exception e) {
             e.printStackTrace();
             if (song != null) songService.deleteSong(song.getSongId());
@@ -147,5 +142,21 @@ public class SongController {
     @GetMapping("/song/like/count/{songId}")
     public ResponseEntity<Integer> getSongLikeCnt(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(songService.getLikeCnt(songId), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "해당 사용자가 작곡한 곡 리스트 불러오기")
+    @GetMapping("/create")
+    public ResponseEntity<List<SongDTO>> getSongList() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<SongDTO> dtoList = songService.setLike2SongDTOList(songService.getSongListByUserId(userId), userId);
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @ApiOperation(value = "해당 사용자가 작곡한 곡 리스트 불러오기")
+    @GetMapping("/create/{userID}")
+    public ResponseEntity<List<SongDTO>> getCreateListByUserID(@PathVariable("userID") Long userId) {
+        List<SongDTO> dtoList = songService.setLike2SongDTOList(songService.getSongListByUserId(userId), userId);
+        return ResponseEntity.ok(dtoList);
+
     }
 }

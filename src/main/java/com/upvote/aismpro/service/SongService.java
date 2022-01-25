@@ -2,11 +2,13 @@ package com.upvote.aismpro.service;
 
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
+import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
 import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.exception.ApiException;
 import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
@@ -20,12 +22,14 @@ import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -159,7 +163,7 @@ public class SongService implements SongServiceInter {
         }
     }
 
-    public List<SongDTO> setLike2SongDTOList(List<SongDTO> songDTOList, Long userId) throws Exception {
+    public List<SongDTO> setLike2SongDTOList(List<SongDTO> songDTOList, Long userId) {
         try {
             List<Long> likes = likeRepository.findAllByUser_UserId(userId)
                     .stream()
@@ -172,7 +176,10 @@ public class SongService implements SongServiceInter {
 
             return songDTOList;
         } catch (Exception e) {
-            throw new Exception();
+            throw new ApiException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
+            );
         }
     }
 
@@ -180,5 +187,24 @@ public class SongService implements SongServiceInter {
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
+    }
+
+    public List<SongDTO> getSongListByUserId(Long userId) {
+        return songRepository.findAllByUserIdFetchUserQD(userId).stream()
+                .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<SongDTO> searchSongList(MyLibrarySearchDTO reqDto) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String searchStr = reqDto.getSearch();
+
+        return songRepository.searchSongListQD(userId, searchStr).stream()
+                .map(song -> modelMapper.toSongDTO().map(song, SongDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public void deleteSongs(List<Long> songIdList) {
+        songRepository.deleteAllInSongIdList(LocalDateTime.now(), songIdList);
     }
 }

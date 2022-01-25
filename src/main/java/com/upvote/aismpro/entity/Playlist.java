@@ -40,7 +40,7 @@ public class Playlist {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "playlist_song",
             joinColumns = @JoinColumn(name = "playlistId", referencedColumnName="playlistId"),
-            inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="songId")
+            inverseJoinColumns = @JoinColumn(name = "songId", referencedColumnName="song_id")
     )
     private List<Song> songs;
 

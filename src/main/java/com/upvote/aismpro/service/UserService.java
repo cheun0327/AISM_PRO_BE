@@ -3,19 +3,21 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
-import com.upvote.aismpro.entity.Create;
+import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.CreateRepository;
+import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -24,24 +26,27 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CreateRepository createRepository;
+    private final SongRepository songRepository;
     private final CustomModelMapper modelMapper;
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ArtistDetailDTO getArtistDetailInfo(Long userID) throws Exception {
         try {
             User user = userRepository.getById(userID);
 
-            List<Create> creates = createRepository.findAllByUser_UserIdOrderBySong_CreateDateDesc(userID);
+            List<Song> songs = songRepository.findAllByUserIdFetchUserQD(userID);
 
-            List<String> genres = creates.stream().map(song -> song.getSong().getOne()).collect(Collectors.toList());
-            List<String> firstKeywords = creates.stream().map(song -> song.getSong().getTwo()).collect(Collectors.toList());
-            List<String> secondKeywords = creates.stream().map(song -> song.getSong().getThree()).collect(Collectors.toList());
-            List<String> thirdKeywords = creates.stream().map(song -> song.getSong().getFour()).collect(Collectors.toList());
+            List<String> genres = songs.stream().map(Song::getOne).collect(Collectors.toList());
+            List<String> firstKeywords = songs.stream().map(Song::getTwo).collect(Collectors.toList());
+            List<String> secondKeywords = songs.stream().map(Song::getThree).collect(Collectors.toList());
+            List<String> thirdKeywords = songs.stream().map(Song::getFour).collect(Collectors.toList());
 //            List<String> fourthKeywords = creates.stream().map(song -> song.getSong().getFive()).collect(Collectors.toList());
 //            List<String> sixthKeywords = creates.stream().map(song -> song.getSong().getSix()).collect(Collectors.toList());
 
-            List<String> keywords = new ArrayList<>(Arrays.asList(getMostFrequentTags(genres, 1), getMostFrequentTags(firstKeywords, 1), getMostFrequentTags(secondKeywords, 1), getMostFrequentTags(thirdKeywords, 1)));
+            List<String> keywords = Arrays.asList(
+                    getMostFrequentTags(genres, 1),
+                    getMostFrequentTags(firstKeywords, 1),
+                    getMostFrequentTags(secondKeywords, 1),
+                    getMostFrequentTags(thirdKeywords, 1));
 
             return new ArtistDetailDTO(user.getUserId(), user.getNickname(), user.getProfile(), keywords);
         } catch (Exception e) {
@@ -51,7 +56,12 @@ public class UserService {
     }
 
     public String getMostFrequentTags(List<String> genres, int cntLimit) {
-        return genres.stream().collect(Collectors.groupingBy(genre -> genre, Collectors.counting())).entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).map(Map.Entry::getKey).limit(cntLimit).reduce("", String::concat);
+        return genres.stream()
+                .collect(Collectors.groupingBy(genre -> genre, Collectors.counting())).entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .map(Map.Entry::getKey)
+                .limit(cntLimit)
+                .reduce("", String::concat);
     }
 
     // email 중복 체크
@@ -75,12 +85,12 @@ public class UserService {
         try {
             final User fetchedUser = userRepository.findById(userId).get();
 
-            if (user.getEmail() != null)     fetchedUser.setEmail(user.getEmail());
-            if (user.getNickname() != null)  fetchedUser.setNickname(user.getNickname());
+            if (user.getEmail() != null) fetchedUser.setEmail(user.getEmail());
+            if (user.getNickname() != null) fetchedUser.setNickname(user.getNickname());
             userRepository.save(fetchedUser);
 
             return modelMapper.toUserDTO().map(fetchedUser, UserDTO.class);
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }
@@ -100,7 +110,7 @@ public class UserService {
 
             File profileDir = new File(dirPath);
 
-            if (!profileDir.exists())   profileDir.mkdir();
+            if (!profileDir.exists()) profileDir.mkdir();
             file.transferTo(new File(dirPath + "/" + imgName));
 
             user = userRepository.save(user.setProfile(imgFolder + "/" + imgName));
