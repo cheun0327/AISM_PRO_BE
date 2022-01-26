@@ -3,6 +3,7 @@ package com.upvote.aismpro.controller;
 import com.upvote.aismpro.dto.MyLibraryDeleteDTO;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.PlaylistDTO;
+import com.upvote.aismpro.dto.PlaylistDetailDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.*;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class MyLibraryController {
     private final SongService songService;
 
     @GetMapping("/my-library/playlist")
-    public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID() {
+    public ResponseEntity<List<PlaylistDetailDTO>> getPlaylistByUserID() {
         try {
             Long userId = SecurityUtil.getCurrentUserId();
             if (userId < 0) throw new Exception();

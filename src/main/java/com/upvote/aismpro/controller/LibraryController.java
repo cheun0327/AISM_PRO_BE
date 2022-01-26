@@ -1,9 +1,6 @@
 package com.upvote.aismpro.controller;
 
-import com.upvote.aismpro.dto.ArtistDTO;
-import com.upvote.aismpro.dto.LibrarySearchDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -82,10 +79,10 @@ public class LibraryController {
     }
 
     @PostMapping("/library/search/total/playlist")
-    public ResponseEntity<List<PlaylistDTO>> playlistTotalLibrarySearch(final Pageable pageable,
-                                                                        @RequestBody LibrarySearchDTO librarySearchDTO) {
+    public ResponseEntity<List<PlaylistDetailDTO>> playlistTotalLibrarySearch(final Pageable pageable,
+                                                                              @RequestBody LibrarySearchDTO librarySearchDTO) {
         try {
-            List<PlaylistDTO> playlistDTOList = libraryService.getTotalPlaylistSearchResult(pageable, librarySearchDTO);
+            List<PlaylistDetailDTO> playlistDTOList = libraryService.getTotalPlaylistSearchResult(pageable, librarySearchDTO);
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

@@ -54,7 +54,7 @@ public class PlaylistController {
     ////////////////////////   playlist read   ////////////////////////
     // 유저의 플레이리스트 리스트 가져오기
     @GetMapping("/playlist")
-    public ResponseEntity<List<PlaylistDTO>> getMyPlaylist() {
+    public ResponseEntity<List<PlaylistDetailDTO>> getMyPlaylist() {
         try {
             Long userId = SecurityUtil.getCurrentUserId();
             if (userId == -1) throw new Exception();
@@ -67,7 +67,7 @@ public class PlaylistController {
     }
 
     @GetMapping("/playlist/{userID}")
-    public ResponseEntity<List<PlaylistDTO>> getPlaylistByUserID(@PathVariable("userID") Long userId) {
+    public ResponseEntity<List<PlaylistDetailDTO>> getPlaylistByUserID(@PathVariable("userID") Long userId) {
         try {
             if (userId == -1) throw new Exception();
             return new ResponseEntity<>(playlistService.getUserPlaylist(userId), HttpStatus.OK);
@@ -79,11 +79,9 @@ public class PlaylistController {
 
     // 해당 음원이 저장된 플레이리스트 찾기
     @GetMapping("/playlist/saved/{songId}")
-    public ResponseEntity<List<PlaylistDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
+    public ResponseEntity<List<PlaylistDetailDTO>> getSavedPlaylist(@PathVariable("songId") Long songId) {
         try {
-            List<PlaylistDTO> playlistDTOList = playlistService.getSavedPlaylistBySongId(songId);
-            System.out.println("저장된 플리 " + playlistDTOList.size());
-            Long userId = SecurityUtil.getCurrentUserId();
+            List<PlaylistDetailDTO> playlistDTOList = playlistService.getSavedPlaylistBySongId(songId);
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
 
@@ -100,8 +98,6 @@ public class PlaylistController {
         try {
             PlaylistDetailDTO playlistDetailDTO = playlistService.getPlayListDetail(playlistId);
 
-            Long userId = SecurityUtil.getCurrentUserId();
-
             return new ResponseEntity<>(playlistDetailDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -112,11 +108,9 @@ public class PlaylistController {
 
     // 플레이리스트 디테일 페이지에서 비슷한 플레이 리스트 가져오기
     @GetMapping("/playlist/similar/{playlistId}")
-    public ResponseEntity<List<PlaylistDTO>> getSimilarPlaylist(@PathVariable("playlistId") Long playlistId) throws Exception {
+    public ResponseEntity<List<PlaylistDetailDTO>> getSimilarPlaylist(@PathVariable("playlistId") Long playlistId) throws Exception {
         try {
-            List<PlaylistDTO> playlistDTOList = playlistService.getSimilarPlaylist(playlistId);
-
-            Long userId = SecurityUtil.getCurrentUserId();
+            List<PlaylistDetailDTO> playlistDTOList = playlistService.getSimilarPlaylist(playlistId);
 
             return new ResponseEntity<>(playlistDTOList, HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -128,9 +122,9 @@ public class PlaylistController {
 
     // 곡 디테일에서 비슷한 플레이 리스트 가져오기
     @GetMapping("/playlist/similar/song/{songId}")
-    public ResponseEntity<List<PlaylistDTO>> getNewSimilarPlaylist(@PathVariable("songId") Long songId) throws Exception {
+    public ResponseEntity<List<PlaylistDetailDTO>> getNewSimilarPlaylist(@PathVariable("songId") Long songId) throws Exception {
         try {
-            List<PlaylistDTO> playlistDTOList = playlistService.getSimilarPlaylistBySong(songId);
+            List<PlaylistDetailDTO> playlistDTOList = playlistService.getSimilarPlaylistBySong(songId);
 
             Long userId = SecurityUtil.getCurrentUserId();
 

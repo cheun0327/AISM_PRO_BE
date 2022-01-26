@@ -1,10 +1,7 @@
 package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
-import com.upvote.aismpro.dto.ArtistDTO;
-import com.upvote.aismpro.dto.LibrarySearchDTO;
-import com.upvote.aismpro.dto.PlaylistDTO;
-import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.dto.*;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
@@ -61,7 +58,7 @@ public class LibraryService {
 
         try {
             // song type 있으면 플레이리스트 가져옴. -> playlist like 적용 안한 버전
-            List<PlaylistDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
+            List<PlaylistDetailDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
             map.put("playlist", playlists);
 
             // 검색 결과에 해당하는 song 리스트 가져옴
@@ -185,14 +182,14 @@ public class LibraryService {
 
     // Library 검색 결과 가져오기(랜더링)
     @Transactional
-    public List<PlaylistDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
+    public List<PlaylistDetailDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
 
         try {
             // 15개 제한해서 가져옴
             Page<Playlist> pls = playlistRepository.findLibraryPlaylistSearchQD(librarySearchDTO);
             return pls
                     .stream()
-                    .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                    .map(pl -> modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,11 +216,11 @@ public class LibraryService {
 
     // playlist 전체 보기
     @Transactional
-    public List<PlaylistDTO> getTotalPlaylistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
+    public List<PlaylistDetailDTO> getTotalPlaylistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
         return playlistRepository.findLibraryTotalPlaylistSearchQD(pageable, librarySearchDTO)
                 .stream()
-                .map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+                .map(pl -> modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class))
                 .collect(Collectors.toList());
 
     }
