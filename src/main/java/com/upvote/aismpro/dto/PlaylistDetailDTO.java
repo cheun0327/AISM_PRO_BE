@@ -16,5 +16,7 @@ public class PlaylistDetailDTO {
     private List<String> playlistImgs;
     private List<SongDTO> songs;
     private List<String> keywords;
+    private Integer playlistSongCount;
+    private Integer playlistPlaytime;
 }
 

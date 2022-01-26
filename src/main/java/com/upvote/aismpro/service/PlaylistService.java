@@ -60,12 +60,12 @@ public class PlaylistService {
     }
 
     // user 별 play list 가져오기
-    public List<PlaylistDTO> getPlayList(Long userId) throws Exception {
+    public List<PlaylistDetailDTO> getPlayList(Long userId) throws Exception {
         try {
             // playlist like
-            List<PlaylistDTO> playlistDTOList = new ArrayList<>();
+            List<PlaylistDetailDTO> playlistDTOList = new ArrayList<>();
             for (Playlist pl : playlistRepository.findAll()) {
-                PlaylistDTO dto = modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class);
+                PlaylistDetailDTO dto = modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class);
                 playlistDTOList.add(dto);
             }
             return playlistDTOList;
@@ -78,10 +78,10 @@ public class PlaylistService {
         }
     }
 
-    public List<PlaylistDTO> getUserPlaylist(Long userId) throws Exception {
+    public List<PlaylistDetailDTO> getUserPlaylist(Long userId) throws Exception {
         try {
-            List<PlaylistDTO> playlistDTOList = playlistRepository.findMyLibraryAllPlaylistQD(userId)
-                    .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+            List<PlaylistDetailDTO> playlistDTOList = playlistRepository.findMyLibraryAllPlaylistQD(userId)
+                    .stream().map(pl -> modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class))
                     .collect(Collectors.toList());
             return playlistDTOList;
         } catch (Exception e) {
@@ -154,13 +154,13 @@ public class PlaylistService {
 //    }
 
     // 플레이리스트와 비슷한 플레이리스트 가져오기
-    public List<PlaylistDTO> getSimilarPlaylist(Long playlistId) throws Exception {
+    public List<PlaylistDetailDTO> getSimilarPlaylist(Long playlistId) throws Exception {
         PlaylistDetailDTO pl = modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playlistId), PlaylistDetailDTO.class);
 
         List<Playlist> similar_li = playlistRepository.findSimilarPlaylistQD(pl);
         try {
             return similar_li
-                    .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
+                    .stream().map(Playlist -> modelMapper.toPlaylistDetailDTO().map(Playlist, PlaylistDetailDTO.class))
                     .collect(Collectors.toList());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
@@ -172,11 +172,11 @@ public class PlaylistService {
     }
 
     // 음원과 비슷한 플레이리스트 가져오기
-    public List<PlaylistDTO> getSimilarPlaylistBySong(Long songId) throws Exception {
+    public List<PlaylistDetailDTO> getSimilarPlaylistBySong(Long songId) throws Exception {
         SongDTO songDTO = modelMapper.toSongDTO().map(songRepository.getById(songId), SongDTO.class);
         try {
-            List<PlaylistDTO> similar = playlistRepository.findNewSimilarPlaylistQD(songDTO)
-                    .stream().map(Playlist -> modelMapper.toPlaylistDTO().map(Playlist, PlaylistDTO.class))
+            List<PlaylistDetailDTO> similar = playlistRepository.findNewSimilarPlaylistQD(songDTO)
+                    .stream().map(Playlist -> modelMapper.toPlaylistDetailDTO().map(Playlist, PlaylistDetailDTO.class))
                     .collect(Collectors.toList());
 
             Collections.shuffle(similar);
@@ -211,9 +211,9 @@ public class PlaylistService {
     }
 
     // 해당 음원이 저장된 플레이리스트 찾기
-    public List<PlaylistDTO> getSavedPlaylistBySongId(Long songId) throws Exception {
-        List<PlaylistDTO> savedPlaylists = playlistSongRepository.findPlaylistBySongIdQD(songId)
-                .stream().map(playListSong -> modelMapper.toPlaylistDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDTO.class))
+    public List<PlaylistDetailDTO> getSavedPlaylistBySongId(Long songId) throws Exception {
+        List<PlaylistDetailDTO> savedPlaylists = playlistSongRepository.findPlaylistBySongIdQD(songId)
+                .stream().map(playListSong -> modelMapper.toPlaylistDetailDTO().map(playlistRepository.getById(playListSong.getPlaylistId()), PlaylistDetailDTO.class))
                 .collect(Collectors.toList());
 
         if (savedPlaylists.isEmpty()) throw new NoSuchElementException();
@@ -222,18 +222,13 @@ public class PlaylistService {
     }
 
     // MyLibrary 검색 결과 가져오기
-    public List<PlaylistDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
+    public List<PlaylistDetailDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
         try {
             // TODO 검색어 포함된 플레이리스트 찾기 - 플레이리스트명, 키워드 123,
-            List<PlaylistDTO> result = playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
-                    .stream().map(pl -> modelMapper.toPlaylistDTO().map(pl, PlaylistDTO.class))
+            List<PlaylistDetailDTO> result = playlistRepository.findMyLibraryPlaylistSearchQD(userId, myLibrarySearchDTO)
+                    .stream().map(pl -> modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class))
                     .collect(Collectors.toList());
-
-
-//            // like 추가
-//            result = setLike2PlaylistDTOList(result, userId);
-//            System.out.println(result);
 
             return result;
 

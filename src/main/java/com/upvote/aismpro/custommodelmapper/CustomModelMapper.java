@@ -5,24 +5,15 @@ import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
-import com.upvote.aismpro.repository.SongRepository;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -184,17 +175,13 @@ public class CustomModelMapper {
     Converter<Playlist, Integer> playlistPlaytimeCvt = new Converter<Playlist, Integer>() {
         @Override
         public Integer convert(MappingContext<Playlist, Integer> context) {
-            AudioFileFormat aff = null;
-            try {
-                aff = AudioSystem.getAudioFileFormat(new File("./song/sos.wav"));
-            } catch (UnsupportedAudioFileException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            List<Song> songs = context.getSource().getSongs();
+            Integer playtime = 0;
+            for (Song s : songs) {
+                playtime += Integer.parseInt(s.getPlaytime());
             }
-            AudioFormat af = aff.getFormat();
-            double playTime = (double) aff.getFrameLength() / af.getFrameRate() * 3.7;
-            return (int) Math.ceil((context.getSource().getSongs().size() * (int) Math.ceil(playTime)) / 60);
+            System.out.println(playtime/60);
+            return playtime/60;
         }
     };
 
@@ -266,6 +253,8 @@ public class CustomModelMapper {
         modelMapper.createTypeMap(Playlist.class, PlaylistDetailDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(playlistTagCvt).map(src -> src, PlaylistDetailDTO::setKeywords))
                 .addMappings(modelMapper -> modelMapper.using(playlistImgsCvt).map(src -> src, PlaylistDetailDTO::setPlaylistImgs))
+                .addMappings(modelMapper -> modelMapper.using(playlistSongCntCvt).map(src -> src, PlaylistDetailDTO::setPlaylistSongCount))
+                .addMappings(modelMapper -> modelMapper.using(playlistPlaytimeCvt).map(src -> src, PlaylistDetailDTO::setPlaylistPlaytime))
                 .addMapping(Playlist::getPlaylistId, PlaylistDetailDTO::setPlaylistId)
                 .addMapping(Playlist::getName, PlaylistDetailDTO::setPlaylistName)
                 .addMapping(Playlist::getState, PlaylistDetailDTO::setPlaylistState)
