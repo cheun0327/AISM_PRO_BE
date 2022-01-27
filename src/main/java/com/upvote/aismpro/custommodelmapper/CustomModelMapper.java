@@ -12,6 +12,8 @@ import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +44,7 @@ public class CustomModelMapper {
         @Override
         public Integer convert(MappingContext<GenreInfo, Integer> context) {
             String categories[] = {context.getSource().getOne(), context.getSource().getTwo(),
-                context.getSource().getThree(), context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()};
+                    context.getSource().getThree(), context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()};
             Integer cnt = 0;
             for (String cate : categories) if (cate != null) cnt++;
             return cnt;
@@ -68,7 +70,9 @@ public class CustomModelMapper {
                     context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()
             };
             List<String> tags = new ArrayList<>();
-            Arrays.stream(categories).forEach(s -> {if (s != null)  tags.add(s);});
+            Arrays.stream(categories).forEach(s -> {
+                if (s != null) tags.add(s);
+            });
             return tags;
         }
     };
@@ -91,17 +95,17 @@ public class CustomModelMapper {
 
     Converter<Song, String> songMidiFilePathCvt = new Converter<Song, String>() {
         @Override
-        public String convert(MappingContext<Song, String > context) {
+        public String convert(MappingContext<Song, String> context) {
             return context.getSource().getSongId() + ".mid";
         }
     };
 
     Converter<Song, Boolean> songLikeCvt = new Converter<Song, Boolean>() {
-            @Override
-            public Boolean convert(MappingContext<Song, Boolean> context) {
-                // like default setting -> false로!
-                return false;
-            }
+        @Override
+        public Boolean convert(MappingContext<Song, Boolean> context) {
+            // like default setting -> false로!
+            return false;
+        }
     };
 
     Converter<Song, String> songPlaytimeCvt = new Converter<Song, String>() {
@@ -122,18 +126,22 @@ public class CustomModelMapper {
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
 
+        Converter<LocalDateTime, Timestamp> songCreateDateCvt =
+                ctx -> Timestamp.valueOf(ctx.getSource());
+
         modelMapper.createTypeMap(Song.class, SongDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
                 .addMappings(modelMapper -> modelMapper.using(songFilePathCvt).map(src -> src, SongDTO::setWavFile))
                 .addMappings(modelMapper -> modelMapper.using(songMidiFilePathCvt).map(src -> src, SongDTO::setMidiFile))
                 .addMappings(modelMapper -> modelMapper.using(songLikeCvt).map(src -> src, SongDTO::setLike))
                 .addMappings(modelMapper -> modelMapper.using(songPlaytimeCvt).map(src -> src, SongDTO::setPlaytime))
+                .addMappings(modelMapper -> modelMapper.using(songCreateDateCvt).map(Song::getCreateDate, SongDTO::setCreateDate))
                 .addMapping(src -> src.getUser().getNickname(), SongDTO::setCreatorName)
                 .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
                 .addMapping(Song::getSongId, SongDTO::setSongId)
                 .addMapping(Song::getSongName, SongDTO::setSongName)
-                .addMapping(Song::getCreateDate, SongDTO::setCreateDate)
                 .addMapping(Song::getImgFile, SongDTO::setImgFile);
+
         return modelMapper;
     }
 
@@ -155,7 +163,7 @@ public class CustomModelMapper {
     }
 
     @Bean
-    public ModelMapper songSaveDTO2song(){
+    public ModelMapper songSaveDTO2song() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
@@ -180,8 +188,8 @@ public class CustomModelMapper {
             for (Song s : songs) {
                 playtime += Integer.parseInt(s.getPlaytime());
             }
-            System.out.println(playtime/60);
-            return playtime/60;
+            System.out.println(playtime / 60);
+            return playtime / 60;
         }
     };
 
@@ -209,8 +217,7 @@ public class CustomModelMapper {
                         playlistImgs = songs.subList(0, 4).stream().map(img -> "/songImg/" + img).collect(Collectors.toList());
                     }
                 }
-            }
-            else {
+            } else {
                 playlistImgs.add("/playlistImg/" + context.getSource().getImgFile());
             }
             System.out.println(playlistImgs);
