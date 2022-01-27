@@ -2,34 +2,33 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.GenreInfoDTO;
+import com.upvote.aismpro.entity.Genre;
 import com.upvote.aismpro.entity.GenreInfo;
-import com.upvote.aismpro.entity.Keyword;
 import com.upvote.aismpro.repository.GenreInfoRepository;
+import com.upvote.aismpro.repository.GenreRepository;
 import com.upvote.aismpro.repository.KeywordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.NotContextException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Service
+@RequiredArgsConstructor
 @Transactional
+@Service
 public class ComposeService implements ComposeServiceInter {
 
-    @Autowired
-    private GenreInfoRepository genreInfoRepository;
-
-    @Autowired
-    private KeywordRepository keywordRepository;
-
-    @Autowired
-    private CustomModelMapper modelMapper;
-
+    private final GenreRepository genreRepository;
+    private final GenreInfoRepository genreInfoRepository;
+    private final KeywordRepository keywordRepository;
+    private final CustomModelMapper modelMapper;
 
     public List<String> getGenreList() {
-        List<String> genres = genreInfoRepository.findGenreQD();
-        return genres;
+        return genreRepository.findAll(Sort.by(Sort.DEFAULT_DIRECTION, "genreOrder"))
+                .stream().map(Genre::getGenreName)
+                .collect(Collectors.toList());
     }
 
     public GenreInfoDTO getCategoryList(String genre) {

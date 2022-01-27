@@ -24,7 +24,7 @@ public class QSong extends EntityPathBase<Song> {
 
     public final QBaseEventEntity _super = new QBaseEventEntity(this);
 
-    public final DateTimePath<java.sql.Timestamp> createDate = createDateTime("createDate", java.sql.Timestamp.class);
+    public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final DateTimePath<java.time.LocalDateTime> deletedDate = createDateTime("deletedDate", java.time.LocalDateTime.class);
 
