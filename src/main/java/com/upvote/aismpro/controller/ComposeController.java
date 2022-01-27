@@ -2,9 +2,9 @@ package com.upvote.aismpro.controller;
 
 
 import com.upvote.aismpro.dto.GenreInfoDTO;
-import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.service.ComposeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class ComposeController {
 
-    @Autowired
-    private ComposeService composeService;
+    private final ComposeService composeService;
 
     @GetMapping("/compose/category/{genre}")
     public ResponseEntity<GenreInfoDTO> getCategory(@PathVariable("genre") String genre) {
@@ -29,6 +29,7 @@ public class ComposeController {
         }
     }
 
+    @ApiOperation("장르 리스트 가져오기")
     @GetMapping("/compose")
     public ResponseEntity<List<String>> get1st() {
         try{
