@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,7 +19,7 @@ public class SongDTO extends EntityModel<SongDTO> {
 
     private String creatorName;
 
-    private Timestamp createDate;
+    private LocalDateTime createDate;
 
     private List<String> tags;
 
