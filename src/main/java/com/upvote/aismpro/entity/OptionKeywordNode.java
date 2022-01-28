@@ -29,7 +29,7 @@ public class OptionKeywordNode {
     @JoinColumn(name = "parent_node_id")
     private OptionKeywordNode parentNode;
 
-    @Column(name = "path")
+    @Column(name = "path", unique = true)
     private String path;
 
     @Column(name = "depth", nullable = false)

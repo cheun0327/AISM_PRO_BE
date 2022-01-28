@@ -28,7 +28,7 @@ public class GenreOptionNode {
     @JoinColumn(name = "parent_node_id")
     private GenreOptionNode parentNode;
 
-    @Column(name = "path", nullable = false, unique = true)
+    @Column(name = "path", unique = true)
     private String path;
 
     @Column(name = "depth", nullable = false)
