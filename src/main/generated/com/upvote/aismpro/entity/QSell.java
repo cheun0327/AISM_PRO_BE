@@ -22,7 +22,7 @@ public class QSell extends EntityPathBase<Sell> {
 
     public static final QSell sell = new QSell("sell");
 
-    public final StringPath id = createString("id");
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QSong song;
 
