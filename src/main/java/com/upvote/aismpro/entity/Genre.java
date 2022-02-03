@@ -1,5 +1,6 @@
 package com.upvote.aismpro.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class Genre {
 
     @Column(name = "genre_order")
     private Integer genreOrder;
+
+    @Builder
+    public Genre(String genreName, Integer genreOrder) {
+        this.genreName = genreName;
+        this.genreOrder = genreOrder;
+    }
 }
