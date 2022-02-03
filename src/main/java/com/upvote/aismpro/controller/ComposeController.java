@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,9 +44,8 @@ public class ComposeController {
 
     @ApiOperation(value = "키워드 ID로 하위 키워드 찾기")
     @GetMapping("/keywords")
-    public KeywordListResDTO findChildKeyword(@RequestParam("ids") List<String> selectedKeywordIdList) {
-        List<Long> list = selectedKeywordIdList.stream().map(Long::valueOf).collect(Collectors.toList());
-        return composeService.findChildKeyword(list);
+    public KeywordListResDTO findChildKeyword(@RequestParam("ids") List<Long> selectedKeywordIdList) {
+        return composeService.findChildKeyword(selectedKeywordIdList);
     }
 
     @GetMapping("/compose/{one}")
