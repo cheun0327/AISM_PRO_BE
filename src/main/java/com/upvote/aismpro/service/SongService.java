@@ -95,7 +95,7 @@ public class SongService implements SongServiceInter {
 
         // 생성 곡 저장 위치 디렉토리 확인
         String songDirPath = dirPath + "/" + userId + "/tmp/" + userId + ".mp3";
-        String songMidiPath = dirPath + "/" + userId + "/tmp/MergeMid.mid";
+        String songMidiPath = dirPath + "/" + userId + "/tmp/" + userId + "_ALL Track.mid";
 
         // 저장된 곡 위치 이동
         File source = new File(songDirPath);
