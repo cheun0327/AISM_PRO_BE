@@ -3,8 +3,12 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
+import com.upvote.aismpro.entity.Sell;
+import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.SellRepository;
 import com.upvote.aismpro.repository.SongRepository;
+import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,8 @@ public class SellService {
     private SellRepository sellRepository;
     @Autowired
     private SongRepository songRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private CustomModelMapper modelMapper;
 
@@ -50,6 +56,20 @@ public class SellService {
         catch (Exception e) {
             throw new Exception();
         }
+    }
+
+    @Transactional
+    public void createSells(Long songId) throws Exception{
+
+        User user = userRepository.getById(SecurityUtil.getCurrentUserId());
+
+        Song song = songRepository.getById(songId);
+
+        sellRepository.save(Sell.builder()
+                .user(user)
+                .song(song)
+                .build());
+
     }
 
     @Transactional

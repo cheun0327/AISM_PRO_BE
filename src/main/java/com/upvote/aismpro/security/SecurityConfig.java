@@ -71,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/song/playlist/insert").authenticated()
                 .antMatchers(HttpMethod.GET, "/song/**").permitAll()
                 .antMatchers("/actuator/health").permitAll()
+                .antMatchers("/sell/**").permitAll()
 
                 .antMatchers("/playlist/validate/**").authenticated()
                 .anyRequest().authenticated()       // 나머지 api 모두 인증 필요
