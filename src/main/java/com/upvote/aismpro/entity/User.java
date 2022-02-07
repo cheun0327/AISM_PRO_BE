@@ -44,6 +44,9 @@ public class User {
     @JsonBackReference
     private List<Like> likes;
 
+    @OneToOne(mappedBy = "user")
+    private Credit credit;
+
     @Builder
     public User(String nickname, String email) {
         this.nickname = nickname;

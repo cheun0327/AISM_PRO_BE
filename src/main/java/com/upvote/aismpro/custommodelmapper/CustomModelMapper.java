@@ -35,7 +35,8 @@ public class CustomModelMapper {
                 .addMapping(User::getEmail, UserDTO::setEmail)
                 .addMapping(User::getNickname, UserDTO::setNickname)
                 .addMapping(User::getPlatform, UserDTO::setPlatform)
-                .addMapping(User::getProfile, UserDTO::setProfile);
+                .addMapping(User::getProfile, UserDTO::setProfile)
+                .addMapping(src -> src.getCredit().getCredit(), (ctx, v) -> ctx.setCredit((Long) v));
 
         return modelMapper;
     }

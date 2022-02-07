@@ -13,6 +13,7 @@ public class LoginUserDTO {
     private String nickname;
     private String platform;
     private String profile;
+    private Long credit;
 
     public LoginUserDTO(String token, User user) {
         this.token = token;
@@ -21,6 +22,7 @@ public class LoginUserDTO {
         this.nickname = user.getNickname();
         this.platform = user.getPlatform();
         this.profile = user.getProfile();
+        this.credit = user.getCredit().getCredit();
     }
 
     public LoginUserDTO(String token, User user, String platform) {
