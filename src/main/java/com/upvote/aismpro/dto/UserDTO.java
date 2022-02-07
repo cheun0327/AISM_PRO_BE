@@ -11,4 +11,5 @@ public class UserDTO {
     private String nickname;
     private String platform;
     private String profile;
+    private Long credit;
 }

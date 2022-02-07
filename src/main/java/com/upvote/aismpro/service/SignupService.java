@@ -2,7 +2,9 @@ package com.upvote.aismpro.service;
 
 import com.upvote.aismpro.dto.LoginUserDTO;
 import com.upvote.aismpro.dto.SignupDTO;
+import com.upvote.aismpro.entity.Credit;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.repository.CreditRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.Authority;
 import com.upvote.aismpro.security.TokenDTO;
@@ -24,6 +26,7 @@ public class SignupService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final CreditRepository creditRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -56,6 +59,13 @@ public class SignupService {
             file.transferTo(new File(dirPath + "/" + imgName));
 
             user = userRepository.save(user.setProfile(imgFolder + "/" + imgName));
+
+            Credit credit = Credit.builder()
+                    .credit(50000L)
+                    .user(user)
+                    .build();
+
+            creditRepository.save(credit);
 
             //user token 생성
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
@@ -90,7 +100,14 @@ public class SignupService {
                     .platform(signupDTO.getSns())
                     .authority(Authority.ROLE_GUEST)
                     .build();
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
+
+            Credit credit = Credit.builder()
+                    .credit(50000L)
+                    .user(savedUser)
+                    .build();
+
+            creditRepository.save(credit);
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
 

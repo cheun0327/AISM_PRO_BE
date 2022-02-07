@@ -18,9 +18,13 @@ public class QUser extends EntityPathBase<User> {
 
     private static final long serialVersionUID = 1604385207L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QUser user = new QUser("user");
 
     public final EnumPath<com.upvote.aismpro.security.Authority> authority = createEnum("authority", com.upvote.aismpro.security.Authority.class);
+
+    public final QCredit credit;
 
     public final StringPath email = createString("email");
 
@@ -35,15 +39,24 @@ public class QUser extends EntityPathBase<User> {
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QUser(String variable) {
-        super(User.class, forVariable(variable));
+        this(User.class, forVariable(variable), INITS);
     }
 
     public QUser(Path<? extends User> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QUser(PathMetadata metadata) {
-        super(User.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QUser(PathMetadata metadata, PathInits inits) {
+        this(User.class, metadata, inits);
+    }
+
+    public QUser(Class<? extends User> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.credit = inits.isInitialized("credit") ? new QCredit(forProperty("credit"), inits.get("credit")) : null;
     }
 
 }
