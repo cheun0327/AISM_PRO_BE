@@ -198,7 +198,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
         QueryResults<Song> results = query.select(song)
                 .from(song)
                 .where(
-                        searchWhere(librarySearchDTO)
+                        searchWhere(librarySearchDTO),
+                        song.deletedDate.isNull()
                 )
                 .orderBy(song.createDate.desc())
                 .offset(0)
@@ -213,7 +214,8 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
         QueryResults<Song> results = query.select(song)
                 .from(song)
                 .where(
-                        searchWhere(librarySearchDTO)
+                        searchWhere(librarySearchDTO),
+                        song.deletedDate.isNull()
                 )
                 .offset(0)
                 .limit(6)
