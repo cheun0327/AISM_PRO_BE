@@ -1,6 +1,7 @@
 package com.upvote.aismpro.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,11 @@ public class Buy {
     @JoinColumn(name = "creatorId", referencedColumnName = "userId")
     @JsonManagedReference
     private User user;
+
+    @Builder
+    public Buy(User user, Song song) {
+        this.user = user;
+        this.song = song;
+    }
 
 }

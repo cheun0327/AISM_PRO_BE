@@ -41,4 +41,8 @@ public class Credit extends BaseEventEntity {
         this.credit = credit;
         this.createdDate = createdDate;
     }
+
+    public void updateCredit(Long credit) {
+        this.credit = credit;
+    }
 }

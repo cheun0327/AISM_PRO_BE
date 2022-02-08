@@ -13,4 +13,5 @@ import java.util.List;
 public interface BuyRepository extends JpaRepository<Buy, Long>, BuyRepositoryCustom {
     public List<Buy> findAllByUser_UserId(Long userId);
     public void deleteByUser_UserIdAndSong_SongId(Long userId, Long songId);
+    public List<Buy> findAllByUser_UserIdAndSong_SongId(Long userId, Long songId);
 }

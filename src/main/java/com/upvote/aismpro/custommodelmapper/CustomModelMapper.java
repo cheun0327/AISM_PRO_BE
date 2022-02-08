@@ -5,10 +5,15 @@ import com.upvote.aismpro.entity.GenreInfo;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.repository.BuyRepository;
+import com.upvote.aismpro.repository.SellRepository;
+import com.upvote.aismpro.service.BuyService;
+import com.upvote.aismpro.service.SellService;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +28,12 @@ import java.util.stream.Collectors;
 public class CustomModelMapper {
 
     private final ModelMapper modelMapper = new ModelMapper();
+
+    // SBA temp
+    @Autowired
+    private SellService sellService;
+    @Autowired
+    private BuyService buyService;
 
     @Bean
     public ModelMapper toUserDTO() {
@@ -121,6 +132,13 @@ public class CustomModelMapper {
         }
     };
 
+    Converter<Song, Boolean> sellCvt = new Converter<Song, Boolean>() {
+        @Override
+        public Boolean convert(MappingContext<Song, Boolean> context) {
+            return sellService.isSell(context.getSource().getSongId());
+        }
+    };
+
     @Bean
     public ModelMapper toSongDTO() {
         modelMapper.getConfiguration()
@@ -129,6 +147,10 @@ public class CustomModelMapper {
 
         Converter<LocalDateTime, Timestamp> songCreateDateCvt =
                 ctx -> Timestamp.valueOf(ctx.getSource());
+
+        Converter<Song, Boolean> buyCvt =
+                ctx -> buyService.isBuy(ctx.getSource().getSongId());
+
 
         modelMapper.createTypeMap(Song.class, SongDTO.class)
                 .addMappings(modelMapper -> modelMapper.using(songTagCvt).map(src -> src, SongDTO::setTags))
@@ -141,7 +163,9 @@ public class CustomModelMapper {
                 .addMapping(src -> src.getUser().getUserId(), SongDTO::setCreatorId)
                 .addMapping(Song::getSongId, SongDTO::setSongId)
                 .addMapping(Song::getSongName, SongDTO::setSongName)
-                .addMapping(Song::getImgFile, SongDTO::setImgFile);
+                .addMapping(Song::getImgFile, SongDTO::setImgFile)
+                .addMappings(modelMapper -> modelMapper.using(sellCvt).map(src -> src, SongDTO::setIsSell))
+                .addMappings(modelMapper -> modelMapper.using(buyCvt).map(src -> src, SongDTO::setIsBuy));
 
         return modelMapper;
     }

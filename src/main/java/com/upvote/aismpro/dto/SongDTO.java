@@ -32,5 +32,9 @@ public class SongDTO extends EntityModel<SongDTO> {
     private String midiFile;
 
     private Boolean like;
+
+    private Boolean isSell;
+
+    private Boolean isBuy;
 }
 

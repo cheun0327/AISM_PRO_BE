@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.LibrarySearchDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.entity.QSell;
 import com.upvote.aismpro.entity.QSong;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
@@ -25,6 +26,7 @@ import java.util.Objects;
 public class SongRepositoryImpl implements SongRepositoryCustom {
     private final JPAQueryFactory query;
     private final QSong song = QSong.song;
+    private final QSell sell = QSell.sell;
 
     // 비슷한 곡 리스트 반환
     @Override

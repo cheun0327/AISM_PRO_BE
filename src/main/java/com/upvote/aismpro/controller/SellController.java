@@ -4,6 +4,7 @@ import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.SellService;
 import com.upvote.aismpro.service.SongService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class SellController {
     @Autowired
     private SongService songService;
 
+    @ApiOperation(value = "사용자 본인이 판매하는 곡 불러오기")
     @GetMapping("/sell")
     public ResponseEntity<List<SongDTO>> getSellList() {
         try {
@@ -35,7 +37,8 @@ public class SellController {
         }
     }
 
-    @GetMapping("/sell/{songId}")
+    @ApiOperation(value = "판매 등록하기")
+    @PostMapping("/sell/{songId}")
     public ResponseEntity<Boolean> createSell(@PathVariable Long songId) {
         try {
             sellService.createSells(songId);

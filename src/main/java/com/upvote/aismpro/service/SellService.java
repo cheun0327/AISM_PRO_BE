@@ -72,6 +72,10 @@ public class SellService {
 
     }
 
+    public Boolean isSell(Long songId) {
+         return !sellRepository.findAllByUser_UserIdAndSong_SongId(SecurityUtil.getCurrentUserId(), songId).isEmpty();
+    }
+
     @Transactional
     public List<SongDTO> getMyLibrarySearchResult(MyLibrarySearchDTO myLibrarySearchDTO) throws Exception {
         Long userId = SecurityUtil.getCurrentUserId();
