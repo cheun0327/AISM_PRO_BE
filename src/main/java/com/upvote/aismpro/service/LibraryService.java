@@ -7,8 +7,7 @@ import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.*;
 import com.upvote.aismpro.security.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.json.GsonTester;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,22 +17,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
 public class LibraryService {
 
-    @Autowired
-    private SongRepository songRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PlaylistRepository playlistRepository;
-    @Autowired
-    private GenreInfoRepository genreInfoRepository;
-    @Autowired
-    private KeywordRepository keywordRepository;
+    private final SongRepository songRepository;
+    private final UserRepository userRepository;
+    private final PlaylistRepository playlistRepository;
+    private final GenreInfoRepository genreInfoRepository;
+    private final KeywordRepository keywordRepository;
 
-    @Autowired
-    private CustomModelMapper modelMapper;
+    private final CustomModelMapper modelMapper;
 
     // 라이브러리 검색 옵션
     public Map<String, Object> getSearchOptionDate() {
@@ -49,35 +44,31 @@ public class LibraryService {
     }
 
     // 라이브러리 검색 결괴
-    @Transactional
     public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDTO) throws Exception {
         Map<String, Object> map = new HashMap<>();
         // 플레이리스트 : 검색 + 15개 디폴트
         // 음원 : 검색 + 6개 디폴트
         // 아티스트 : 랜던 4개 디폴트
 
-        try {
-            // song type 있으면 플레이리스트 가져옴. -> playlist like 적용 안한 버전
-            List<PlaylistDetailDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
-            map.put("playlist", playlists);
+        List<PlaylistDetailDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
+        map.put("playlist", playlists);
 
-            // 검색 결과에 해당하는 song 리스트 가져옴
-            Page<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDTO);
+        // 검색 결과에 해당하는 song 리스트 가져옴
+        Page<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDTO);
 
-            // like 추가 & 형변환
-            // 정렬 구현 안됨.
-            List<SongDTO> songDTOList = new ArrayList<>();
-            if (!librarySearchDTO.getUserId().equals(-1L)) {
-                songDTOList = mapToSongDTOWithLike(songList, librarySearchDTO.getUserId());
-            }
-            else {
-                songDTOList = mapToSongDTOWithoutLike(songList);
-            }
+        // like 추가 & 형변환
+        // 정렬 구현 안됨.
+        List<SongDTO> songDTOList = new ArrayList<>();
+        if (!librarySearchDTO.getUserId().equals(-1L)) {
+            songDTOList = mapToSongDTOWithLike(songList, librarySearchDTO.getUserId());
+        } else {
+            songDTOList = mapToSongDTOWithoutLike(songList);
+        }
 
-            // TODO List를 Page로 변경해줘야하나
-            map.put("song", songDTOList);
+        // TODO List를 Page로 변경해줘야하나
+        map.put("song", songDTOList);
 
-            // 검색 결과 키워드 필터링
+        // 검색 결과 키워드 필터링
 //            if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
 //                map.put("song", filterNewSearchKeyword(librarySearchDTO.getSearch(), songDTOList));
 //            }
@@ -85,22 +76,16 @@ public class LibraryService {
 //                map.put("song", songDTOList);
 //            }
 
-            // TODO 아티스트 "검색"
-            List<ArtistDTO> artists = songRepository.findLibraryArtistSearchQD(librarySearchDTO.getSearch())
-                    .stream().map(usr -> modelMapper.toArtistDTO().map(usr, ArtistDTO.class))
-                    .collect(Collectors.toList());
+        // TODO 아티스트 "검색"
+        List<ArtistDTO> artists = songRepository.findLibraryArtistSearchQD(librarySearchDTO.getSearch())
+                .stream().map(usr -> modelMapper.toArtistDTO().map(usr, ArtistDTO.class))
+                .collect(Collectors.toList());
 
-            map.put("artist", artists);
+        map.put("artist", artists);
 
-            return map;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
+        return map;
     }
 
-    @Transactional
     private List<SongDTO> mapToSongDTOWithLike(Page<Song> songList, Long userId) {
         User user = userRepository.getById(userId);
         List<Long> likes = user.getLikes().stream().map(l -> l.getSong().getSongId()).collect(Collectors.toList());
@@ -114,7 +99,6 @@ public class LibraryService {
         return newSongDTOs;
     }
 
-    @Transactional
     private List<SongDTO> mapToSongDTOWithoutLike(Page<Song> songList) {
 
         List<SongDTO> newSongDTOs = new ArrayList<>();
@@ -127,14 +111,12 @@ public class LibraryService {
     }
 
     // 악기 옵션 가져오기
-    @Transactional
     private List<String> getInstList() {
         List<String> tmp = keywordRepository.findInstFromNewageQD();
         return tmp;
     }
 
     // 분위기 옵션 가져오기
-    @Transactional
     private List<String> getMoodList() {
         List<String> newageMood = keywordRepository.findMoodFromNewageQD();
         List<String> notNewageMood = keywordRepository.findMoodFromNotNewageQD();
@@ -165,7 +147,7 @@ public class LibraryService {
 
 
     public List<PlaylistDTO> getPlaylistsWithoutLike(Pageable pageable, String type) {
-        if (type.equals("모두") || type.equals("음원")){
+        if (type.equals("모두") || type.equals("음원")) {
             List<PlaylistDTO> newPlaylistDTOList = new ArrayList<>();
 
             Page<Playlist> pls = playlistRepository.findAll(pageable);
@@ -181,7 +163,6 @@ public class LibraryService {
     }
 
     // Library 검색 결과 가져오기(랜더링)
-    @Transactional
     public List<PlaylistDetailDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
 
         try {
@@ -198,7 +179,6 @@ public class LibraryService {
     }
 
     // song 전체보기
-    @Transactional
     public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
         Long userId = SecurityUtil.getCurrentUserId();
         Page<Song> songList = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
@@ -206,8 +186,7 @@ public class LibraryService {
         List<SongDTO> songDTOList = new ArrayList<>();
         if (!userId.equals(-1L)) {
             songDTOList = mapToSongDTOWithLike(songList, userId);
-        }
-        else {
+        } else {
             songDTOList = mapToSongDTOWithoutLike(songList);
         }
         System.out.println("total like add");
@@ -215,7 +194,6 @@ public class LibraryService {
     }
 
     // playlist 전체 보기
-    @Transactional
     public List<PlaylistDetailDTO> getTotalPlaylistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
         return playlistRepository.findLibraryTotalPlaylistSearchQD(pageable, librarySearchDTO)
@@ -226,7 +204,6 @@ public class LibraryService {
     }
 
     // artist 전체 보기
-    @Transactional
     public List<ArtistDTO> getTotalArtistSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
 
         return songRepository.findLibraryTotalArtistSearchQD(pageable, librarySearchDTO.getSearch())
