@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,36 +39,24 @@ public class LoginController {
 
     // 카카오 로그인 정보 받음
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginUserDTO> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo){
+    public ResponseEntity<LoginUserDTO> kakaoLogin(HttpServletRequest request, @RequestBody LinkedHashMap<String, Object> kakaoInfo) throws Exception {
         // 카카오 로그인 정보 json
         LinkedHashMap<String, Object> kakaoProfile = (LinkedHashMap<String, Object>) kakaoInfo.get("profile");
         // 카카오 로그인 유저 정보 json
         LinkedHashMap<String, Object> kakaoProfileInfo = (LinkedHashMap<String, Object>) kakaoProfile.get("kakao_account");
 
-        try {
-            User user = loginService.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
+        User user = loginService.checkUser("카카오", (String) kakaoProfileInfo.get("email"));
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getEmail());
 
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
 
-            TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
+        TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
 
-            // TODO refresh token 저장
+        // TODO refresh token 저장
 
-            return new ResponseEntity<>(new LoginUserDTO(tokenDTO.getAccessToken(), user), HttpStatus.OK);
+        return new ResponseEntity<>(new LoginUserDTO(tokenDTO.getAccessToken(), user), HttpStatus.OK);
 
-        } catch (NoSuchElementException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (Exception e) {
-            System.out.println("예외 여기로!!!!");
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @PostMapping("/login/google")
