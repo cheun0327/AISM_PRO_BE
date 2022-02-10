@@ -73,7 +73,7 @@ public class SellService {
     }
 
     public Boolean isSell(Long songId) {
-         return !sellRepository.findAllByUser_UserIdAndSong_SongId(SecurityUtil.getCurrentUserId(), songId).isEmpty();
+         return !sellRepository.findAllBySong_SongId(songId).isEmpty();
     }
 
     @Transactional
