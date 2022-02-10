@@ -12,4 +12,6 @@ public interface SellRepository extends JpaRepository<Sell, Long>, SellRepositor
     public List<Sell> findAllByUser_UserId(Long userId);
     public void deleteByUser_UserIdAndSong_SongId(Long userId, Long songId);
     public List<Sell> findAllByUser_UserIdAndSong_SongId(Long userId, Long songId);
+
+    List<Sell> findAllBySong_SongId(Long songId);
 }

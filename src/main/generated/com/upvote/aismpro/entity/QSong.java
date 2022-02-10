@@ -70,7 +70,7 @@ public class QSong extends EntityPathBase<Song> {
 
     public QSong(Class<? extends Song> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
