@@ -26,7 +26,7 @@ public class LibraryService {
     private final UserRepository userRepository;
     private final PlaylistRepository playlistRepository;
     private final GenreInfoRepository genreInfoRepository;
-    private final KeywordRepository keywordRepository;
+    private final KeywordPathRepository keywordPathRepository;
 
     private final CustomModelMapper modelMapper;
 
@@ -112,14 +112,14 @@ public class LibraryService {
 
     // 악기 옵션 가져오기
     private List<String> getInstList() {
-        List<String> tmp = keywordRepository.findInstFromNewageQD();
+        List<String> tmp = keywordPathRepository.findInstFromNewageQD();
         return tmp;
     }
 
     // 분위기 옵션 가져오기
     private List<String> getMoodList() {
-        List<String> newageMood = keywordRepository.findMoodFromNewageQD();
-        List<String> notNewageMood = keywordRepository.findMoodFromNotNewageQD();
+        List<String> newageMood = keywordPathRepository.findMoodFromNewageQD();
+        List<String> notNewageMood = keywordPathRepository.findMoodFromNotNewageQD();
 
         return Stream.concat(notNewageMood.stream(), newageMood.stream())
                 .collect(Collectors.toList());
