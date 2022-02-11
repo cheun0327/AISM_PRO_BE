@@ -1,10 +1,7 @@
 package com.upvote.aismpro.custommodelmapper;
 
 import com.upvote.aismpro.dto.*;
-import com.upvote.aismpro.entity.GenreInfo;
-import com.upvote.aismpro.entity.Playlist;
-import com.upvote.aismpro.entity.Song;
-import com.upvote.aismpro.entity.User;
+import com.upvote.aismpro.entity.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -14,9 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -62,19 +57,34 @@ public class CustomModelMapper {
         return modelMapper;
     }
 
-    Converter<Song, List<String>> songTagCvt = new Converter<Song, List<String>>() {
-        @Override
-        public List<String> convert(MappingContext<Song, List<String>> context) {
-            String categories[] = {
-                    context.getSource().getOne(), context.getSource().getTwo(), context.getSource().getThree(),
-                    context.getSource().getFour(), context.getSource().getFive(), context.getSource().getSix()
-            };
-            List<String> tags = new ArrayList<>();
-            Arrays.stream(categories).forEach(s -> {
-                if (s != null) tags.add(s);
-            });
-            return tags;
+    Converter<Song, List<String>> songTagCvt = context -> {
+        KeywordPath keywordPath = context.getSource().getKeywordPath();
+
+        String[] hashTags = keywordPath.getSubCategory().getHashTag().split("/");
+        String lastTag = hashTags[hashTags.length - 1];
+
+        if (lastTag.contains(",")) {
+            hashTags = Arrays.copyOfRange(hashTags, 0, hashTags.length - 1);
         }
+
+        List<String> filteredTags = Arrays.stream(hashTags)
+                .collect(Collectors.toList());
+
+        List<String> tags = Arrays.asList(
+                keywordPath.getGenre(),
+                keywordPath.getCategory(),
+                keywordPath.getKeyword(),
+                keywordPath.getFx().getKeyword()
+        );
+
+        Set<String> tagSet = new HashSet<>();
+        tagSet.addAll(tags);
+        tagSet.addAll(filteredTags);
+
+        return tagSet.stream()
+                .filter(tag -> !tag.isEmpty())
+                .map(tag -> "#" + tag)
+                .collect(Collectors.toList());
     };
 
     Converter<Song, String> songImgPathCvt = new Converter<Song, String>() {

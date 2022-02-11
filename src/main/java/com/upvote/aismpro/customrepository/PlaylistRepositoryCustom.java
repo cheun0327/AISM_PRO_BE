@@ -17,6 +17,8 @@ public interface PlaylistRepositoryCustom {
     // MyLibrary 플레이리스트 검색 결과
     public List<Playlist> findMyLibraryPlaylistSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO);
     // Library 플리이리스트 검색 결과
-    public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO);
+    List<Playlist> findLibraryPlaylistSearchQD(String searchKeyword);
+    List<Playlist> findAllRecentPlaylistQD();
     public Page<Playlist> findLibraryTotalPlaylistSearchQD(Pageable pageable, LibrarySearchDTO librarySearchDTO);
+
 }

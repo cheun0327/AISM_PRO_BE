@@ -21,4 +21,6 @@ public interface KeywordPathRepositoryCustom {
 
     // 뉴에이지 아닌 장르에서 분위기 가져오기
     List<String> findMoodFromNotNewageQD();
+
+    KeywordPath findOnePath(String one, String two, String three, String four, String five);
 }

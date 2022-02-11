@@ -7,10 +7,8 @@ import com.upvote.aismpro.entity.KeywordPath;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.upvote.aismpro.entity.QDummyKeywordPath.dummyKeywordPath;
 import static com.upvote.aismpro.entity.QKeywordPath.keywordPath;
@@ -84,22 +82,35 @@ public class KeywordPathRepositoryImpl implements KeywordPathRepositoryCustom {
         List<Tuple> tupleList = queryFactory
                 .selectDistinct(
                         keywordPath.category,
-                        keywordPath.subCategory.keyword,
+                        keywordPath.subCategory.hashTag,
                         keywordPath.keyword
                 )
                 .from(keywordPath)
                 .innerJoin(keywordPath.subCategory)
                 .fetch();
 
-        Set<String> keywordSet = new HashSet<>();
+        List<String> categoryList = tupleList.stream()
+                .map(tuple -> tuple.get(keywordPath.category))
+                .collect(Collectors.toList());
 
-        tupleList.forEach(tuple -> {
-            keywordSet.add(tuple.get(keywordPath.category));
-            keywordSet.add(tuple.get(keywordPath.subCategory.keyword));
-            keywordSet.add(tuple.get(keywordPath.keyword));
-        });
+        List<String> hashTagList = tupleList.stream()
+                .map(tuple -> Objects.requireNonNull(tuple.get(keywordPath.subCategory.hashTag)).split("/"))
+                .flatMap(Arrays::stream)
+                .filter(tag -> tag.indexOf(",") == tag.lastIndexOf(",")) // 콤마(",")가 2개 이상인 문자열 제외
+                .collect(Collectors.toList());
 
-        return new ArrayList<>(keywordSet);
+        List<String> keywordList = tupleList.stream()
+                .map(tuple -> tuple.get(keywordPath.keyword))
+                .collect(Collectors.toList());
+
+        Set<String> moodSet = new HashSet<>();
+        moodSet.addAll(categoryList);
+        moodSet.addAll(hashTagList);
+        moodSet.addAll(keywordList);
+
+        moodSet.remove("");
+
+        return new ArrayList<>(moodSet);
     }
 
     @Override
@@ -117,5 +128,26 @@ public class KeywordPathRepositoryImpl implements KeywordPathRepositoryCustom {
         }
 
         return new ArrayList<>(keywordSet);
+    }
+
+    @Override
+    public KeywordPath findOnePath(
+            String genre,
+            String category,
+            String subCategory,
+            String keyword,
+            String fx
+    ) {
+        return queryFactory
+                .selectFrom(keywordPath)
+                .innerJoin(keywordPath.subCategory)
+                .innerJoin(keywordPath.fx)
+                .where(
+                        keywordPath.genre.eq(genre),
+                        keywordPath.category.eq(category),
+                        keywordPath.subCategory.keyword.eq(subCategory),
+                        keywordPath.keyword.eq(keyword),
+                        keywordPath.fx.keyword.eq(fx)
+                ).fetchOne();
     }
 }

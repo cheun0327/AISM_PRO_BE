@@ -28,25 +28,15 @@ public class QSong extends EntityPathBase<Song> {
 
     public final DateTimePath<java.time.LocalDateTime> deletedDate = createDateTime("deletedDate", java.time.LocalDateTime.class);
 
-    public final StringPath five = createString("five");
-
-    public final StringPath four = createString("four");
-
     public final StringPath imgFile = createString("imgFile");
 
-    public final StringPath one = createString("one");
+    public final QKeywordPath keywordPath;
 
     public final StringPath playtime = createString("playtime");
-
-    public final StringPath six = createString("six");
 
     public final NumberPath<Long> songId = createNumber("songId", Long.class);
 
     public final StringPath songName = createString("songName");
-
-    public final StringPath three = createString("three");
-
-    public final StringPath two = createString("two");
 
     public final StringPath type = createString("type");
 
@@ -70,6 +60,7 @@ public class QSong extends EntityPathBase<Song> {
 
     public QSong(Class<? extends Song> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.keywordPath = inits.isInitialized("keywordPath") ? new QKeywordPath(forProperty("keywordPath"), inits.get("keywordPath")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 

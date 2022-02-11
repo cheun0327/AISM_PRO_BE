@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional
@@ -27,6 +26,7 @@ public class LibraryService {
     private final PlaylistRepository playlistRepository;
     private final GenreInfoRepository genreInfoRepository;
     private final KeywordPathRepository keywordPathRepository;
+    private final LikeRepository likeRepository;
 
     private final CustomModelMapper modelMapper;
 
@@ -44,39 +44,43 @@ public class LibraryService {
     }
 
     // 라이브러리 검색 결괴
-    public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDTO) throws Exception {
+    public Map<String, Object> getSearchResult(LibrarySearchDTO librarySearchDTO) {
         Map<String, Object> map = new HashMap<>();
         // 플레이리스트 : 검색 + 15개 디폴트
         // 음원 : 검색 + 6개 디폴트
         // 아티스트 : 랜던 4개 디폴트
 
-        List<PlaylistDetailDTO> playlists = getLibrarySearchPlaylistResult(librarySearchDTO);
-        map.put("playlist", playlists);
+        List<Playlist> playlists = playlistRepository.findLibraryPlaylistSearchQD(librarySearchDTO.getSearch());
+        if (playlists.isEmpty()) {
+            playlists = playlistRepository.findAllRecentPlaylistQD();
+        }
+        map.put("playlist", playlists.stream()
+                .map(PlaylistDetailDTO::new)
+                .collect(Collectors.toList()));
 
         // 검색 결과에 해당하는 song 리스트 가져옴
-        Page<Song> songList = songRepository.findSongBySearchParamQD(librarySearchDTO);
+        List<Song> songList = songRepository.findSongBySearchParamQD(
+                librarySearchDTO.getSearch(), librarySearchDTO.getType(), librarySearchDTO.getSort(),
+                librarySearchDTO.getGenre(), librarySearchDTO.getInst(), librarySearchDTO.getMood()
+        );
+
+        List<Long> currentUserLikes = likeRepository.findByUserIdAndSongIdIn(
+                librarySearchDTO.getUserId(),
+                songList.stream().map(Song::getSongId).collect(Collectors.toList())
+        ).stream().map(like -> like.getSong().getSongId()).collect(Collectors.toList());
 
         // like 추가 & 형변환
-        // 정렬 구현 안됨.
-        List<SongDTO> songDTOList = new ArrayList<>();
-        if (!librarySearchDTO.getUserId().equals(-1L)) {
-            songDTOList = mapToSongDTOWithLike(songList, librarySearchDTO.getUserId());
-        } else {
-            songDTOList = mapToSongDTOWithoutLike(songList);
-        }
+        List<SongDTO> songDTOList = songList.stream()
+                .map(SongDTO::new)
+                .collect(Collectors.toList());
 
-        // TODO List를 Page로 변경해줘야하나
+        songDTOList.forEach(dto -> {
+            dto.setLike(currentUserLikes.contains(dto.getSongId()));
+        });
+
         map.put("song", songDTOList);
 
-        // 검색 결과 키워드 필터링
-//            if (!Objects.equals(librarySearchDTO.getSearch(), "") && librarySearchDTO.getSearch() != null) {
-//                map.put("song", filterNewSearchKeyword(librarySearchDTO.getSearch(), songDTOList));
-//            }
-//            else {
-//                map.put("song", songDTOList);
-//            }
-
-        // TODO 아티스트 "검색"
+        // 아티스트 "검색"
         List<ArtistDTO> artists = songRepository.findLibraryArtistSearchQD(librarySearchDTO.getSearch())
                 .stream().map(usr -> modelMapper.toArtistDTO().map(usr, ArtistDTO.class))
                 .collect(Collectors.toList());
@@ -118,11 +122,7 @@ public class LibraryService {
 
     // 분위기 옵션 가져오기
     private List<String> getMoodList() {
-        List<String> newageMood = keywordPathRepository.findMoodFromNewageQD();
-        List<String> notNewageMood = keywordPathRepository.findMoodFromNotNewageQD();
-
-        return Stream.concat(notNewageMood.stream(), newageMood.stream())
-                .collect(Collectors.toList());
+        return keywordPathRepository.findMoodFromNewageQD();
     }
 
 //    public List<PlaylistDTO> getPlaylistsWithLike(Pageable pageable, String type, Long userId) {
@@ -162,35 +162,21 @@ public class LibraryService {
         return new ArrayList<>();
     }
 
-    // Library 검색 결과 가져오기(랜더링)
-    public List<PlaylistDetailDTO> getLibrarySearchPlaylistResult(LibrarySearchDTO librarySearchDTO) throws Exception {
-
-        try {
-            // 15개 제한해서 가져옴
-            Page<Playlist> pls = playlistRepository.findLibraryPlaylistSearchQD(librarySearchDTO);
-            return pls
-                    .stream()
-                    .map(pl -> modelMapper.toPlaylistDetailDTO().map(pl, PlaylistDetailDTO.class))
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
-    }
-
     // song 전체보기
     public List<SongDTO> getTotalSongSearchResult(Pageable pageable, LibrarySearchDTO librarySearchDTO) {
         Long userId = SecurityUtil.getCurrentUserId();
-        Page<Song> songList = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
+        List<Song> songList = songRepository.findLibraryTotalSongSearchQD(pageable, librarySearchDTO);
+        List<Long> currentUserLikedSongList = likeRepository.findByUserIdAndSongIdIn(
+                        userId,
+                        songList.stream().map(Song::getSongId).collect(Collectors.toList())
+                ).stream()
+                .map(like -> like.getSong().getSongId())
+                .collect(Collectors.toList());
 
-        List<SongDTO> songDTOList = new ArrayList<>();
-        if (!userId.equals(-1L)) {
-            songDTOList = mapToSongDTOWithLike(songList, userId);
-        } else {
-            songDTOList = mapToSongDTOWithoutLike(songList);
-        }
-        System.out.println("total like add");
-        return songDTOList;
+        return songList.stream()
+                .map(SongDTO::new)
+                .peek(songDTO -> songDTO.setLike(currentUserLikedSongList.contains(songDTO.getSongId())))
+                .collect(Collectors.toList());
     }
 
     // playlist 전체 보기
