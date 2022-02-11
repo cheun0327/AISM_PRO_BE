@@ -103,9 +103,9 @@ public class SongService implements SongServiceInter {
         FileUtils.moveFile(source, target);
 
         // 저장된 미디 파일 위치 이동
-        File midiSource = new File(songMidiPath);
-        File midiTarget = new File(midiDirPath + "/" + songId + ".mid");
-        FileUtils.moveFile(midiSource, midiTarget);
+//        File midiSource = new File(songMidiPath);
+//        File midiTarget = new File(midiDirPath + "/" + songId + ".mid");
+//        FileUtils.moveFile(midiSource, midiTarget);
 
         // 음원 재생시간 계산
         java.util.logging.Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
