@@ -91,6 +91,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://141.164.62.192");
         configuration.addAllowedOrigin("http://141.164.62.192:80");
+        configuration.addAllowedOrigin("http://aism.kr");
+        configuration.addAllowedOrigin("http://www.aism.kr");
         configuration.setAllowCredentials(true);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
