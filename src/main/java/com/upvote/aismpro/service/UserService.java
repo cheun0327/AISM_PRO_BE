@@ -3,6 +3,7 @@ package com.upvote.aismpro.service;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.ArtistDetailDTO;
 import com.upvote.aismpro.dto.UserDTO;
+import com.upvote.aismpro.entity.KeywordPath;
 import com.upvote.aismpro.entity.Song;
 import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.repository.SongRepository;
@@ -30,29 +31,24 @@ public class UserService {
     private final CustomModelMapper modelMapper;
 
     public ArtistDetailDTO getArtistDetailInfo(Long userID) throws Exception {
-        try {
-            User user = userRepository.getById(userID);
+        User user = userRepository.getById(userID);
 
-            List<Song> songs = songRepository.findAllByUserIdFetchUserQD(userID);
+        List<KeywordPath> keywordPathList = songRepository.findAllByUserIdFetchUserQD(userID).stream()
+                .map(Song::getKeywordPath)
+                .collect(Collectors.toList());
 
-            List<String> genres = songs.stream().map(Song::getOne).collect(Collectors.toList());
-            List<String> firstKeywords = songs.stream().map(Song::getTwo).collect(Collectors.toList());
-            List<String> secondKeywords = songs.stream().map(Song::getThree).collect(Collectors.toList());
-            List<String> thirdKeywords = songs.stream().map(Song::getFour).collect(Collectors.toList());
-//            List<String> fourthKeywords = creates.stream().map(song -> song.getSong().getFive()).collect(Collectors.toList());
-//            List<String> sixthKeywords = creates.stream().map(song -> song.getSong().getSix()).collect(Collectors.toList());
+        List<String> genres = keywordPathList.stream().map(KeywordPath::getGenre).collect(Collectors.toList());
+        List<String> firstKeywords = keywordPathList.stream().map(KeywordPath::getCategory).collect(Collectors.toList());
+        List<String> secondKeywords = keywordPathList.stream().map(kp -> kp.getSubCategory().getKeyword()).collect(Collectors.toList());
+        List<String> thirdKeywords = keywordPathList.stream().map(KeywordPath::getKeyword).collect(Collectors.toList());
 
-            List<String> keywords = Arrays.asList(
-                    getMostFrequentTags(genres, 1),
-                    getMostFrequentTags(firstKeywords, 1),
-                    getMostFrequentTags(secondKeywords, 1),
-                    getMostFrequentTags(thirdKeywords, 1));
+        List<String> keywords = Arrays.asList(
+                getMostFrequentTags(genres, 1),
+                getMostFrequentTags(firstKeywords, 1),
+                getMostFrequentTags(secondKeywords, 1),
+                getMostFrequentTags(thirdKeywords, 1));
 
-            return new ArtistDetailDTO(user.getUserId(), user.getNickname(), user.getProfile(), keywords);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
+        return new ArtistDetailDTO(user.getUserId(), user.getNickname(), user.getProfile(), keywords);
     }
 
     public String getMostFrequentTags(List<String> genres, int cntLimit) {

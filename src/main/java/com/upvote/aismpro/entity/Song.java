@@ -1,7 +1,8 @@
 package com.upvote.aismpro.entity;
 
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,7 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 @Table(name = "songs")
 @Entity
@@ -25,12 +26,9 @@ public class Song extends BaseEventEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedDate;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "keyword_path_id")
+    private KeywordPath keywordPath;
 
     @Column(name = "song_name")
     private String songName;
@@ -44,21 +42,35 @@ public class Song extends BaseEventEntity {
     @Column(name = "img_file")
     private String imgFile;
 
-    @Column(name = "one")
-    private String one;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createDate;
 
-    @Column(name = "two")
-    private String two;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedDate;
 
-    @Column(name = "three")
-    private String three;
+    @Builder
+    public Song(
+            User user,
+            KeywordPath keywordPath,
+            String songName,
+            String type,
+            String playtime,
+            String imgFile
+    ) {
+        this.user = user;
+        this.keywordPath = keywordPath;
+        this.songName = songName;
+        this.type = type;
+        this.playtime = playtime;
+        this.imgFile = imgFile;
+    }
 
-    @Column(name = "four")
-    private String four;
+    public void addImgFile(String imgFile) {
+        this.imgFile = imgFile;
+    }
 
-    @Column(name = "five")
-    private String five;
-
-    @Column(name = "six")
-    private String six;
+    public void addPlayTime(String playtime) {
+        this.playtime = playtime;
+    }
 }
