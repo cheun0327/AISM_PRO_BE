@@ -6,15 +6,17 @@ import com.upvote.aismpro.dto.MyLibrarySearchDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.entity.KeywordPath;
 import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.Song;
+import com.upvote.aismpro.entity.User;
 import com.upvote.aismpro.exception.ApiException;
+import com.upvote.aismpro.repository.KeywordPathRepository;
 import com.upvote.aismpro.repository.LikeRepository;
 import com.upvote.aismpro.repository.SongRepository;
 import com.upvote.aismpro.repository.UserRepository;
 import com.upvote.aismpro.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -30,10 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -45,42 +44,54 @@ public class SongService implements SongServiceInter {
     private final SongRepository songRepository;
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
+    private final KeywordPathRepository keywordPathRepository;
+
     private final CustomModelMapper modelMapper;
 
     // 생성 song 저장
-    public SongDTO saveSong(SongSaveDTO songSave, MultipartFile file) throws Exception, FileUploadException {
+    public Long saveSong(SongSaveDTO saveReqDTO, MultipartFile file) {
+        // 이미지 파일이 필수값이기 때문에 null check 불필요
+        if (file == null) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "이미지 파일을 추가해 주세요.");
+        }
+
         Long userId = SecurityUtil.getCurrentUserId();
+        User creator = userRepository.getById(userId);
+
+        KeywordPath keywordPath = keywordPathRepository.findOnePath(
+                saveReqDTO.getOne(),
+                saveReqDTO.getTwo(),
+                saveReqDTO.getThree(),
+                saveReqDTO.getFour(),
+                saveReqDTO.getFive()
+        );
+
+        Song song = Song.builder()
+                .user(creator)
+                .keywordPath(keywordPath)
+                .songName(saveReqDTO.getSongName())
+                .type(saveReqDTO.getType())
+                .build();
+
+        Song savedSong = songRepository.save(song);
+
+        // ------- 곡 저장 후 로직 ---------
+        String dirPath = "/var/lib/jenkins/workspace/img/song";
+        String imgName = savedSong.getSongId() + "." + extractExt(Objects.requireNonNull(file.getOriginalFilename()));
 
         try {
-            Song song = modelMapper.songSaveDTO2song().map(songSave, Song.class);
-            song.setUser(userRepository.getById(userId));
-
-            // song 정보 저장
-            Song savedSong = songRepository.save(song);
-            if (savedSong.getSongName().equals("음원 제목")) savedSong.setSongName("Song" + savedSong.getSongId());
-
-            // song img 저장
-            if (file != null) {
-                String dirPath = "/var/lib/jenkins/workspace/img/song";
-                String imgName = savedSong.getSongId() + "." + extractExt(file.getOriginalFilename());
-
-                file.transferTo(new File(dirPath + "/" + imgName));
-                savedSong.setImgFile(imgName);
-            }
-            savedSong.setPlaytime(String.valueOf(moveSongFiles(savedSong.getSongId())));
-            songRepository.save(savedSong);
-
-            // songDTO
-            SongDTO songDTO = modelMapper.toSongDTO().map(savedSong, SongDTO.class);
-            System.out.println(songDTO);
-
-            return songDTO;
-
-        } catch (Exception e) {
-            System.out.println("일반 에러로!!!!!");
-//            e.printStackTrace();
-            throw new Exception();
+            file.transferTo(new File(dirPath + "/" + imgName));
+        } catch (IOException e) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "MultipartFile 변환 실패");
         }
+
+        try {
+            savedSong.addPlayTime(String.valueOf(moveSongFiles(savedSong.getSongId())));
+        } catch (Exception e) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "음원 파일 이동 실패");
+        }
+
+        return songRepository.save(savedSong).getSongId();
     }
 
     // song 삭제
@@ -125,14 +136,20 @@ public class SongService implements SongServiceInter {
 
     // 비슷한 곡 가져오기
     public List<SongDTO> getSimilarSong(Long songId) {
-        Song song = songRepository.getById(songId);
-        List<SongDTO> similar = songRepository.findSimilarSongQD(song)
-                .stream()
+        Song song = songRepository.findByIdFetchKeywordPathQD(songId);
+
+        KeywordPath keywordPath = song.getKeywordPath();
+
+        return songRepository.findSimilarSongQD(
+                        song.getSongId(),
+                        keywordPath.getGenre(),
+                        keywordPath.getCategory(),
+                        keywordPath.getSubCategory().getKeyword(),
+                        keywordPath.getKeyword(),
+                        keywordPath.getFx().getKeyword()
+                ).stream()
                 .map(s -> modelMapper.toSongDTO().map(s, SongDTO.class))
                 .collect(Collectors.toList());
-        Collections.shuffle(similar);
-        if (similar.size() > 6) return Lists.newArrayList(similar.subList(0, 6));
-        return similar;
     }
 
     // 작곡하기 step2 비슷한 곡 가져오기

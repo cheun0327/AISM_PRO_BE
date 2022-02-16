@@ -2,6 +2,7 @@ package com.upvote.aismpro.customrepository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.upvote.aismpro.dto.MyLibrarySearchDTO;
+import com.upvote.aismpro.entity.Like;
 import com.upvote.aismpro.entity.QLike;
 import com.upvote.aismpro.entity.Song;
 import lombok.RequiredArgsConstructor;
@@ -18,58 +19,74 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom{
     @Override
     public List<Song> findMyLibraryLikeSearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
         // TODO 정렬 : 디폴트로 날짜 정렬
-        String search = myLibrarySearchDTO.getSearch();
-
-        switch (myLibrarySearchDTO.getSort()) {
-            case "업로드 날짜": {
-                return searchOrderByDate(userId, myLibrarySearchDTO);
-            }
-            default: {
-                return searchOrderByDate(userId, myLibrarySearchDTO);
-            }
-        }
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        switch (myLibrarySearchDTO.getSort()) {
+//            case "업로드 날짜": {
+//                return searchOrderByDate(userId, myLibrarySearchDTO);
+//            }
+//            default: {
+//                return searchOrderByDate(userId, myLibrarySearchDTO);
+//            }
+//        }
+        return null;
     }
 
     private List<Song> searchOrderByDate(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
-        String search = myLibrarySearchDTO.getSearch();
-
-        List<Song> songs = query.select(like.song)
-                .from(like)
-                .where(
-                        like.user.userId.eq(userId)
-                                        .and(
-                                                like.song.songName.contains(search)
-                                                        .or(like.song.one.contains(search))
-                                                        .or(like.song.two.contains(search))
-                                                        .or(like.song.three.contains(search))
-                                                        .or(like.song.four.contains(search))
-                                                        .or(like.song.five.contains(search))
-                                                        .or(like.song.six.contains(search))
-                                        )
-                )
-                .orderBy(like.song.createDate.desc())
-                .fetch();
-        return songs;
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        List<Song> songs = query.select(like.song)
+//                .from(like)
+//                .where(
+//                        like.user.userId.eq(userId)
+//                                        .and(
+//                                                like.song.songName.contains(search)
+//                                                        .or(like.song.one.contains(search))
+//                                                        .or(like.song.two.contains(search))
+//                                                        .or(like.song.three.contains(search))
+//                                                        .or(like.song.four.contains(search))
+//                                                        .or(like.song.five.contains(search))
+//                                                        .or(like.song.six.contains(search))
+//                                        )
+//                )
+//                .orderBy(like.song.createDate.desc())
+//                .fetch();
+//        return songs;
+        return null;
     }
 
     private List<Song> searchRandom(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
-        String search = myLibrarySearchDTO.getSearch();
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        List<Song> songs = query.select(like.song)
+//                .from(like)
+//                .where(
+//                        like.user.userId.eq(userId)
+//                                .and(
+//                                        like.song.songName.contains(search)
+//                                                .or(like.song.one.contains(search))
+//                                                .or(like.song.two.contains(search))
+//                                                .or(like.song.three.contains(search))
+//                                                .or(like.song.four.contains(search))
+//                                                .or(like.song.five.contains(search))
+//                                                .or(like.song.six.contains(search))
+//                                )
+//                )
+//                .fetch();
+//        return songs;
+        return null;
+    }
 
-        List<Song> songs = query.select(like.song)
-                .from(like)
+    @Override
+    public List<Like> findByUserIdAndSongIdIn(Long userId, List<Long> songIdList) {
+        return query
+                .selectFrom(like)
+                .innerJoin(like.user).fetchJoin()
+                .innerJoin(like.song).fetchJoin()
                 .where(
-                        like.user.userId.eq(userId)
-                                .and(
-                                        like.song.songName.contains(search)
-                                                .or(like.song.one.contains(search))
-                                                .or(like.song.two.contains(search))
-                                                .or(like.song.three.contains(search))
-                                                .or(like.song.four.contains(search))
-                                                .or(like.song.five.contains(search))
-                                                .or(like.song.six.contains(search))
-                                )
+                        like.user.userId.eq(userId),
+                        like.song.songId.in(songIdList)
                 )
                 .fetch();
-        return songs;
     }
 }

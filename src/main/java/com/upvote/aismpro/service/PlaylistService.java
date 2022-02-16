@@ -3,6 +3,7 @@ package com.upvote.aismpro.service;
 import com.google.api.client.util.Lists;
 import com.upvote.aismpro.custommodelmapper.CustomModelMapper;
 import com.upvote.aismpro.dto.*;
+import com.upvote.aismpro.entity.KeywordPath;
 import com.upvote.aismpro.entity.Playlist;
 import com.upvote.aismpro.entity.PlaylistSong;
 import com.upvote.aismpro.entity.Song;
@@ -92,31 +93,25 @@ public class PlaylistService {
 
     // playlist detail 가져오기
     public PlaylistDetailDTO getPlayListDetail(Long playlistId) throws Exception {
-        try {
-            Playlist playlist = playlistRepository.findByIdFetchSongQD(playlistId);
-            List<Song> songs = playlist.getSongs();
+        Playlist playlist = playlistRepository.findByIdFetchSongQD(playlistId);
+        List<KeywordPath> keywordPathList = playlist.getSongs().stream()
+                .map(Song::getKeywordPath)
+                .collect(Collectors.toList());
 
-            List<String> firstKeywords = songs.stream().map(Song::getTwo).collect(Collectors.toList());
-            List<String> secondKeywords = songs.stream().map(Song::getThree).collect(Collectors.toList());
-            List<String> thirdKeywords = songs.stream().map(Song::getFour).collect(Collectors.toList());
+        List<String> firstKeywords = keywordPathList.stream().map(KeywordPath::getCategory).collect(Collectors.toList());
+        List<String> secondKeywords = keywordPathList.stream().map(kp -> kp.getSubCategory().getKeyword()).collect(Collectors.toList());
+        List<String> thirdKeywords = keywordPathList.stream().map(KeywordPath::getKeyword).collect(Collectors.toList());
 
-            List<String> keywords = Arrays.asList(
-                    userService.getMostFrequentTags(firstKeywords, 1),
-                    userService.getMostFrequentTags(secondKeywords, 1),
-                    userService.getMostFrequentTags(thirdKeywords, 1)
-            );
+        List<String> keywords = Arrays.asList(
+                userService.getMostFrequentTags(firstKeywords, 1),
+                userService.getMostFrequentTags(secondKeywords, 1),
+                userService.getMostFrequentTags(thirdKeywords, 1)
+        );
 
-            PlaylistDetailDTO dto = modelMapper.toPlaylistDetailDTO().map(playlist, PlaylistDetailDTO.class);
-            dto.setKeywords(keywords);
+        PlaylistDetailDTO dto = modelMapper.toPlaylistDetailDTO().map(playlist, PlaylistDetailDTO.class);
+        dto.setKeywords(keywords);
 
-            return dto;
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            throw new NoSuchElementException();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
+        return dto;
     }
 
 //    // playlistDetailDTO에 like 추가

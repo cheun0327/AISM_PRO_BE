@@ -19,58 +19,61 @@ public class BuyRepositoryImpl implements BuyRepositoryCustom{
     @Override
     public List<Song> findMyLibraryBuySearchQD(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
         // TODO 정렬 : 디폴트로 날짜 정렬
-        String search = myLibrarySearchDTO.getSearch();
-
-        switch (myLibrarySearchDTO.getSort()) {
-            case "업로드 날짜": {
-                return searchOrderByDate(userId, myLibrarySearchDTO);
-            }
-            default: {
-                return searchOrderByDate(userId, myLibrarySearchDTO);
-            }
-        }
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        switch (myLibrarySearchDTO.getSort()) {
+//            case "업로드 날짜": {
+//                return searchOrderByDate(userId, myLibrarySearchDTO);
+//            }
+//            default: {
+//                return searchOrderByDate(userId, myLibrarySearchDTO);
+//            }
+//        }
+        return null;
     }
 
     private List<Song> searchOrderByDate(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
-        String search = myLibrarySearchDTO.getSearch();
-
-        List<Song> songs = query.select(buy.song)
-                .from(buy)
-                .where(
-                        buy.user.userId.eq(userId)
-                                        .and(
-                                                buy.song.songName.contains(search)
-                                                        .or(buy.song.one.contains(search))
-                                                        .or(buy.song.two.contains(search))
-                                                        .or(buy.song.three.contains(search))
-                                                        .or(buy.song.four.contains(search))
-                                                        .or(buy.song.five.contains(search))
-                                                        .or(buy.song.six.contains(search))
-                                        )
-                )
-                .orderBy(buy.song.createDate.desc())
-                .fetch();
-        return songs;
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        List<Song> songs = query.select(buy.song)
+//                .from(buy)
+//                .where(
+//                        buy.user.userId.eq(userId)
+//                                        .and(
+//                                                buy.song.songName.contains(search)
+//                                                        .or(buy.song.one.contains(search))
+//                                                        .or(buy.song.two.contains(search))
+//                                                        .or(buy.song.three.contains(search))
+//                                                        .or(buy.song.four.contains(search))
+//                                                        .or(buy.song.five.contains(search))
+//                                                        .or(buy.song.six.contains(search))
+//                                        )
+//                )
+//                .orderBy(buy.song.createDate.desc())
+//                .fetch();
+//        return songs;
+        return null;
     }
 
     private List<Song> searchRandom(Long userId, MyLibrarySearchDTO myLibrarySearchDTO) {
-        String search = myLibrarySearchDTO.getSearch();
-
-        List<Song> songs = query.select(buy.song)
-                .from(buy)
-                .where(
-                        buy.user.userId.eq(userId)
-                                .and(
-                                        buy.song.songName.contains(search)
-                                                .or(buy.song.one.contains(search))
-                                                .or(buy.song.two.contains(search))
-                                                .or(buy.song.three.contains(search))
-                                                .or(buy.song.four.contains(search))
-                                                .or(buy.song.five.contains(search))
-                                                .or(buy.song.six.contains(search))
-                                )
-                )
-                .fetch();
-        return songs;
+//        String search = myLibrarySearchDTO.getSearch();
+//
+//        List<Song> songs = query.select(buy.song)
+//                .from(buy)
+//                .where(
+//                        buy.user.userId.eq(userId)
+//                                .and(
+//                                        buy.song.songName.contains(search)
+//                                                .or(buy.song.one.contains(search))
+//                                                .or(buy.song.two.contains(search))
+//                                                .or(buy.song.three.contains(search))
+//                                                .or(buy.song.four.contains(search))
+//                                                .or(buy.song.five.contains(search))
+//                                                .or(buy.song.six.contains(search))
+//                                )
+//                )
+//                .fetch();
+//        return songs;
+        return null;
     }
 }

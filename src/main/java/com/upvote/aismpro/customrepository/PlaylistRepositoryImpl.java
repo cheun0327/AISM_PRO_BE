@@ -140,47 +140,37 @@ public class PlaylistRepositoryImpl implements PlaylistRepositoryCustom {
 
     // Library 플리이리스트 검색 결과
     @Override
-    public Page<Playlist> findLibraryPlaylistSearchQD(LibrarySearchDTO librarySearchDTO) {
-
-        QueryResults<Playlist> result = query.select(playlist)
-                .from(playlist)
+    public List<Playlist> findLibraryPlaylistSearchQD(String searchKeyword) {
+        return query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
                 .where(
-                        playlist.state.eq(true)
-                                .and(
-                                        playlist.songs.size().goe(1)
-                                )
-                                .and(
-                                        playlist.name.contains(librarySearchDTO.getSearch())
-                                                .or(playlist.user.nickname.contains(librarySearchDTO.getSearch()))
-                                                .or(playlist.one.contains(librarySearchDTO.getSearch()))
-                                                .or(playlist.two.contains(librarySearchDTO.getSearch()))
-                                                .or(playlist.three.contains(librarySearchDTO.getSearch()))
-                                )
+                        playlist.state.eq(true),
+                        playlist.songs.size().goe(1),
+                        playlist.name.contains(searchKeyword)
+                                .or(playlist.user.nickname.contains(searchKeyword))
                 )
-                .offset(0)
+
+                .orderBy(playlist.playlistId.desc())
+
                 .limit(8)
-                .orderBy(playlist.createDate.desc())
-                .fetchResults();
+                .fetch();
+    }
 
-        // 검색 결과 없으면 디폴트(최신) 8개 가져오기
-        if (result.getResults().isEmpty()) {
-            QueryResults<Playlist> defaultResult = query.select(playlist)
-                    .from(playlist)
-                    .where(
-                            playlist.state.eq(true)
-                                    .and(
-                                            playlist.songs.size().goe(1)
-                                    )
-                    )
-                    .offset(0)
-                    .limit(8)
-                    .orderBy(playlist.createDate.desc())
-                    .fetchResults();
+    @Override
+    public List<Playlist> findAllRecentPlaylistQD() {
+        return query
+                .selectFrom(playlist)
+                .innerJoin(playlist.user).fetchJoin()
+                .where(
+                        playlist.state.eq(true),
+                        playlist.songs.size().goe(1)
+                )
 
-            return new PageImpl<>(defaultResult.getResults());
-        }
+                .orderBy(playlist.playlistId.desc())
 
-        return new PageImpl<>(result.getResults());
+                .limit(8)
+                .fetch();
     }
 
     @Override

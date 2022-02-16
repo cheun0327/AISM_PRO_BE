@@ -1,10 +1,9 @@
 package com.upvote.aismpro.dto;
 
-import com.upvote.aismpro.entity.User;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class SongSaveDTO {
 
@@ -18,5 +17,4 @@ public class SongSaveDTO {
     private String four;
     private String five;
     private String six;
-
 }

@@ -1,12 +1,12 @@
 package com.upvote.aismpro.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class LibrarySearchDTO {
 
@@ -14,37 +14,19 @@ public class LibrarySearchDTO {
     private String search;
     private String type;
     private String sort;
+
+    @NotNull
     private List<String> genre;
+
+    @NotNull
     private List<String> inst;
+
+    @NotNull
     private List<String> mood;
+
+    @NotNull
     private List<String> playtime;
+
+    @NotNull
     private List<String> tempo;
-
-    public LibrarySearchDTO(Long userId, String search, String type, String sort, List<String> genre, List<String> inst, List<String> mood, List<String> playtime, List<String> tempo){
-        this.userId = userId;
-        this.search = search;
-        this.type = type;
-        this.sort = sort;
-        this.genre = genre;
-        this.inst = inst;
-        this.mood = mood;
-        this.playtime = playtime.stream().map(p->typeConversionPlaytime(p)).collect(Collectors.toList());
-        this.tempo = tempo;
-    }
-
-    private String typeConversionPlaytime(String playtime) {
-        switch (playtime) {
-            case "30초": return "30";
-            case "1분": return "60";
-            case "1분 30초": return "90";
-            case "2분": return "120";
-            case "2분 30초": return "150";
-            case "3분": return "180";
-            case "3분 30초": return "210";
-            case "4분": return "240";
-            case "4분 30초": return "270";
-            case "5분": return "300";
-            default: return null;
-        }
-    }
 }

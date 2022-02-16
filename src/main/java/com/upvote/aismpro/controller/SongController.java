@@ -6,6 +6,7 @@ import com.upvote.aismpro.dto.PlaylistDTO;
 import com.upvote.aismpro.dto.SongDTO;
 import com.upvote.aismpro.dto.SongSaveDTO;
 import com.upvote.aismpro.dto.SongTagDTO;
+import com.upvote.aismpro.exception.ApiException;
 import com.upvote.aismpro.security.SecurityUtil;
 import com.upvote.aismpro.service.PlaylistService;
 import com.upvote.aismpro.service.SongService;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,32 +38,24 @@ public class SongController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Song created successfully"),
             @ApiResponse(code = 400, message = "Bad Request(+File Size Exceeded)"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 404, message = "Not Found")
+            @ApiResponse(code = 401, message = "Unauthorized")
     })
     public ResponseEntity<Long> createSong(@ModelAttribute SongSaveVO songVO) {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        SongDTO song = new SongDTO();
+        // JSON String -> DTO
+        SongSaveDTO songSaveReqDTO;
         try {
-            Long userId = SecurityUtil.getCurrentUserId();
-            if (userId < 0) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-            SongSaveDTO songDTO = mapper.readValue(songVO.getVal(), SongSaveDTO.class);
-
-            // song 기본 정보 저장
-            song = songService.saveSong(songDTO, songVO.getImg());
-
-            // song wav file tmp에서 이동
-            // song.setPlaytime(String.valueOf(songService.moveSongFiles(song.getSongId())));
-
-            return new ResponseEntity<>(song.getSongId(), HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (song != null) songService.deleteSong(song.getSongId());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            songSaveReqDTO = mapper.readValue(songVO.getVal(), SongSaveDTO.class);
+        } catch (IOException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다. 입력값을 확인 해 주세요.");
         }
+
+        // song 기본 정보 저장
+        Long savedSongId = songService.saveSong(songSaveReqDTO, songVO.getImg());
+
+        return new ResponseEntity<>(savedSongId, HttpStatus.CREATED);
     }
 
     // song 저장 => 저장 권한 확인 후 저장
