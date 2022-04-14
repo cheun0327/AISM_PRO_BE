@@ -34,19 +34,19 @@ public class LibraryController {
 
         Map<String, Object> map = libraryService.getSearchResult(librarySearchDTO);
 
-//        Pageable songTotalDefaultPageable = PageRequest.of(0, 20);
-//        Pageable playlistTotalDefaultPageable = PageRequest.of(0, 15);
-//        Pageable artistTotalDefaultPageable = PageRequest.of(0, 10);
-//
-//        EntityModel<Map<String, Object>> result = new EntityModel<>(map);
-//        result.add(
-//                linkTo(methodOn(LibraryController.class)
-//                        .songTotalLibrarySearch(songTotalDefaultPageable, librarySearchDTO)).withRel("track"),
-//                linkTo(methodOn(LibraryController.class)
-//                        .playlistTotalLibrarySearch(playlistTotalDefaultPageable, librarySearchDTO)).withRel("playlist"),
-//                linkTo(methodOn(LibraryController.class)
-//                        .artistTotalLibrarySearch(artistTotalDefaultPageable, librarySearchDTO)).withRel("artist")
-//        );
+       Pageable songTotalDefaultPageable = PageRequest.of(0, 20);
+       Pageable playlistTotalDefaultPageable = PageRequest.of(0, 15);
+       Pageable artistTotalDefaultPageable = PageRequest.of(0, 10);
+
+       EntityModel<Map<String, Object>> result = new EntityModel<>(map);
+       result.add(
+               linkTo(methodOn(LibraryController.class)
+                       .songTotalLibrarySearch(songTotalDefaultPageable, librarySearchDTO)).withRel("track"),
+               linkTo(methodOn(LibraryController.class)
+                       .playlistTotalLibrarySearch(playlistTotalDefaultPageable, librarySearchDTO)).withRel("playlist"),
+               linkTo(methodOn(LibraryController.class)
+                       .artistTotalLibrarySearch(artistTotalDefaultPageable, librarySearchDTO)).withRel("artist")
+       );
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
